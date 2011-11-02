@@ -41,7 +41,7 @@
 		658C860C144F1641003A190E /* NumericalTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumericalTools.h; sourceTree = "<group>"; };
 		658C860D144F1641003A190E /* NumericalTools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NumericalTools.c; sourceTree = "<group>"; };
 		658C860E144F1641003A190E /* NetworkSim.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NetworkSim.c; sourceTree = "<group>"; };
-		658C860F144F1641003A190E /* LIFNeuron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LIFNeuron.h; sourceTree = "<group>"; };
+		658C860F144F1641003A190E /* cl_LIFNeuron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cl_LIFNeuron.h; sourceTree = "<group>"; };
 		658C8610144F1641003A190E /* NetworkTopology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NetworkTopology.c; sourceTree = "<group>"; };
 		658C8611144F1641003A190E /* ExternalCurrents.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExternalCurrents.c; sourceTree = "<group>"; };
 		658C8612144F1641003A190E /* LIFNeuron.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LIFNeuron.c; sourceTree = "<group>"; };
@@ -92,7 +92,7 @@
 				658C860C144F1641003A190E /* NumericalTools.h */,
 				658C860D144F1641003A190E /* NumericalTools.c */,
 				658C860E144F1641003A190E /* NetworkSim.c */,
-				658C860F144F1641003A190E /* LIFNeuron.h */,
+				658C860F144F1641003A190E /* cl_LIFNeuron.h */,
 				658C8610144F1641003A190E /* NetworkTopology.c */,
 				658C8611144F1641003A190E /* ExternalCurrents.c */,
 				658C8612144F1641003A190E /* LIFNeuron.c */,

@@ -1,7 +1,7 @@
 TXclNet
 v7
 r0
-t341330609.561874
+t341942862.217206
 cCheck dependencies
 cCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" normal x86_64 c com.apple.compilers.gcc.4_2
 cCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" normal x86_64 c com.apple.compilers.gcc.4_2
@@ -117,16 +117,17 @@ i<unistd.h>
 i<OpenCL/opencl.h>
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c
-c000000004EA812D40000000000001DB5
-t1319637716
-s7605
+c000000004EB16ACC0000000000003395
+t1320250060
+s13205
 i"HandleOpenCL.h"
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h
-c000000004EA8135D0000000000000785
-t1319637853
-s1925
+c000000004EB16A72000000000000091F
+t1320249970
+s2335
 i"GeneralIncludes.h"
+i"cl_LIFNeuron.h"
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c
 c000000004DDE56710000000000003017
@@ -214,8 +215,8 @@ s1589
 i"GeneralIncludes.h"
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet
-t1319637809
-s17552
+t1320250062
+s21736
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/CLNet.o
 t1319034661
@@ -230,8 +231,8 @@ t1319034661
 s3864
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o
-t1319637745
-s17276
+t1320250060
+s19396
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/LIFNeuron.o
 t1319034661
@@ -267,8 +268,8 @@ t1319034661
 s8812
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o
-t1319637807
-s5316
+t1320249972
+s5768
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/StaticAnalyzer/normal/x86_64/HandleOpenCL.plist
 t1319622433
@@ -277,6 +278,12 @@ s276
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/StaticAnalyzer/normal/x86_64/main.plist
 t1319622433
 s1613
+
+N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/cl_LIFNeuron.h
+c000000004EB1578B000000000000067B
+t1320245131
+s1659
+i"GeneralIncludes.h"
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c
 c000000004E9EDCC10000000000002773
@@ -293,10 +300,11 @@ i<sys/stat.h>
 i<OpenCL/opencl.h>
 
 N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c
-c000000004EA8132F00000000000006B4
-t1319637807
-s1716
+c000000004EB16A2C0000000000000A7E
+t1320249900
+s2686
 i"GeneralIncludes.h"
+i"cl_LIFNeuron.h"
 i"HandleOpenCL.h"
 
 CAnalyze "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c"
@@ -321,7 +329,7 @@ lSLF07#2@80"Analyze /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/X
 
 CCheck dependencies
 r0
-lSLF07#2@18"Check dependencies341330609#341330609#0(0"0(0#1#0"8617178528#0"0#
+lSLF07#2@18"Check dependencies341942862#341942862#0(0"0(0#1#0"8621613632#0"0#
 
 CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/CLNet.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c" normal x86_64 c com.apple.compilers.gcc.4_2
 s340727461.412882
@@ -363,8 +371,8 @@ xcom.apple.compilers.gcc.4_2
 lSLF07#2@92"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c340727461#340727461#0(0"0(0#0#84"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c8603724832#1595"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/ExternalCurrents.o"0#
 
 CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s341330545.799040
-e341330545.853724
+s341942862.205095
+e341942862.205882
 r1
 xCompileC
 xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o
@@ -373,7 +381,7 @@ xnormal
 xx86_64
 xc
 xcom.apple.compilers.gcc.4_2
-lSLF07#2@88"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341330545#341330545#0(0"0(0#0#80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c8611329728#1587"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o"0#
+lSLF07#2@88"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341942862#341942862#0(0"0(0#0#80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c8623574944#1587"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o"0#
 
 CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/LIFNeuron.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c" normal x86_64 c com.apple.compilers.gcc.4_2
 s340727461.518988
@@ -491,8 +499,8 @@ xcom.apple.compilers.gcc.4_2
 lSLF07#2@81"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c340727461#340727461#0(0"0(0#0#73"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c8604381600#1573"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/hello.o"0#
 
 CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s341330609.550585
-e341330609.551285
+s341942771.962712
+e341942772.006565
 r1
 xCompileC
 xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o
@@ -501,15 +509,15 @@ xnormal
 xx86_64
 xc
 xcom.apple.compilers.gcc.4_2
-lSLF07#2@80"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341330609#341330609#0(0"0(0#0#72"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c8616653760#1571"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o"0#
+lSLF07#2@80"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341942771#341942772#0(0"0(0#0#72"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c8623312800#1571"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o"0#
 
 CLd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet" normal x86_64
-s341330609.551399
-e341330609.561838
+s341942862.205927
+e341942862.217160
 r1
 xLd
 x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet
 xnormal
 xx86_64
-lSLF07#2@89"Link /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet341330609#341330609#0(0"0(0#0#0"8616570272#657"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk "-L/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" -filelist "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/XclNet.LinkFileList" -mmacosx-version-min=10.6 -framework OpenCL -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet"0#
+lSLF07#2@89"Link /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet341942862#341942862#0(0"0(0#0#0"8621442976#657"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk "-L/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" -filelist "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/XclNet.LinkFileList" -mmacosx-version-min=10.6 -framework OpenCL -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet"0#
 
