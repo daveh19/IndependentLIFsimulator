@@ -24,6 +24,10 @@
 
 //from Mac OpenCL demo
 #include <unistd.h>
+#ifdef __APPLE__ //ifdef added from web suggestions
 #include <OpenCL/opencl.h>
+#else
+#include <CL/cl.h>
+#endif
 
 #endif /*GENERAL_INCLUDES_H_*/

@@ -62,6 +62,7 @@ typedef struct {
 	float sigma;
 	float refrac_time;
 	float dt;
+	unsigned int no_lifs;
 } cl_LIFNeuron;
 
 //
