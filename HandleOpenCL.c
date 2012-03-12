@@ -285,7 +285,7 @@ int enqueueSynInputBuf(CL *cl, cl_Synapse *syn){
     (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).rho, 0, NULL, NULL);
     (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).ca, 0, NULL, NULL);
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).gauss, 0, NULL, NULL);
-	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_SYNS, (*syn).preT, 0, NULL, NULL);
+	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_SYNS, (*syn).preT[0], 0, NULL, NULL);
     (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).post_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_SYNS, (*syn).postT, 0, NULL, NULL);
 	if ((*cl).err != CL_SUCCESS)
     {
@@ -434,7 +434,6 @@ int enqueueLifKernel(CL *cl){
 	if((*cl).err){
 		printf("Error already occurred\n");
 	}
-	//TODO: fix job size, hcf(local, global)
 	(*cl).global = NO_LIFS;
 	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
 	while( (*cl).global % (*cl).local != 0){
@@ -443,8 +442,7 @@ int enqueueLifKernel(CL *cl){
 		//printf("New value for global: %d\n", (*cl).global);
 	}
 	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, NO_LIFS);
-	//(*cl).global = 400;
-	//(*cl).local = 1;
+
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
 	{

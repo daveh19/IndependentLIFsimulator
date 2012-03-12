@@ -59,7 +59,7 @@ typedef struct Synapse{
     float * rho;
     float * ca;
 	float * gauss;
-    unsigned int * preT;
+    unsigned int ** preT;
     unsigned int * postT;
 	
 	float gamma_p;

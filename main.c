@@ -25,7 +25,7 @@ int main (int argc, const char * argv[]) {
 	(*lif_p).v_threshold = -54.0;
 	(*lif_p).r_m = 20.0;
 	(*lif_p).c_m = 0.001;
-	(*lif_p).sigma = 0; //3.5;
+	(*lif_p).sigma = 0; //3.5; //TODO: switch noise back on
 	(*lif_p).refrac_time = 20;
 	(*lif_p).dt = 0.001;
 	(*lif_p).no_lifs = NO_LIFS;
@@ -42,16 +42,21 @@ int main (int argc, const char * argv[]) {
 	(*syn_p).rho = malloc(sizeof(float) * NO_SYNS);
 	(*syn_p).ca = malloc(sizeof(float) * NO_SYNS);
 	(*syn_p).gauss = calloc(NO_SYNS, sizeof(float));
+	(*syn_p).delay = 4; // measured in multiples of dt
 	//TODO:preT will need to be 2-D to cope with (t-D)
-	(*syn_p).preT = calloc(NO_SYNS, sizeof(unsigned int));
+	//(*syn_p).preT = calloc(NO_SYNS, sizeof(unsigned int));
+	(*syn_p).preT = malloc(sizeof(unsigned int *) * (*syn_p).delay);
+	for(i = 1; i < (*syn_p).delay; i++){
+		(*syn_p).preT[i] = calloc(NO_SYNS, sizeof(unsigned int));
+	}
 	(*syn_p).postT = calloc(NO_SYNS, sizeof(unsigned int));
 	
 	(*syn_p).gamma_p = 725.085;
 	(*syn_p).gamma_d = 331.909;
 	(*syn_p).theta_p = 1.3;
 	(*syn_p).theta_d = 1.0;
-	(*syn_p).delay = 4; // measured in multiples of dt
-	(*syn_p).sigma = 3.35;
+	//(*syn_p).delay = 4; // measured in multiples of dt
+	(*syn_p).sigma = 0; //3.35; //TODO: switch noise back on
 	(*syn_p).tau = 346.3615;
 	(*syn_p).tau_ca = 0.0226936;
 	(*syn_p).c_pre = 0.5617539;
@@ -80,6 +85,9 @@ int main (int argc, const char * argv[]) {
 		(*syn_p).rho[i] = 1;
 		(*syn_p).ca[i] = 5;
 		(*syn_p).gauss[i] = gasdev(&random_seed);
+		for( j = 0; j < (*syn_p).delay; j++){
+			(*syn_p).preT[j][i] = j;//0;//j;
+		}
 	}
 	
 	
@@ -153,8 +161,29 @@ int main (int argc, const char * argv[]) {
 	
 		// Output results
 		printf("V(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[0], j, (*lif_p).time_since_spike[0], (*lif_p).gauss[0]);
-		printf("rho(%d): %f, ca(%d): %f, gauss: %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0], (*syn_p).gauss[0]);
+		printf("rho(%d): %f, ca(%d): %f, preT(%d): %d, gauss: %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0], j, (*syn_p).preT[0][0], (*syn_p).gauss[0]);
 		
+		//TODO: when Network is in place, change preT and postT to pointers to time_since_spike in relevant lif's
+		/*printf("BEFORE:-------------\n");
+		for( i = 0; i < (*syn_p).delay; i++){
+			for(int k = 0; k < 10; k++){
+				printf("preT[%d][%d]: %d, ", i, k, (*syn_p).preT[i][k]);
+			}
+			printf("\n");
+		}*/
+		//Rearrange pointers in preT[] to take account of delays
+		unsigned int * local_delay_rearrange = (*syn_p).preT[0];
+		for( i = 0; i < ((*syn_p).delay - 1); i++){
+			(*syn_p).preT[i] = (*syn_p).preT[i+1];
+		}
+		(*syn_p).preT[(*syn_p).delay - 1] = local_delay_rearrange;
+		/*printf("AFTER:-------------\n");
+		for( i = 0; i < (*syn_p).delay; i++){
+			for(int k = 0; k < 10; k++){
+				printf("preT[%d][%d]: %d, ", i, k, (*syn_p).preT[i][k]);
+			}
+			printf("\n");
+		}*/
 		// Generate new random numbers, for noise processes
 		for ( i = 0; i < NO_LIFS; i++){
 			(*lif_p).gauss[i] = gasdev(&random_seed);
