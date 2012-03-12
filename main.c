@@ -2,10 +2,12 @@
 #include "cl_LIFNeuron.h"
 #include "cl_Synapse.h"
 #include "HandleOpenCL.h"
+#include "NumericalTools.h"
 
 
 int main (int argc, const char * argv[]) {
 	int i, j;
+	long random_seed = -13;
 	
 	// LIF compute kernel
 	CL cl_lif;
@@ -23,7 +25,7 @@ int main (int argc, const char * argv[]) {
 	(*lif_p).v_threshold = -54.0;
 	(*lif_p).r_m = 20.0;
 	(*lif_p).c_m = 0.001;
-	(*lif_p).sigma = 3.5;
+	(*lif_p).sigma = 0; //3.5;
 	(*lif_p).refrac_time = 20;
 	(*lif_p).dt = 0.001;
 	(*lif_p).no_lifs = NO_LIFS;
@@ -71,12 +73,13 @@ int main (int argc, const char * argv[]) {
 		(*lif_p).V[i] = -66.0;
 		(*lif_p).I[i] = 1.0;
 		//(*lif_p).gauss[i] = 1.;
-		//(*lif_p).gauss[i] = gasdev(&random_seed);
+		(*lif_p).gauss[i] = gasdev(&random_seed);
 		(*lif_p).time_since_spike[i] = (*lif_p).refrac_time;
 	}
 	for( i = 0; i < NO_SYNS; i++){
 		(*syn_p).rho[i] = 1;
 		(*syn_p).ca[i] = 5;
+		(*syn_p).gauss[i] = gasdev(&random_seed);
 	}
 	
 	
@@ -149,9 +152,16 @@ int main (int argc, const char * argv[]) {
 		}	
 	
 		// Output results
-		printf("V(%d): %f, time_since_spike(%d): %d\n", j, (*lif_p).V[0], j, (*lif_p).time_since_spike[0]);
-		printf("rho(%d): %f, ca(%d): %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0]);
+		printf("V(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[0], j, (*lif_p).time_since_spike[0], (*lif_p).gauss[0]);
+		printf("rho(%d): %f, ca(%d): %f, gauss: %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0], (*syn_p).gauss[0]);
 		
+		// Generate new random numbers, for noise processes
+		for ( i = 0; i < NO_LIFS; i++){
+			(*lif_p).gauss[i] = gasdev(&random_seed);
+		}
+		for( i = 0; i < NO_SYNS; i++){
+			(*syn_p).gauss[i] = gasdev(&random_seed);
+		}
 		// Setup next LIF Kernel
 		if( enqueueLifInputBuf(cl_lif_p, lif_p) == EXIT_FAILURE){
 			return EXIT_FAILURE;
@@ -163,7 +173,8 @@ int main (int argc, const char * argv[]) {
 		
 		j++;
 	}
-		
+	//TODO: could do another read here, as bufs have already been enqueued for processing
+	
 	//----------------------
 
 	/*printf("Results\n");

@@ -203,7 +203,7 @@ void psdes(unsigned long *lword, unsigned long *irword)
 
 float gasdev(long *idum)
 {
-	float ran1(long *idum);
+	float ran2(long *idum);
 	static int iset=0;
 	static float gset;
 	float fac,rsq,v1,v2;
@@ -211,8 +211,8 @@ float gasdev(long *idum)
 	if (*idum < 0) iset=0;
 	if  (iset == 0) {
 		do {
-			v1=2.0*ran1(idum)-1.0;
-			v2=2.0*ran1(idum)-1.0;
+			v1=2.0*ran2(idum)-1.0;
+			v2=2.0*ran2(idum)-1.0;
 			rsq=v1*v1+v2*v2;
 		} while (rsq >= 1.0 || rsq == 0.0);
 		fac=sqrt(-2.0*log(rsq)/rsq);
@@ -228,11 +228,11 @@ float gasdev(long *idum)
 
 float expdev(long *idum)
 {
-	float ran1(long *idum);
+	float ran2(long *idum);
 	float dum;
 
 	do
-		dum=ran1(idum);
+		dum=ran2(idum);
 	while (dum == 0.0);
 	return -log(dum);
 }
@@ -240,7 +240,7 @@ float expdev(long *idum)
 
 float gamdev(int ia, long *idum)
 {
-	float ran1(long *idum);
+	float ran2(long *idum);
 	//void nrerror(char error_text[]);
 	int j;
 	float am,e,s,v1,v2,x,y;
@@ -248,14 +248,14 @@ float gamdev(int ia, long *idum)
 	if (ia < 1) nrerror("Error in routine gamdev");
 	if (ia < 6) {
 		x=1.0;
-		for (j=1;j<=ia;j++) x *= ran1(idum);
+		for (j=1;j<=ia;j++) x *= ran2(idum);
 		x = -log(x);
 	} else {
 		do {
 			do {
 				do {
-					v1=ran1(idum);
-					v2=2.0*ran1(idum)-1.0;
+					v1=ran2(idum);
+					v2=2.0*ran2(idum)-1.0;
 				} while (v1*v1+v2*v2 > 1.0);
 				y=v2/v1;
 				am=ia-1;
@@ -263,7 +263,7 @@ float gamdev(int ia, long *idum)
 				x=s*y+am;
 			} while (x <= 0.0);
 			e=(1.0+y*y)*exp(am*log(x/am)-s*y);
-		} while (ran1(idum) > e);
+		} while (ran2(idum) > e);
 	}
 	return x;
 }
@@ -272,7 +272,7 @@ float gamdev(int ia, long *idum)
 float poidev(float xm, long *idum)
 {
 	float gammln(float xx);
-	float ran1(long *idum);
+	float ran2(long *idum);
 	static float sq,alxm,g,oldm=(-1.0);
 	float em,t,y;
 
@@ -285,7 +285,7 @@ float poidev(float xm, long *idum)
 		t=1.0;
 		do {
 			++em;
-			t *= ran1(idum);
+			t *= ran2(idum);
 		} while (t > g);
 	} else {
 		if (xm != oldm) {
@@ -296,12 +296,12 @@ float poidev(float xm, long *idum)
 		}
 		do {
 			do {
-				y=tan(PI*ran1(idum));
+				y=tan(PI*ran2(idum));
 				em=sq*y+xm;
 			} while (em < 0.0);
 			em=floor(em);
 			t=0.9*(1.0+y*y)*exp(em*alxm-gammln(em+1.0)-g);
-		} while (ran1(idum) > t);
+		} while (ran2(idum) > t);
 	}
 	return em;
 }
@@ -327,7 +327,7 @@ float gammln(float xx)
 float bnldev(float pp, int n, long *idum)
 {
 	float gammln(float xx);
-	float ran1(long *idum);
+	float ran2(long *idum);
 	int j;
 	static int nold=(-1);
 	float am,em,g,angle,p,bnl,sq,t,y;
@@ -338,12 +338,12 @@ float bnldev(float pp, int n, long *idum)
 	if (n < 25) {
 		bnl=0.0;
 		for (j=1;j<=n;j++)
-			if (ran1(idum) < p) ++bnl;
+			if (ran2(idum) < p) ++bnl;
 	} else if (am < 1.0) {
 		g=exp(-am);
 		t=1.0;
 		for (j=0;j<=n;j++) {
-			t *= ran1(idum);
+			t *= ran2(idum);
 			if (t < g) break;
 		}
 		bnl=(j <= n ? j : n);
@@ -361,14 +361,14 @@ float bnldev(float pp, int n, long *idum)
 		sq=sqrt(2.0*am*pc);
 		do {
 			do {
-				angle=PI*ran1(idum);
+				angle=PI*ran2(idum);
 				y=tan(angle);
 				em=sq*y+am;
 			} while (em < 0.0 || em >= (en+1.0));
 			em=floor(em);
 			t=1.2*sq*(1.0+y*y)*exp(oldg-gammln(em+1.0)
 				-gammln(en-em+1.0)+em*plog+(en-em)*pclog);
-		} while (ran1(idum) > t);
+		} while (ran2(idum) > t);
 		bnl=em;
 	}
 	if (p != pp) bnl=n-bnl;

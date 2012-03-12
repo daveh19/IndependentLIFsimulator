@@ -198,14 +198,14 @@ int createLifIObufs(CL *cl){
 	
     // Create the input and output arrays in device memory for our calculation
     //
-    (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * NO_LIFS, NULL, NULL);
-    (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * NO_LIFS, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * NO_LIFS, NULL, NULL);
-	(*cl).input_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(unsigned int) * NO_LIFS, NULL, NULL);
+    (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_LIFS, NULL, NULL);
+    (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_LIFS, NULL, NULL);
+	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_LIFS, NULL, NULL);
+	(*cl).input_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * NO_LIFS, NULL, NULL);
 	
-	(*cl).output_v = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_LIFS, NULL, NULL);
-	(*cl).output_spike = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * NO_LIFS, NULL, NULL);
-    if (!(*cl).input_v || !(*cl).input_current || !(*cl).input_gauss || !(*cl).input_spike || !(*cl).output_v || !(*cl).output_spike)
+	//(*cl).output_v = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_LIFS, NULL, NULL);
+	//(*cl).output_spike = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * NO_LIFS, NULL, NULL);
+    if (!(*cl).input_v || !(*cl).input_current || !(*cl).input_gauss || !(*cl).input_spike /*|| !(*cl).output_v || !(*cl).output_spike*/)
     {
         printf("Error: Failed to allocate device memory!\n");
 	    exit(1);
@@ -221,15 +221,15 @@ int createSynIObufs(CL *cl){
 	
     // Create the input and output arrays in device memory for our calculation
     //
-    (*cl).rho = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * NO_SYNS, NULL, NULL);
-    (*cl).ca = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * NO_SYNS, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * NO_SYNS, NULL, NULL);
-	(*cl).pre_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(unsigned int) * NO_SYNS, NULL, NULL);
-	(*cl).post_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(unsigned int) * NO_SYNS, NULL, NULL);
+    (*cl).rho = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_SYNS, NULL, NULL);
+    (*cl).ca = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_SYNS, NULL, NULL);
+	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_SYNS, NULL, NULL);
+	(*cl).pre_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * NO_SYNS, NULL, NULL);
+	(*cl).post_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * NO_SYNS, NULL, NULL);
 	
-	(*cl).output_rho = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
-	(*cl).output_ca = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
-    if (!(*cl).rho || !(*cl).ca || !(*cl).input_gauss || !(*cl).pre_spike || !(*cl).post_spike || !(*cl).output_rho || !(*cl).output_ca)
+	//(*cl).output_rho = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
+	//(*cl).output_ca = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
+    if (!(*cl).rho || !(*cl).ca || !(*cl).input_gauss || !(*cl).pre_spike || !(*cl).post_spike /*|| !(*cl).output_rho || !(*cl).output_ca*/)
     {
         printf("Error: Failed to allocate device memory!\n");
 	    exit(1);
@@ -329,18 +329,18 @@ int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 2, sizeof(cl_mem), &(*cl).input_gauss);
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 3, sizeof(cl_mem), &(*cl).input_spike);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 4, sizeof(cl_mem), &(*cl).output_v);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(cl_mem), &(*cl).output_spike);
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 4, sizeof(cl_mem), &(*cl).output_v);
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(cl_mem), &(*cl).output_spike);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(float), &(*lif).v_rest);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 7, sizeof(float), &(*lif).v_reset);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*lif).v_threshold);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*lif).r_m);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*lif).c_m);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*lif).sigma);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*lif).refrac_time);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*lif).dt);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(unsigned int), &(*lif).no_lifs);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 4, sizeof(float), &(*lif).v_rest);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(float), &(*lif).v_reset);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(float), &(*lif).v_threshold);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 7, sizeof(float), &(*lif).r_m);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*lif).c_m);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*lif).sigma);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*lif).refrac_time);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*lif).dt);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(unsigned int), &(*lif).no_lifs);
 	
     if ((*cl).err != CL_SUCCESS)
     {
@@ -365,20 +365,20 @@ int setSynKernelArgs(CL *cl, cl_Synapse *syn){
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 3, sizeof(cl_mem), &(*cl).pre_spike);
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 4, sizeof(cl_mem), &(*cl).post_spike);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(cl_mem), &(*cl).output_rho);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(cl_mem), &(*cl).output_ca);
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(cl_mem), &(*cl).output_rho);
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(cl_mem), &(*cl).output_ca);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 7, sizeof(float), &(*syn).gamma_p);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*syn).gamma_d);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*syn).theta_p);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*syn).theta_p);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*syn).tau);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*syn).tau_ca);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*syn).c_pre);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(float), &(*syn).c_post);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 15, sizeof(float), &(*syn).sigma);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 16, sizeof(float), &(*syn).dt);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 17, sizeof(unsigned int), &(*syn).no_syns);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(float), &(*syn).gamma_p);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(float), &(*syn).gamma_d);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 7, sizeof(float), &(*syn).theta_p);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*syn).theta_p);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*syn).tau);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*syn).tau_ca);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*syn).c_pre);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*syn).c_post);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*syn).sigma);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(float), &(*syn).dt);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 15, sizeof(unsigned int), &(*syn).no_syns);
 	
     if ((*cl).err != CL_SUCCESS)
     {
@@ -391,7 +391,7 @@ int setSynKernelArgs(CL *cl, cl_Synapse *syn){
 int getMaxWorkSize(CL *cl){
 	// Get the maximum work group size for executing the kernel on the device
 	//
-	size_t my_local_var;
+	//size_t my_local_var;
 	
 	printf("getting max work group size...\n");
 	
@@ -463,7 +463,6 @@ int enqueueSynKernel(CL *cl){
 	if((*cl).err){
 		printf("Error already occurred\n");
 	}
-	//TODO: fix job size, hcf(local, global)
 	(*cl).global = NO_SYNS;
 	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
 	while( (*cl).global % (*cl).local != 0){
@@ -472,8 +471,7 @@ int enqueueSynKernel(CL *cl){
 		//printf("New value for global: %d\n", (*cl).global);
 	}
 	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, NO_SYNS);
-	//(*cl).global = 40;
-	//(*cl).local = 1;
+
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
 	{
@@ -513,8 +511,10 @@ int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif){
 	
 	printf("reading output from LIF kernel...\n");
 	
-	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).output_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
+	//(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).output_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
+	//(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
+	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
 	if ((*cl).err != CL_SUCCESS)
 	{
 		printf("Error: Failed to read output array! %d\n", (*cl).err);
@@ -529,8 +529,8 @@ int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn){
 	
 	printf("reading output from Synapse kernel...\n");
 	
-	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).output_rho, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).rho, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_ca, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).ca, 0, NULL, NULL );
+	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).rho, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).ca, 0, NULL, NULL );
 	if ((*cl).err != CL_SUCCESS)
 	{
 		printf("Error: Failed to read output array! %d\n", (*cl).err);
@@ -559,14 +559,14 @@ void shutdownLifKernel(CL *cl){
 	// Shutdown and cleanup
 	//
 	
-	printf("shutting down and cleaning up kernel memory...");
+	printf("shutting down and cleaning up LIF kernel memory...");
 	
 	clReleaseMemObject((*cl).input_v);
 	clReleaseMemObject((*cl).input_current);
 	clReleaseMemObject((*cl).input_gauss);
 	clReleaseMemObject((*cl).input_spike);
-	clReleaseMemObject((*cl).output_v);
-	clReleaseMemObject((*cl).output_spike);
+	//clReleaseMemObject((*cl).output_v);
+	//clReleaseMemObject((*cl).output_spike);
 	clReleaseProgram((*cl).program);
 	clReleaseKernel((*cl).kernel);
 	clReleaseCommandQueue((*cl).commands);
@@ -579,15 +579,15 @@ void shutdownSynKernel(CL *cl){
 	// Shutdown and cleanup
 	//
 	
-	printf("shutting down and cleaning up kernel memory...");
+	printf("shutting down and cleaning up Synapse kernel memory...");
 	
 	clReleaseMemObject((*cl).rho);
 	clReleaseMemObject((*cl).ca);
 	clReleaseMemObject((*cl).input_gauss);
 	clReleaseMemObject((*cl).pre_spike);
 	clReleaseMemObject((*cl).post_spike);
-	clReleaseMemObject((*cl).output_rho);
-	clReleaseMemObject((*cl).output_ca);
+	//clReleaseMemObject((*cl).output_rho);
+	//clReleaseMemObject((*cl).output_ca);
 	clReleaseProgram((*cl).program);
 	clReleaseKernel((*cl).kernel);
 	clReleaseCommandQueue((*cl).commands);
