@@ -4,6 +4,7 @@
 #include "HandleOpenCL.h"
 #include "NumericalTools.h"
 
+//#define PI (atan(1.)*4.)
 
 int main (int argc, const char * argv[]) {
 	int i, j;
