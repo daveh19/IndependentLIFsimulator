@@ -54,15 +54,20 @@ int connectToComputeDevice(CL *cl){
 	// Connect to a compute device
 	//
 	int gpu = USE_GPU;
+	//cl_uint dev_info;
 	
 	printf("connecting to compute device...\n");
 	
-	(*cl).err = clGetDeviceIDs(NULL, gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU, 1, &(*cl).device_id, NULL);
+	printf("gpu: %d\n", gpu);
+	
+	(*cl).err = clGetDeviceIDs(NULL, (gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU), 1, &(*cl).device_id, NULL);
 	if ((*cl).err != CL_SUCCESS)
 	{
 		printf("Error: Failed to create a device group!\n");
 		return EXIT_FAILURE;
 	}
+	//clGetDeviceInfo((*cl).device_id, CL_DEVICE_MAX_CONSTANT_ARGS, sizeof(cl_ulong), &dev_info, NULL);
+	//printf("Max no args: %d\n", (unsigned int)dev_info);
 	//printf("test %d\n", !(EXIT_FAILURE));
 	return !(EXIT_FAILURE);
 }
@@ -124,7 +129,7 @@ int createProgram(CL *cl, char ** KernelSource){
 	
 	printf("creating program from source...\n");
 	
-	printf("%s", *KernelSource);
+	//printf("%s", *KernelSource);
 	
 	//printf("Kernel source: %s\n", *KernelSource);
 	
@@ -191,17 +196,17 @@ int createKernel(CL *cl, char * k_name){
 //}
 
 int createLifIObufs(CL *cl){
-	// Create the compute kernel in the program we wish to run
+	// Create IO buffers for transferring data to and from kernel
 	//
 	
 	printf("creating LIF io buffers...\n");
 	
     // Create the input and output arrays in device memory for our calculation
     //
-    (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_LIFS, NULL, NULL);
-    (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_LIFS, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_LIFS, NULL, NULL);
-	(*cl).input_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * NO_LIFS, NULL, NULL);
+    (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
+    (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
+	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
+	(*cl).input_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
 	
 	//(*cl).output_v = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_LIFS, NULL, NULL);
 	//(*cl).output_spike = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * NO_LIFS, NULL, NULL);
@@ -214,18 +219,18 @@ int createLifIObufs(CL *cl){
 }
 
 int createSynIObufs(CL *cl){
-	// Create the compute kernel in the program we wish to run
+	// Create IO buffers for transferring data to and from kernel
 	//
 	
 	printf("creating Synapse io buffers...\n");
 	
     // Create the input and output arrays in device memory for our calculation
     //
-    (*cl).rho = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_SYNS, NULL, NULL);
-    (*cl).ca = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_SYNS, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * NO_SYNS, NULL, NULL);
-	(*cl).pre_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * NO_SYNS, NULL, NULL);
-	(*cl).post_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * NO_SYNS, NULL, NULL);
+    (*cl).rho = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
+    (*cl).ca = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
+	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
+	(*cl).pre_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
+	(*cl).post_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
 	
 	//(*cl).output_rho = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
 	//(*cl).output_ca = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
@@ -255,17 +260,17 @@ int createSynIObufs(CL *cl){
 //}
 
 int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif){
-	// Create the compute kernel in the program we wish to run
+	// Enqueue data for copying to Input buffers
 	//
 	
 	printf("enqueueing LIF input buffer...\n");
 	
     // Write our data set into the input array in device memory
     //
-    (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL);
-    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_current, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).I, 0, NULL, NULL);
-	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).gauss, 0, NULL, NULL);
-	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL);
+    (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL);
+    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_current, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).I, 0, NULL, NULL);
+	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL);
+	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*lif).time_since_spike, 0, NULL, NULL);
     if ((*cl).err != CL_SUCCESS)
     {
         printf("Error: Failed to write to source array!\n");
@@ -274,19 +279,19 @@ int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif){
 	return !(EXIT_FAILURE);
 }
 
-int enqueueSynInputBuf(CL *cl, cl_Synapse *syn){
-	// Create the compute kernel in the program we wish to run
+int enqueueSynInputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const){
+	// Enqueue data for copying to Input buffers
 	//
 	
 	printf("enqueueing Synapse input buffer...\n");
 	
     // Write our data set into the input array in device memory
     //
-    (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).rho, 0, NULL, NULL);
-    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).ca, 0, NULL, NULL);
-	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).gauss, 0, NULL, NULL);
-	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_SYNS, (*syn).preT[0], 0, NULL, NULL);
-    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).post_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_SYNS, (*syn).postT, 0, NULL, NULL);
+    (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).rho, 0, NULL, NULL);
+    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).ca, 0, NULL, NULL);
+	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).gauss, 0, NULL, NULL);
+	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).preT, 0, NULL, NULL);
+    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).post_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).postT, 0, NULL, NULL);
 	if ((*cl).err != CL_SUCCESS)
     {
         printf("Error: Failed to write to source array!\n");
@@ -316,7 +321,7 @@ int enqueueSynInputBuf(CL *cl, cl_Synapse *syn){
 //}
 
 int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
-	// Create the compute kernel in the program we wish to run
+	// Set the Kernel arguments
 	//
 	
 	printf("setting args for LIF compute kernel...\n");
@@ -350,11 +355,13 @@ int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
 	return !(EXIT_FAILURE);
 }
 
-int setSynKernelArgs(CL *cl, cl_Synapse *syn){
-	// Create the compute kernel in the program we wish to run
+int setSynKernelArgs(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const){
+	// Set the Kernel arguments
 	//
 	
 	printf("setting args for Synapse compute kernel...\n");
+	
+	//printf("sizeof(SynapseConsts): %ld\n", sizeof(*syn_const));
 	
     // Set the arguments to our compute kernel
     //
@@ -368,17 +375,21 @@ int setSynKernelArgs(CL *cl, cl_Synapse *syn){
 	//(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(cl_mem), &(*cl).output_rho);
 	//(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(cl_mem), &(*cl).output_ca);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(float), &(*syn).gamma_p);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(float), &(*syn).gamma_d);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 7, sizeof(float), &(*syn).theta_p);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*syn).theta_p);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*syn).tau);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*syn).tau_ca);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*syn).c_pre);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*syn).c_post);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*syn).sigma);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(float), &(*syn).dt);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 15, sizeof(unsigned int), &(*syn).no_syns);
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(SynapseConsts), &(*syn_const));
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(unsigned int), &(*syn_const).no_syns);
+	
+	//TODO: reduce number of const args to kernel to 8
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(float), &(*syn_const).gamma_p);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 6, sizeof(float), &(*syn_const).gamma_d);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 7, sizeof(float), &(*syn_const).theta_p);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*syn_const).theta_p);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*syn_const).tau);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*syn_const).tau_ca);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*syn_const).c_pre);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*syn_const).c_post);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*syn_const).sigma);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(float), &(*syn_const).dt);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 15, sizeof(unsigned int), &(*syn_const).no_syns);
 	
     if ((*cl).err != CL_SUCCESS)
     {
@@ -434,14 +445,14 @@ int enqueueLifKernel(CL *cl){
 	if((*cl).err){
 		printf("Error already occurred\n");
 	}
-	(*cl).global = NO_LIFS;
+	(*cl).global = (*cl).job_size;
 	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
 	while( (*cl).global % (*cl).local != 0){
 		// Pad the global number of work items such that it is divided evenly by local
 		(*cl).global++;
 		//printf("New value for global: %d\n", (*cl).global);
 	}
-	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, NO_LIFS);
+	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, (*cl).job_size);
 
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
@@ -461,14 +472,14 @@ int enqueueSynKernel(CL *cl){
 	if((*cl).err){
 		printf("Error already occurred\n");
 	}
-	(*cl).global = NO_SYNS;
+	(*cl).global = (*cl).job_size;
 	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
 	while( (*cl).global % (*cl).local != 0){
 		// Pad the global number of work items such that it is divided evenly by local
 		(*cl).global++;
 		//printf("New value for global: %d\n", (*cl).global);
 	}
-	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, NO_SYNS);
+	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, (*cl).job_size);
 
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
@@ -504,15 +515,15 @@ void waitForKernel(CL *cl){
 //}
 
 int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif){
-	// Read back the results from the device to verify the output
+	// Enqueue Kernel outputs for reading from buffers to system memory
 	//
 	
 	printf("reading output from LIF kernel...\n");
 	
 	//(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).output_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
 	//(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
-	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
+	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*lif).time_since_spike, 0, NULL, NULL );
 	if ((*cl).err != CL_SUCCESS)
 	{
 		printf("Error: Failed to read output array! %d\n", (*cl).err);
@@ -521,14 +532,16 @@ int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif){
 	return !(EXIT_FAILURE);
 }
 
-int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn){
-	// Read back the results from the device to verify the output
+int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const){
+	// Enqueue Kernel outputs for reading from buffers to system memory
 	//
 	
 	printf("reading output from Synapse kernel...\n");
 	
-	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).rho, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * NO_SYNS, (*syn).ca, 0, NULL, NULL );
+	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).rho, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).ca, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).preT, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).post_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).postT, 0, NULL, NULL );
 	if ((*cl).err != CL_SUCCESS)
 	{
 		printf("Error: Failed to read output array! %d\n", (*cl).err);

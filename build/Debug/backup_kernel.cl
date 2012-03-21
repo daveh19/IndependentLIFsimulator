@@ -6,9 +6,6 @@
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
  */
- 
-#define PI (4.*atan(1.))
-
 /*typedef struct SynapseConstsStruct{
 	float gamma_p;
 	float gamma_d;
@@ -23,7 +20,8 @@
 	float dt;
 	unsigned int no_syns;
 } SynapseConsts;*/
-
+ 
+#define PI (4.*atan(1.))
 
 // Simple compute kernel which computes the square of an input array
 //
@@ -36,7 +34,6 @@ __kernel void square(
 	if(i < count)
 		output[i] = input[i] * input[i];
 }
-
 
 // Second attempt at Marsaglia's generators
 // This time with corrected equations!
@@ -84,7 +81,6 @@ void my_GetNormal(Random2 *rdm)
 	(*rdm).value = r*sin(theta);
 }
 
-
 typedef struct random_struct{
 	float value;
 	unsigned int m_z;
@@ -120,7 +116,6 @@ void GetNormal(RandomStruct *rnd)
 	(*rnd).value = r*sin(theta);
 }
 
-
 // Leaky integrate and fire kernel
 //
 __kernel void lif(
@@ -152,8 +147,7 @@ __kernel void lif(
 		float noise = 0;
 		float tau_m = r_m * c_m;
 	
-		//REMINDER: initialise time_since_spike to refrac_time in main program,
-		// otherwise system always resets to V_reset upon initialisation
+		//TODO: decide initial value for time_since_spike, otherwise system always resets to V_reset upon initialisation
 		if (time_since_spike == 0){
 			// A spike has just occurred, reset membrane voltage to reset potential
 			v = v_reset;
@@ -198,18 +192,7 @@ __kernel void lif(
 }
 
 
-// Graupner 2012 Synapse kernel
-//
-__kernel void synapse( 
-	__global float* input_rho, // synaptic efficacy
-	__global float* input_ca, // synaptic calcium concentration
-	__global float* input_gauss, // gaussian noise on synaptic efficacy
-	__global unsigned int* input_pre_spike, // number of pre-synaptic spikes occurring at time t-D
-	__global unsigned int* input_post_spike, // number of post-synaptic spikes at time t
-
-	//const SynapseConsts *syn_const, // struct of constants required for synapse
-	//const unsigned int no_syns
-	
+	/*
 	//TODO: opencl guarantees support for a minimum of only 8 const args, probably safer to pass params by passing a struct
 	const float gamma_p, // potentiation learning rate
 	const float gamma_d, // depression learning rate
@@ -222,8 +205,30 @@ __kernel void synapse(
 	const float sigma, // size of noise
 	const float dt, // time step size	
 	const unsigned int no_syns // number of synapses in simulation
+	*/
+// Graupner 2012 Synapse kernel
+//
+__kernel void synapse( 
+	__global float* input_rho, // synaptic efficacy
+	__global float* input_ca, // synaptic calcium concentration
+	__global float* input_gauss, // gaussian noise on synaptic efficacy
+	__global unsigned int* input_pre_spike, // number of pre-synaptic spikes occurring at time t-D
+	__global unsigned int* input_post_spike, // number of post-synaptic spikes at time t
+	//__const SynapseConsts syn_const
+	const unsigned int no_syns
 	)
 {
+	float gamma_p = 725.085;
+	float gamma_d = 331.909;
+	float theta_p = 1.3;
+	float theta_d = 1.0;
+	float sigma = 0; //3.35; //TODO: switch noise back on
+	float tau = 346.3615;
+	float tau_ca = 0.0226936;
+	float c_pre = 0.5617539;
+	float c_post = 1.23964;
+	float dt = 0.001;
+	
 	int i = get_global_id(0);
 	
 	if (i < no_syns){
@@ -232,12 +237,10 @@ __kernel void synapse(
 		float gauss = input_gauss[i];
 		unsigned int pre_spike = input_pre_spike[i];
 		unsigned int post_spike = input_post_spike[i];
-		//float pre_spike = (float)input_pre_spike[i];
-		//float post_spike = (float)input_post_spike[i];
 	
 		float new_rho, new_ca;
-		float drho = 0., dca = 0.;
-		float noise = 0.;
+		float drho = 0, dca = 0;
+		float noise = 0;
 	
 		unsigned int h_pot = 0;
 		unsigned int h_dep = 0;
@@ -265,13 +268,7 @@ __kernel void synapse(
 		// Calculate new rho value
 		new_rho = rho + (drho * dt) + noise;
 	
-		// Zeroing arrays preT and postT (for use in main)
-		input_pre_spike[i] = 0;
-		input_post_spike[i] = 0;
-		
-		// Final output
 		input_rho[i] = new_rho;
 		input_ca[i] = new_ca;
-		//TODO: double check numerical output for a given pre_spike or post_spike
 	}
 }

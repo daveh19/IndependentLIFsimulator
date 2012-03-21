@@ -12,15 +12,21 @@
 #include "cl_Synapse.h"
 
 
-// Use a static data size for simplicity
-//
-#define NO_LIFS (400)
-#define NO_SYNS (40)
+#define NO_LIFS (10000) /*(400)*/
+#define NO_SYNS (1000000)
+/*(40)*/ /*119 works 120 not*/
+#define CONNECTIVITY_PROBABILITY (0.05)
+#define SIMULATION_SEED (-13)
+#define NETWORK_SEED (-14)
+#define CALCIUM_DELAY (1)
 #define MAX_TIME_STEPS (10)
-#define USE_GPU (1) // 1=gpu, 0=cpu
+
+#define USE_GPU (1) /* 1=gpu, 0=cpu */
+
+//int job_size;
 
 // Wrap variables in a struct
-typedef struct {
+typedef struct cl_struct{
 	int err;                            // error code returned from api calls
 	
     //float data[DATA_SIZE];              // original data set given to device
@@ -44,8 +50,8 @@ typedef struct {
 	cl_mem input_gauss;
 	cl_mem input_spike;
 	
-	cl_mem output_v;
-	cl_mem output_spike;
+	//cl_mem output_v;
+	//cl_mem output_spike;
 	
 	// Synapse specific memory streams
 	cl_mem rho;
@@ -54,8 +60,10 @@ typedef struct {
 	cl_mem pre_spike;
 	cl_mem post_spike;
 	
-	cl_mem output_rho;
-	cl_mem output_ca;
+	//cl_mem output_rho;
+	//cl_mem output_ca;
+	
+	int job_size;
 } CL;
 
 
@@ -71,10 +79,10 @@ int createLifIObufs(CL *cl);
 int createSynIObufs(CL *cl);
 //int enqueueInputBuf(CL *cl, unsigned int count);
 int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif);
-int enqueueSynInputBuf(CL *cl, cl_Synapse *syn);
+int enqueueSynInputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const);
 //int setKernelArgs(CL *cl, unsigned int count);
 int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif);
-int setSynKernelArgs(CL *cl, cl_Synapse *syn);
+int setSynKernelArgs(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const);
 int getMaxWorkSize(CL *cl);
 //int enqueueKernel(CL *cl, unsigned int count);
 int enqueueLifKernel(CL *cl);
@@ -82,7 +90,7 @@ int enqueueSynKernel(CL *cl);
 void waitForKernel(CL *cl);
 //int enqueueOutputBuf(CL *cl, unsigned int count);
 int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif);
-int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn);
+int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const);
 
 //void shutdownKernel(CL *cl);
 void shutdownLifKernel(CL *cl);
