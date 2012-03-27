@@ -17,7 +17,7 @@
 #define CONNECTIVITY_PROBABILITY (0.05)
 /*#define SIMULATION_SEED (-13)*/
 #define NETWORK_SEED (-14)
-#define CALCIUM_DELAY (1)
+#define CALCIUM_DELAY (5)
 #define MAX_TIME_STEPS (50)
 
 #define USE_GPU (1) /* 1=gpu, 0=cpu */

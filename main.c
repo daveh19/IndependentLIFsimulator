@@ -161,20 +161,17 @@ int main (int argc, const char * argv[]) {
 	(*syn_p).gauss = calloc((*syn_const_p).no_syns, sizeof(float));
 	(*syn_const_p).delay = CALCIUM_DELAY; // measured in multiples of dt
 
-	/*(*syn_p).preT = malloc(sizeof(unsigned int *) * (*syn_const_p).delay);
-	for(i = 1; i < (*syn_const_p).delay; i++){
-		(*syn_p).preT[i] = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
-	}*/
 	(*syn_p).preT = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
 	(*syn_p).postT = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
 	
-	/*SpikeQueue spike_queue;
+	// Event queue for delayed propagation of pre-synaptic spikes to synaptic calcium buffer
+	SpikeQueue spike_queue;
 	SpikeQueue *spike_queue_p = & spike_queue;
 	(*spike_queue_p).neuron_id = malloc((*syn_const_p).delay * sizeof(int *));
 	(*spike_queue_p).no_events = calloc((*syn_const_p).delay, sizeof(int));
 	for(i = 0; i < (*syn_const_p).delay; i++){
 		(*spike_queue_p).neuron_id[i] = malloc((*lif_p).no_lifs * sizeof(int));
-	}*/
+	}
 	
 
 	(*syn_const_p).gamma_p = 725.085;
@@ -309,7 +306,18 @@ int main (int argc, const char * argv[]) {
 		printf("rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0], j, (*syn_p).preT[0], j, (*syn_p).postT[0], (*syn_p).gauss[0]);
 		//(*syn_p).preT[0][0]
 		
-		// Prepare next run
+		// ---- Prepare next run ----
+		
+		// Transfer delayed pre-synaptic spikes to synapses
+		for( i = 0; i < (*spike_queue_p).no_events[offset]; i++){
+			// Process each neuron which spiked (delay timesteps ago)
+			for ( k = 0; k < (*lif_p).no_outgoing_synapses[ (*spike_queue_p).neuron_id[offset][i] ]; k++){
+				(*syn_p).preT[ (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k] ] = 1;
+			}
+		}
+		// Reset delayed event queue
+		(*spike_queue_p).no_events[offset] = 0;
+		// Update LIFs
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			// Fixed external current
 			(*lif_p).I[i] = external_current;
@@ -318,7 +326,6 @@ int main (int argc, const char * argv[]) {
 				/*if(i==0){
 					printf("0 spiked, backprop\n");
 				}*/
-				//printf("Spike! ");
 				for ( k = 0; k < (*lif_p).no_incoming_synapses[i]; k++){
 					(*syn_p).postT[(*lif_p).incoming_synapse_index[i][k]] = 1;
 					/*if(i==0){
@@ -326,31 +333,30 @@ int main (int argc, const char * argv[]) {
 					}*/
 				}
 				// Transfer voltage change to post-synaptic neurons
-				//(*spike_queue_p).no_events[offset] = 0;
 				for ( k = 0; k < (*lif_p).no_outgoing_synapses[i]; k++){
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_current * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
-					/*if(i==0){
+					if(i==0){
 						printf("and post-synaptic neuron(%d)\n", (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
-					}*/
-					//TODO: add to pre-spike event queue
-					//(*spike_queue_p).neuron_id[(*spike_queue_p).no_events[offset]] = i;
-					//(*spike_queue_p).no_events[offset]++;
-					
+					}					
 				}
+				// Add to pre-spike event queue
+				(*spike_queue_p).neuron_id[offset][(*spike_queue_p).no_events[offset]] = i;
+				(*spike_queue_p).no_events[offset]++;
 				
 			}
 			// Pre-synaptic spike propagates across synapse after delay
-			//TODO: switch to event-queue system
-			else if((*lif_p).time_since_spike[i] == (*syn_const_p).delay){
+			//Alternative to event queue system, assumes only 1 spike can occur in delay period
+			/*else if((*lif_p).time_since_spike[i] == (*syn_const_p).delay){
 				for ( k = 0; k < (*lif_p).no_outgoing_synapses[i]; k++){
 					(*syn_p).preT[(*lif_p).outgoing_synapse_index[i][k]] = 1;
-					/*if(i==0){
+					if(i==0){
 						printf("Delayed spike transferred to post-lif synapse(%d)\n", (*lif_p).outgoing_synapse_index[i][k]);
-					}*/
+					}
 				}
 			}
-			//offset = offset++ % (*syn_const_p).delay;
+			*/
 		}
+		
 		
 		printf("after transfer V(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[0], j, (*lif_p).time_since_spike[0], (*lif_p).gauss[0]);
 		printf("after transfer rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0], j, (*syn_p).preT[0], j, (*syn_p).postT[0], (*syn_p).gauss[0]);
@@ -365,6 +371,7 @@ int main (int argc, const char * argv[]) {
 			return EXIT_FAILURE;
 		}
 		
+		offset = (++offset) % (*syn_const_p).delay;
 		j++;
 	}
 	
