@@ -12,18 +12,25 @@
 #include "cl_Synapse.h"
 
 
-#define NO_LIFS (10000) /*(400)*/
-#define NO_SYNS (1000000)
-/*(40)*/ /*119 works 120 not*/
+#define NO_LIFS (10000) /*(400)*/ /*(10000)*/ /*(400)*/
+/*#define NO_SYNS (1000000)*/
 #define CONNECTIVITY_PROBABILITY (0.05)
-#define SIMULATION_SEED (-13)
+/*#define SIMULATION_SEED (-13)*/
 #define NETWORK_SEED (-14)
 #define CALCIUM_DELAY (1)
-#define MAX_TIME_STEPS (10)
+#define MAX_TIME_STEPS (50)
 
 #define USE_GPU (1) /* 1=gpu, 0=cpu */
 
 //int job_size;
+
+typedef struct random_struct_marsaglia{
+	//float value;
+	unsigned int * d_z;
+	unsigned int * d_w;
+	unsigned int * d_jsr;
+	unsigned int * d_jcong;
+} cl_MarsagliaStruct;
 
 // Wrap variables in a struct
 typedef struct cl_struct{
@@ -41,8 +48,6 @@ typedef struct cl_struct{
     cl_program program;                 // compute program
     cl_kernel kernel;                   // compute kernel
 	
-    //cl_mem input;                       // device memory object used for the input array
-    //cl_mem output;                      // device memory object used for the output array
 	
 	// LIF specific memory streams
 	cl_mem input_v;
@@ -50,8 +55,6 @@ typedef struct cl_struct{
 	cl_mem input_gauss;
 	cl_mem input_spike;
 	
-	//cl_mem output_v;
-	//cl_mem output_spike;
 	
 	// Synapse specific memory streams
 	cl_mem rho;
@@ -60,8 +63,13 @@ typedef struct cl_struct{
 	cl_mem pre_spike;
 	cl_mem post_spike;
 	
-	//cl_mem output_rho;
-	//cl_mem output_ca;
+	
+	// Random number memory streams
+	cl_mem d_z;
+	cl_mem d_w;
+	cl_mem d_jsr;
+	cl_mem d_jcong;
+	
 	
 	int job_size;
 } CL;
@@ -78,8 +86,8 @@ int createKernel(CL *cl, char * k_name);
 int createLifIObufs(CL *cl);
 int createSynIObufs(CL *cl);
 //int enqueueInputBuf(CL *cl, unsigned int count);
-int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif);
-int enqueueSynInputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const);
+int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd);
+int enqueueSynInputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const, cl_MarsagliaStruct *rnd);
 //int setKernelArgs(CL *cl, unsigned int count);
 int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif);
 int setSynKernelArgs(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const);
@@ -89,8 +97,8 @@ int enqueueLifKernel(CL *cl);
 int enqueueSynKernel(CL *cl);
 void waitForKernel(CL *cl);
 //int enqueueOutputBuf(CL *cl, unsigned int count);
-int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif);
-int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const);
+int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd);
+int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const, cl_MarsagliaStruct *rnd);
 
 //void shutdownKernel(CL *cl);
 void shutdownLifKernel(CL *cl);

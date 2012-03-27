@@ -31,5 +31,10 @@ typedef struct Synapse{
 	signed int * post_lif;
 } cl_Synapse;
 
+/*typedef struct preT_event_queue{
+	int * no_events;
+	int ** neuron_id;
+} SpikeQueue;
+*/
 
 #endif /*CL_SYNAPSE_H_*/

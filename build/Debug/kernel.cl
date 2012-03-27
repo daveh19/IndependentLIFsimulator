@@ -38,17 +38,18 @@ __kernel void square(
 }
 
 
-// Second attempt at Marsaglia's generators
-// This time with corrected equations!
+// Marsaglia's generators
+// with corrected equations!
 // taken from http://www.math.niu.edu/~rusin/known-math/99/RNG
-typedef struct random_struct2{
+typedef struct random_struct_marsaglia{
 	float value;
 	unsigned int d_z;
 	unsigned int d_w;
 	unsigned int d_jsr;
 	unsigned int d_jcong;
-} Random2;
-void my_two(Random2 *rdm){
+} MarsagliaStruct;
+// Get Uniform(0,1) pseudo-random value using technique published by Marsaglia
+void Marsaglia_Uniform(MarsagliaStruct *rdm){
 	// Multiply-with-carry
 	(*rdm).d_z = 36969*((*rdm).d_z&65535)+((*rdm).d_z>>16);
 	(*rdm).d_w = 18000*((*rdm).d_w&65535)+((*rdm).d_w>>16);
@@ -72,50 +73,51 @@ void my_two(Random2 *rdm){
 	
 	(*rdm).value = d_uni;
 }
-void my_GetNormal(Random2 *rdm)
+// Convert Uniform(0,1) to Gaussian(0,1) using Box-Muller algorithm
+void Marsaglia_GetNormal(MarsagliaStruct *rdm)
 {
 	// Use Box-Muller algorithm
-	my_two(rdm);
-	float r = sqrt( -2.0*log((*rdm).value) );
+	Marsaglia_Uniform(rdm);
+	float r = sqrt( (float)(-2.0*log((*rdm).value)) );
 	
-	my_two(rdm); // Don't forget this second call!
+	Marsaglia_Uniform(rdm); // Don't forget this second call!
 	float theta = 2.0*PI*(*rdm).value;
 	
 	(*rdm).value = r*sin(theta);
 }
 
 
-typedef struct random_struct{
+typedef struct random_struct_mwc{
 	float value;
 	unsigned int m_z;
 	unsigned int m_w;
-} RandomStruct;
+} MWCRandomStruct;
 // Multiply-with-Carry random number generator
 // static unsigned int m_w = 521288629, m_z = 362436069;
 // Code basically from http://www.codeproject.com/Articles/25172/Simple-Random-Number-Generation
-unsigned int GetUint(RandomStruct *rnd)
+unsigned int MWC_GetUint(MWCRandomStruct *rnd)
 {
 	(*rnd).m_z = 36969 * ((*rnd).m_z & 65535) + ((*rnd).m_z >> 16);
 	(*rnd).m_w = 18000 * ((*rnd).m_w & 65535) + ((*rnd).m_w >> 16);
 	return ((*rnd).m_z << 16) + (*rnd).m_w;
 }
 // Uniform distribution in interval (0,1)
-float GetUniform(RandomStruct *rnd)
+float MWC_GetUniform(MWCRandomStruct *rnd)
 {
 	// 0 <= u < 2^32
-	unsigned int u = GetUint(rnd);
+	unsigned int u = MWC_GetUint(rnd);
 	// The magic number below is 1/(2^32 + 2).
 	// The result is strictly between 0 and 1.
 	(*rnd).value = (u + 1.0) * 2.328306435454494e-10;
 	return (*rnd).value;
 }
 // Gaussian(0,1) distribution using Box-Muller algorithm
-void GetNormal(RandomStruct *rnd)
+void MWC_GetNormal(MWCRandomStruct *rnd)
 {
 	// Use Box-Muller algorithm
-	float u1 = GetUniform(rnd);
-	float u2 = GetUniform(rnd);
-	float r = sqrt( -2.0*log(u1) );
+	float u1 = MWC_GetUniform(rnd);
+	float u2 = MWC_GetUniform(rnd);
+	float r = sqrt( (float)(-2.0*log(u1)) );
 	float theta = 2.0*PI*u2;
 	(*rnd).value = r*sin(theta);
 }
@@ -128,6 +130,12 @@ __kernel void lif(
 	__global float* input_i, // input current
 	__global float* input_gauss, // gaussian noise on membrane potential
 	__global unsigned int* input_spike, // refractory period count down variable
+	
+	//State variables for random number generator
+	__global unsigned int* d_z,
+	__global unsigned int* d_w,
+	__global unsigned int* d_jsr,
+	__global unsigned int* d_jcong,
 	
 	const float v_rest, // resting membrane voltage
 	const float v_reset, // reset membrane voltage
@@ -144,8 +152,15 @@ __kernel void lif(
 	if ( i < no_lifs ){
 		float v = input_v[i];
 		float input_current = input_i[i];
-		float gauss = input_gauss[i];
 		unsigned int time_since_spike = input_spike[i];
+		
+		// Generate Gaussian(0,1) noise
+		MarsagliaStruct rnd;
+		rnd.d_z = d_z[i];
+		rnd.d_w = d_w[i];
+		rnd.d_jsr = d_jsr[i];
+		rnd.d_jcong = d_jcong[i];
+		Marsaglia_GetNormal(&rnd);
 	
 		float new_v;
 		float dv = 0;
@@ -167,16 +182,18 @@ __kernel void lif(
 			// Apply the external current
 			dv += (input_current / c_m);
 			// Apply noise
-			noise = sqrt(dt / tau_m) * sigma * gauss;
+			noise = sqrt(dt / tau_m) * sigma * rnd.value;
 		}
 
 		new_v = v + (dv * dt) + noise;
 		// Apply lower threshold to membrane voltage
+		//TODO: disabling this hard lower bound? (to allow for hyperpolarisation due to inputs)
 		if (new_v < v_rest){
 			new_v = v_rest;
 		}
 	
 		//Check if a spike has just occurred
+		//TODO: is this ok? I signal a spike when V>threshold but don't reset V until next timestep
 		if (new_v > v_threshold){
 			// A spike has just occurred, set time since last spike to 0
 			time_since_spike = 0;
@@ -185,13 +202,13 @@ __kernel void lif(
 			// No spike occurred, increment time since last spike
 			time_since_spike++;
 		}
-	
-		//new_v = uni_kiss(153512,22532,3167,43733);
-		/*RandomStruct rnd;
-		rnd.m_w = 521288629;
-		rnd.m_z = 362436069;
-		GetUniform(&rnd);
-		new_v = rnd.value;*/
+		
+		d_z[i] = rnd.d_z;
+		d_w[i] = rnd.d_w;
+		d_jsr[i] = rnd.d_jsr;
+		d_jcong[i] = rnd.d_jcong;
+		input_gauss[i] = rnd.value;
+
 		input_spike[i] = time_since_spike;
 		input_v[i] = new_v;
 	}
@@ -207,6 +224,12 @@ __kernel void synapse(
 	__global unsigned int* input_pre_spike, // number of pre-synaptic spikes occurring at time t-D
 	__global unsigned int* input_post_spike, // number of post-synaptic spikes at time t
 
+	//State variables for random number generator
+	__global unsigned int* d_z,
+	__global unsigned int* d_w,
+	__global unsigned int* d_jsr,
+	__global unsigned int* d_jcong,
+	
 	//const SynapseConsts *syn_const, // struct of constants required for synapse
 	//const unsigned int no_syns
 	
@@ -229,11 +252,16 @@ __kernel void synapse(
 	if (i < no_syns){
 		float rho = input_rho[i];
 		float ca = input_ca[i];
-		float gauss = input_gauss[i];
 		unsigned int pre_spike = input_pre_spike[i];
 		unsigned int post_spike = input_post_spike[i];
-		//float pre_spike = (float)input_pre_spike[i];
-		//float post_spike = (float)input_post_spike[i];
+		
+		// Generate Gaussian(0,1) noise
+		MarsagliaStruct rnd;
+		rnd.d_z = d_z[i];
+		rnd.d_w = d_w[i];
+		rnd.d_jsr = d_jsr[i];
+		rnd.d_jcong = d_jcong[i];
+		Marsaglia_GetNormal(&rnd);
 	
 		float new_rho, new_ca;
 		float drho = 0., dca = 0.;
@@ -244,8 +272,9 @@ __kernel void synapse(
 		unsigned int h_noise = 0;
 	
 		// Update Calcium concentration
-		dca = (-ca/tau_ca) + (c_pre * pre_spike) + (c_post * post_spike);
-		new_ca = ca + (dca * dt);
+		//TODO: surely the effects of c_pre and c_post should not be dependent on dt
+		dca = (-ca/tau_ca); // + (c_pre * pre_spike) + (c_post * post_spike);
+		new_ca = ca + (dca * dt) + (c_pre * pre_spike) + (c_post * post_spike);
 	
 		// Update Synaptic efficacy
 		if (new_ca > theta_p){
@@ -261,7 +290,7 @@ __kernel void synapse(
 		drho = (-rho * (1.0 - rho) * (0.5 - rho)) + (gamma_p * (1.0 - rho) * h_pot) - (gamma_d * rho * h_dep);
 		drho /= tau;
 		// Calculate noise
-		noise = (h_noise * sigma * sqrt(dt/tau) * gauss);
+		noise = (h_noise * sigma * sqrt(dt/tau) * rnd.value);
 		// Calculate new rho value
 		new_rho = rho + (drho * dt) + noise;
 	
@@ -270,6 +299,12 @@ __kernel void synapse(
 		input_post_spike[i] = 0;
 		
 		// Final output
+		d_z[i] = rnd.d_z;
+		d_w[i] = rnd.d_w;
+		d_jsr[i] = rnd.d_jsr;
+		d_jcong[i] = rnd.d_jcong;
+		input_gauss[i] = rnd.value;
+		
 		input_rho[i] = new_rho;
 		input_ca[i] = new_ca;
 		//TODO: double check numerical output for a given pre_spike or post_spike

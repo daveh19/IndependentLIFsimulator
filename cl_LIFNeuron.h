@@ -3,7 +3,6 @@
 
 #include "GeneralIncludes.h"
 
-
 typedef struct LIFNeuron{
     float * V;
 	float * I;
