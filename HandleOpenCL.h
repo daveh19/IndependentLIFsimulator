@@ -11,10 +11,11 @@
 #include "cl_LIFNeuron.h"
 #include "cl_Synapse.h"
 
-
-#define NO_LIFS (10000) /*(400)*/ /*(10000)*/ /*(400)*/
+#define NO_EXC (10000) /*(2)*//*(10000)*/ /*(400)*/ /*(10000)*/ /*(400)*/
+#define NO_INH (2500) /*(2)*/ /*(2500)*/
+#define NO_LIFS (NO_EXC + NO_INH) 
 /*#define NO_SYNS (1000000)*/
-#define CONNECTIVITY_PROBABILITY (0.05)
+#define CONNECTIVITY_PROBABILITY (0.05) /*(0.05)*/
 /*#define SIMULATION_SEED (-13)*/
 #define NETWORK_SEED (-14)
 #define CALCIUM_DELAY (5)

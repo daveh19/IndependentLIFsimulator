@@ -10,6 +10,7 @@ typedef struct LIFNeuron{
     unsigned int * time_since_spike;
 	
 	unsigned int * no_outgoing_synapses;
+	unsigned int * no_outgoing_ee_synapses;
 	signed int ** outgoing_synapse_index;
 	
 	unsigned int * no_incoming_synapses;

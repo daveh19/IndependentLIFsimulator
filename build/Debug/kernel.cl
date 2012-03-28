@@ -180,6 +180,7 @@ __kernel void lif(
 			// Apply leak current
 			dv = (-(v - v_rest) / (c_m * r_m));
 			// Apply the external current
+			//TODO: should the input_current really be multiplied by dt?
 			dv += (input_current / c_m);
 			// Apply noise
 			noise = sqrt(dt / tau_m) * sigma * rnd.value;

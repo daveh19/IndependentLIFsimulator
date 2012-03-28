@@ -15,7 +15,7 @@ typedef struct SynapseConstsStruct{
 	float c_pre;
 	float c_post;
 	float dt;
-	unsigned int no_syns;
+	unsigned int no_syns; //number of MG type synapses, which get sent to GPU
 } SynapseConsts;
 
 
@@ -36,5 +36,11 @@ typedef struct preT_event_queue{
 	int ** neuron_id;
 } SpikeQueue;
 
+typedef struct fixed_synapse{
+	signed int * post_lif;
+	signed int * sign;
+	
+	unsigned int total_fixed_synapses;
+} FixedSynapse;
 
 #endif /*CL_SYNAPSE_H_*/
