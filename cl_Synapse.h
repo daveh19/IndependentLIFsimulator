@@ -38,7 +38,7 @@ typedef struct preT_event_queue{
 
 typedef struct fixed_synapse{
 	signed int * post_lif;
-	signed int * sign;
+	float * Jx;
 	
 	unsigned int total_fixed_synapses;
 } FixedSynapse;

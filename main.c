@@ -25,7 +25,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	(*syn_p).pre_lif = calloc(estimated_total_ee_synapses, sizeof(signed int));
 	(*syn_p).post_lif = calloc(estimated_total_ee_synapses, sizeof(signed int));
 	
-	(*fixed_syn_p).sign = calloc(estimated_total_synapses, sizeof(signed int));
+	(*fixed_syn_p).Jx = calloc(estimated_total_synapses, sizeof(float));
 	(*fixed_syn_p).post_lif = calloc(estimated_total_synapses, sizeof(signed int));
 	
 	printf("mean_ee_syn_per_neuron: %d, est_ee_syn_per_neuron: %d, est_total_ee_synapses: %d\n", mean_ee_synapses_per_neuron, estimated_ee_synapses_per_neuron, estimated_total_ee_synapses);
@@ -85,7 +85,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					// A new synapse
 					// by not having a pre_lif variable we save on checks when backpropagating spikes
 					(*fixed_syn_p).post_lif[total_fixed_synapses] = j;
-					(*fixed_syn_p).sign[total_fixed_synapses] = +1;
+					(*fixed_syn_p).Jx[total_fixed_synapses] = J_IE;
 				
 					(*lif_p).outgoing_synapse_index[i][(*lif_p).no_outgoing_synapses[i]] = (int)(total_fixed_synapses + total_ee_synapses); //synaptic id
 					(*lif_p).no_outgoing_synapses[i]++;
@@ -102,7 +102,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 				if((ran2(&network_seed)) < p){
 					// A new synapse
 					(*fixed_syn_p).post_lif[total_fixed_synapses] = j;
-					(*fixed_syn_p).sign[total_fixed_synapses] = -1;
+					(*fixed_syn_p).Jx[total_fixed_synapses] = J_EI;
 					
 					(*lif_p).outgoing_synapse_index[i][(*lif_p).no_outgoing_synapses[i]] = (int)(total_fixed_synapses + total_ee_synapses); //synaptic id
 					(*lif_p).no_outgoing_synapses[i]++;
@@ -117,7 +117,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 				if((ran2(&network_seed)) < p){
 					// A new synapse
 					(*fixed_syn_p).post_lif[total_fixed_synapses] = j;
-					(*fixed_syn_p).sign[total_fixed_synapses] = -1;
+					(*fixed_syn_p).Jx[total_fixed_synapses] = J_II;
 					
 					(*lif_p).outgoing_synapse_index[i][(*lif_p).no_outgoing_synapses[i]] = (int)(total_fixed_synapses + total_ee_synapses); //synaptic id
 					(*lif_p).no_outgoing_synapses[i]++;
@@ -134,7 +134,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	// Shrink memory reserved to required sizes
 	(*syn_p).pre_lif = realloc((*syn_p).pre_lif, sizeof(signed int) * total_ee_synapses);
 	(*syn_p).post_lif = realloc((*syn_p).post_lif, sizeof(signed int) * total_ee_synapses);
-	(*fixed_syn_p).sign = realloc((*fixed_syn_p).sign, sizeof(signed int) * total_fixed_synapses);
+	(*fixed_syn_p).Jx = realloc((*fixed_syn_p).Jx, sizeof(float) * total_fixed_synapses);
 	(*fixed_syn_p).post_lif = realloc((*fixed_syn_p).post_lif, sizeof(signed int) * total_fixed_synapses);
 	for(int i = 0; i < NO_LIFS; i++){
 		(*lif_p).incoming_synapse_index[i] = realloc((*lif_p).incoming_synapse_index[i], sizeof(signed int) * (*lif_p).no_incoming_synapses[i]);
@@ -151,10 +151,10 @@ int main (int argc, const char * argv[]) {
 	int offset;
 	//long random_seed = -13;
 
-	//TODO: set external_current, 0.8 drives to threshold, check notes from Nicolas.
-	float external_current = 1.0; 
+	//TODO: set external_voltage, 0.8 drives to threshold, check notes from Nicolas.
+	float external_voltage = J_EXT; 
 	//TODO: transfer current should be of the order external_cur/expected_no_syn_per_neuron (Brunel '97), right?
-	float transfer_current = 1.0; 
+	float transfer_voltage = J_EE; 
 	
 	
 	char *KernelSource = readKernelSource("kernel.cl");
@@ -285,7 +285,7 @@ int main (int argc, const char * argv[]) {
 	for ( i = 0; i < (*lif_p).no_lifs; i++){
 		//CONSIDER: initialising V and time_since_spike to random values (within reasonable ranges)
 		(*lif_p).V[i] = -66.0;
-		(*lif_p).I[i] = external_current;
+		(*lif_p).I[i] = external_voltage;
 		(*lif_p).time_since_spike[i] = (*lif_p).refrac_time;
 		(*rnd_lif_p).d_z[i] = 362436069 + i + 1;
 		(*rnd_lif_p).d_w[i] = 521288629 + i + 1;
@@ -383,10 +383,14 @@ int main (int argc, const char * argv[]) {
 		
 		// Transfer delayed pre-synaptic spikes to EE synapses
 		for( i = 0; i < (*spike_queue_p).no_events[offset]; i++){
-			printf("number of events: %d\n", (*spike_queue_p).no_events[offset]);
+			//printf("number of events: %d\n", (*spike_queue_p).no_events[offset]);
+			//printf("No outgoing EE synapses for neuron(%d): %d\n", (*spike_queue_p).neuron_id[offset][i], (*lif_p).no_outgoing_ee_synapses[(*spike_queue_p).neuron_id[offset][i]]);
+			
 			// Process each neuron which spiked (delay timesteps ago)
-			printf("No outgoing EE synapses for neuron(%d): %d\n", (*spike_queue_p).neuron_id[offset][i], (*lif_p).no_outgoing_ee_synapses[(*spike_queue_p).neuron_id[offset][i]]);
 			for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[ (*spike_queue_p).neuron_id[offset][i] ]; k++){
+				/*if(i==0){
+					printf("transferring delayed pre-synaptic spike to synapse(%d)\n", (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k]); 
+				}*/
 				(*syn_p).preT[ (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k] ] = 1;
 			}
 		}
@@ -395,7 +399,7 @@ int main (int argc, const char * argv[]) {
 		// Update LIFs
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			// Fixed external current
-			(*lif_p).I[i] = external_current;
+			(*lif_p).I[i] = external_voltage;
 			if((*lif_p).time_since_spike[i] == 0){
 				/*if(i==0){
 					printf("%d spiked\n", i);
@@ -411,22 +415,20 @@ int main (int argc, const char * argv[]) {
 				// Transfer voltage change to post-synaptic neurons
 				for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[i]; k++){
 					// across plastic synapses
-					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_current * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
+					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
 					/*if(i==0){
-						printf("current transfer to post-synaptic neuron(%d)\n", (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
+						printf("current transfer, I: %f, to post-synaptic neuron(%d)\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
 					}*/				
 				}
 				for ( k = (*lif_p).no_outgoing_ee_synapses[i]; k < (*lif_p).no_outgoing_synapses[i]; k++){
 					// Alternative dereferencing for fixed synapses
-					//TODO: change transfer current for inh neurons
-					(*lif_p).I[(*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] ] += transfer_current * (*fixed_syn_p).sign[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-					
-					if(i==0){
-						printf("current transfer via fixed syn(%d) to post-synaptic neuron(%d)\n", (*lif_p).outgoing_synapse_index[i][k]-(*syn_const_p).no_syns, (*fixed_syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns]);
-					}					
+					(*lif_p).I[(*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] ] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
+					/*if(i==0){
+						printf("current transfer, I: %f, via fixed syn(%d) to post-synaptic neuron(%d)\n", ((*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ]), (*lif_p).outgoing_synapse_index[i][k]-(*syn_const_p).no_syns, (*fixed_syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns]);
+					}*/					
 				}
 				// Add to pre-spike event queue
-				//CONSIDER: don't add non EE events to event queue
+				//CONSIDER: don't add non EE events to event queue (relative efficiencies depend on NO_INH<<NO_EXC and nu_i>nu_e)
 				(*spike_queue_p).neuron_id[offset][(*spike_queue_p).no_events[offset]] = i;
 				(*spike_queue_p).no_events[offset]++;
 				
@@ -445,7 +447,7 @@ int main (int argc, const char * argv[]) {
 		}
 		
 		
-		printf("after transfer V(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[0], j, (*lif_p).time_since_spike[0], (*lif_p).gauss[0]);
+		printf("after transfer V(%d): %f, I(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[0], j, (*lif_p).I[0], j, (*lif_p).time_since_spike[0], (*lif_p).gauss[0]);
 		printf("after transfer rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[0], j, (*syn_p).ca[0], j, (*syn_p).preT[0], j, (*syn_p).postT[0], (*syn_p).gauss[0]);
 		
 		
@@ -498,7 +500,7 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_
 	free((*syn_p).pre_lif);
 	free((*syn_p).post_lif);
 	
-	free((*fixed_syn_p).sign);
+	free((*fixed_syn_p).Jx);
 	free((*fixed_syn_p).post_lif);
 	
 	free((*spike_queue_p).no_events);

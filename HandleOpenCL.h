@@ -11,18 +11,6 @@
 #include "cl_LIFNeuron.h"
 #include "cl_Synapse.h"
 
-#define NO_EXC (10000) /*(2)*//*(10000)*/ /*(400)*/ /*(10000)*/ /*(400)*/
-#define NO_INH (2500) /*(2)*/ /*(2500)*/
-#define NO_LIFS (NO_EXC + NO_INH) 
-/*#define NO_SYNS (1000000)*/
-#define CONNECTIVITY_PROBABILITY (0.05) /*(0.05)*/
-/*#define SIMULATION_SEED (-13)*/
-#define NETWORK_SEED (-14)
-#define CALCIUM_DELAY (5)
-#define MAX_TIME_STEPS (50)
-
-#define USE_GPU (1) /* 1=gpu, 0=cpu */
-
 //int job_size;
 
 typedef struct random_struct_marsaglia{
@@ -36,9 +24,6 @@ typedef struct random_struct_marsaglia{
 // Wrap variables in a struct
 typedef struct cl_struct{
 	int err;                            // error code returned from api calls
-	
-    //float data[DATA_SIZE];              // original data set given to device
-    //float results[DATA_SIZE];           // results returned from device
 	
     size_t global;                      // global domain size for our calculation: work size per dimension
     size_t local;                       // local domain size for our calculation: work-group size per dimension
