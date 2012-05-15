@@ -56,8 +56,8 @@ void Marsaglia_Uniform(MarsagliaStruct *rdm){
 	unsigned int d_mwc = ((*rdm).d_z<<16)+(*rdm).d_w;
 	
 	// 3-shift-register generator
-	(*rdm).d_jsr^=((*rdm).d_jsr<<17);
-	(*rdm).d_jsr^=((*rdm).d_jsr>>13);
+	(*rdm).d_jsr^=((*rdm).d_jsr<<13); //Fixed wrongly ordered shifts (see Kiss11)
+	(*rdm).d_jsr^=((*rdm).d_jsr>>17);
 	(*rdm).d_jsr^=((*rdm).d_jsr<<5);
 	//unsigned int d_shr3 = (*rdm).d_jsr;
 	

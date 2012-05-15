@@ -4,9 +4,12 @@
 #include "HandleOpenCL.h"
 #include "NumericalTools.h"
 
+#include "DataReporters.h"
+
 //#define PI (atan(1.)*4.)
 
 void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_p, SpikeQueue *spike_queue_p);
+
 
 unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_p){
 	float p = CONNECTIVITY_PROBABILITY;
@@ -146,6 +149,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	return total_ee_synapses;
 }
 
+
 int main (int argc, const char * argv[]) {
 	int i, j, k;
 	int offset;
@@ -156,6 +160,8 @@ int main (int argc, const char * argv[]) {
 	//TODO: transfer current should be of the order external_cur/expected_no_syn_per_neuron (Brunel '97), right?
 	float transfer_voltage = J_EE; 
 	
+	//Setup output files
+	reporters_setup();
 	
 	char *KernelSource = readKernelSource("kernel.cl");
 	
@@ -177,7 +183,7 @@ int main (int argc, const char * argv[]) {
 	(*lif_p).c_m = 0.001;
 	(*lif_p).sigma = 0; //3.5; //TODO: switch noise back on
 	(*lif_p).refrac_time = 3; //20;//TODO: reenable refrac_time
-	(*lif_p).dt = 0.001;
+	(*lif_p).dt = LIF_DT;
 	(*lif_p).no_lifs = NO_LIFS;
 	(*cl_lif_p).job_size = (*lif_p).no_lifs;
 	 
@@ -293,6 +299,7 @@ int main (int argc, const char * argv[]) {
 		(*rnd_lif_p).d_jcong[i] = 380116160 + i + 1;
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
+		//TODO: store rho_init, when it becomes a non constant initial value
 		(*syn_p).rho[i] = 1;
 		(*syn_p).ca[i] = 5;
 		(*rnd_syn_p).d_z[i] = 362436069 - i;
@@ -396,11 +403,21 @@ int main (int argc, const char * argv[]) {
 		}
 		// Reset delayed event queue
 		(*spike_queue_p).no_events[offset] = 0;
+		int local_count = 0;
 		// Update LIFs
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			// Fixed external current
 			(*lif_p).I[i] = external_voltage;
+			// Print to intracellular recorder file
+			if(i == RECORDER_NEURON_ID){
+				//TODO: move this out of loop
+				// there's no need to have an if running this many times, but I[t] which was set on the previous line needs to be catered for.
+				// print: time, voltage, input current
+				fprintf(intracellular_output, "%d %f %f ", j, (*lif_p).V[i], (*lif_p).I[i]);
+			}
+			
 			if((*lif_p).time_since_spike[i] == 0){
+				//TODO: strongly consider implementing parallel spike transfer system
 				/*if(i==0){
 					printf("%d spiked\n", i);
 				}*/
@@ -415,12 +432,18 @@ int main (int argc, const char * argv[]) {
 				// Transfer voltage change to post-synaptic neurons
 				for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[i]; k++){
 					// across plastic synapses
-					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
+					if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
+						local_count++;
+					}
+					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					/*if(i==0){
 						printf("current transfer, I: %f, to post-synaptic neuron(%d)\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
 					}*/				
 				}
 				for ( k = (*lif_p).no_outgoing_ee_synapses[i]; k < (*lif_p).no_outgoing_synapses[i]; k++){
+					if((*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] == RECORDER_NEURON_ID){
+						local_count--;
+					}
 					// Alternative dereferencing for fixed synapses
 					(*lif_p).I[(*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] ] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
 					/*if(i==0){
@@ -432,6 +455,16 @@ int main (int argc, const char * argv[]) {
 				(*spike_queue_p).neuron_id[offset][(*spike_queue_p).no_events[offset]] = i;
 				(*spike_queue_p).no_events[offset]++;
 				
+				//Print to raster file
+				print_raster_spike(j, i);
+				
+				// Add to average spiking activity bins
+				if(i < NO_EXC){
+					summary_exc_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
+				}
+				else{
+					summary_inh_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
+				}
 			}
 			// Pre-synaptic spike propagates across synapse after delay
 			//Alternative to event queue system, assumes only 1 spike can occur in delay period
@@ -445,6 +478,16 @@ int main (int argc, const char * argv[]) {
 			}
 			*/
 		}
+		
+		printf("count: %d\n", local_count);
+		
+		// Print total I to intracellular recorder file
+		//if(i == RECORDER_NEURON_ID){
+		fprintf(intracellular_output, "%f\n", (*lif_p).I[RECORDER_NEURON_ID]);
+		//}
+		
+		// Print state of a single synapse
+		print_synapse_activity(j, syn_p);
 		
 		
 		printf("after transfer V(%d): %f, I(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[0], j, (*lif_p).I[0], j, (*lif_p).time_since_spike[0], (*lif_p).gauss[0]);
@@ -467,6 +510,17 @@ int main (int argc, const char * argv[]) {
 	
 	//TODO: could do another process and read here, as bufs have already been enqueued for processing
 	
+	printf("Simulation finished, printing summary of network activity...\n");
+	// Print summary of excitatory and inhibitory activity
+	print_network_summary_activity();
+	
+	printf("and final state of synapses...");
+	// Print final state of synapse strengths
+	print_synapses_final_state(syn_p, syn_const_p);
+	
+	printf("done\n");
+	// Close output files
+	reporters_close();
 	
     shutdownLifKernel(cl_lif_p);
 	shutdownSynKernel(cl_syn_p);
@@ -476,6 +530,7 @@ int main (int argc, const char * argv[]) {
     printf("Hello, World!\n");
     return 0;
 }
+
 
 void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_p, SpikeQueue *spike_queue_p){
 	free((*lif_p).V);
