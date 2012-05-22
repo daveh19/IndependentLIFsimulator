@@ -30,7 +30,7 @@ void reporters_setup(){
 	// Raster output file
 	strcpy(outfile, "output/");
 	strcat(outfile, raster_name);
-	printf("DEBUG: %s\n", outfile);
+	//printf("DEBUG: %s\n", outfile);
 	raster_output = fopen(outfile, "a");
 	if(raster_output == NULL){
 		perror("Error: failed to open raster output file\n");
@@ -40,17 +40,17 @@ void reporters_setup(){
 	// Intracellular recording from a single neuron
 	strcpy(outfile, "output/");
 	strcat(outfile, intracellular_name);
-	printf("DEBUG: %s\n", outfile);
+	//printf("DEBUG: %s\n", outfile);
 	intracellular_output = fopen(outfile, "a");
 	if(intracellular_output == NULL){
 		perror("Error: failed to open intracellular output file\n");
 	}
-	fprintf(intracellular_output, "\n\n\n\n\n# Intracellular recorder (t, V(t), Iext(t), Itot(t))\n# Neuron ID: %d\n", RECORDER_NEURON_ID);
+	fprintf(intracellular_output, "\n\n\n\n\n# Intracellular recorder (t, V(t), time since spike(t), Iext(t), gauss(t-1), Itot(t)), currents:{EE,IE,EI,II}\n# Neuron ID: %d\n", RECORDER_NEURON_ID);
 	
 	// Population spiking activity
 	strcpy(outfile, "output/");
 	strcat(outfile, average_activity_name);
-	printf("DEBUG: %s\n", outfile);
+	//printf("DEBUG: %s\n", outfile);
 	average_activity_ouput = fopen(outfile, "a");
 	if(average_activity_ouput == NULL){
 		perror("Error: failed to open average activity output file\n");
@@ -64,7 +64,7 @@ void reporters_setup(){
 	// Detailed recording from single synapse
 	strcpy(outfile, "output/");
 	strcat(outfile, synaptic_activity_name);
-	printf("DEBUG: %s\n", outfile);
+	//printf("DEBUG: %s\n", outfile);
 	synaptic_activity_output = fopen(outfile, "a");
 	if(synaptic_activity_output == NULL){
 		perror("Error: failed to open synaptic activity output file\n");
@@ -74,12 +74,42 @@ void reporters_setup(){
 	// Final state of all dynamic synapses
 	strcpy(outfile, "output/");
 	strcat(outfile, synaptic_strength_name);
-	printf("DEBUG: %s\n", outfile);
+	//printf("DEBUG: %s\n", outfile);
 	synaptic_strength_output = fopen(outfile, "a");
 	if(synaptic_strength_output == NULL){
 		perror("Error: failed to open synaptic strength output file\n");
 	}
 	fprintf(synaptic_strength_output, "\n\n\n\n\n# Final synaptic strengths (syn_id, pre_syn_lif_id, post_syn_lif_id, rho_final)\n");
+	
+	//Debugging stuff
+	lif_debug_name = "lif_debug.dat";
+	// Raster output file
+	strcpy(outfile, "output/");
+	strcat(outfile, lif_debug_name);
+	//printf("DEBUG: %s\n", outfile);
+	lif_debug_output = fopen(outfile, "a");
+	if(lif_debug_output == NULL){
+		perror("Error: failed to open lif debug output file\n");
+	}
+	fprintf(lif_debug_output, "\n\n\n\n\n# LIF debug output (neuron id, mean destination id, no outgoing synapses, sum of gauss, no outgoing EE syns,\n# {no within class, mean dest within class}:{EE,EI,IE,II},\n# no incomming:{EE,EI,IE,II})\n");
+	lif_mean_destination = calloc(NO_LIFS, sizeof(float));
+	lif_gauss_totals = calloc(NO_LIFS, sizeof(float));
+	lif_debug_no_EE = calloc(NO_LIFS, sizeof(int));
+	lif_debug_no_EI = calloc(NO_LIFS, sizeof(int));
+	lif_debug_no_IE = calloc(NO_LIFS, sizeof(int));
+	lif_debug_no_II = calloc(NO_LIFS, sizeof(int));
+	lif_mean_dest_EE = calloc(NO_LIFS, sizeof(float));
+	lif_mean_dest_EI = calloc(NO_LIFS, sizeof(float));
+	lif_mean_dest_IE = calloc(NO_LIFS, sizeof(float));
+	lif_mean_dest_II = calloc(NO_LIFS, sizeof(float));
+	lif_in_EE = calloc(NO_LIFS, sizeof(int));
+	lif_in_EI = calloc(NO_LIFS, sizeof(int));
+	lif_in_IE = calloc(NO_LIFS, sizeof(int));
+	lif_in_II = calloc(NO_LIFS, sizeof(int));
+	lif_currents_EE = calloc(MAX_TIME_STEPS, sizeof(float));
+	lif_currents_EI = calloc(MAX_TIME_STEPS, sizeof(float));
+	lif_currents_IE = calloc(MAX_TIME_STEPS, sizeof(float));
+	lif_currents_II = calloc(MAX_TIME_STEPS, sizeof(float));
 }
 
 
@@ -109,10 +139,21 @@ void print_synapses_final_state(cl_Synapse *syn, SynapseConsts *syn_const){
 }
 
 
+void print_lif_debug(cl_LIFNeuron *lif){
+	printf("\n-------------DEBUG (to file)-----------------------------\n");
+	for(int i = 0; i < (*lif).no_lifs; i++){
+		fprintf(lif_debug_output, "%d %f %d %f %d %d %f %d %f %d %f %d %f %d %d %d %d\n", i, lif_mean_destination[i], (*lif).no_outgoing_synapses[i], lif_gauss_totals[i], (*lif).no_outgoing_ee_synapses[i], lif_debug_no_EE[i], lif_mean_dest_EE[i], lif_debug_no_EI[i], lif_mean_dest_EI[i], lif_debug_no_IE[i], lif_mean_dest_IE[i], lif_debug_no_II[i], lif_mean_dest_II[i], lif_in_EE[i], lif_in_EI[i], lif_in_IE[i], lif_in_II[i]);
+		//printf("%d %f %d %f\n", i, lif_mean_destination[i], (*lif).no_outgoing_synapses[i], lif_gauss_totals[i]);
+	}
+}
+
+
 void reporters_close(){
 	fclose(raster_output);
 	fclose(intracellular_output);
 	fclose(average_activity_ouput);
 	fclose(synaptic_activity_output);
 	fclose(synaptic_strength_output);
+	//Debugging stuff
+	fclose(lif_debug_output);
 }

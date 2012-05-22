@@ -178,23 +178,25 @@ __kernel void lif(
 		//CONSIDER: changed to >= to allow removal of logical OR which didn't work: (refrac_time==0)||
 		if ( time_since_spike >= refrac_time ){
 			// Apply leak current
-			dv = (-(v - v_rest) / (c_m * r_m));
+			dv = (-(v - v_rest) / tau_m);
 			// Apply the external current
-			//TODO: should the input_current really be multiplied by dt?
-			dv += (input_current / c_m);
+			// Note: I use one input current variable (to cut down on streams to GPU)
+			//  an external current/voltage should be added directly to this variable (outside the kernel)
+			//  a synaptic current/voltage step should be multiplied by (tau_m/dt), for a delta spike, before adding to this variable,
+			//  in order to counter rescaling which happens on next three lines of executable code.
+			// input_current is treated as a voltage step, despite the variable name, hence the division by tau_m
+			dv += (input_current / tau_m);
 			// Apply noise
 			noise = sqrt(dt / tau_m) * sigma * rnd.value;
 		}
 
 		new_v = v + (dv * dt) + noise;
-		// Apply lower threshold to membrane voltage
-		//TODO: disabling this hard lower bound? (to allow for hyperpolarisation due to inputs)
-		if (new_v < v_rest){
+		// Apply lower threshold to membrane voltage (no longer desired)
+		/*if (new_v < v_rest){
 			new_v = v_rest;
-		}
+		}*/
 	
 		//Check if a spike has just occurred
-		//TODO: is this ok? I signal a spike when V>threshold but don't reset V until next timestep
 		if (new_v > v_threshold){
 			// A spike has just occurred, set time since last spike to 0
 			time_since_spike = 0;
@@ -306,7 +308,9 @@ __kernel void synapse(
 		d_jcong[i] = rnd.d_jcong;
 		input_gauss[i] = rnd.value;
 		
-		input_rho[i] = new_rho;
+		//input_rho[i] = new_rho;
+		//TODO: re-enable synaptic weight change
+		input_rho[i] = 1;
 		input_ca[i] = new_ca;
 		//TODO: double check numerical output for a given pre_spike or post_spike
 	}
