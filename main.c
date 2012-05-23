@@ -204,13 +204,13 @@ int main (int argc, const char * argv[]) {
 	(*lif_p).time_since_spike = calloc(NO_LIFS, sizeof(unsigned int));
 	
 	//TODO: move variable values to #defines in GeneralIncludes.h
-	(*lif_p).v_rest = -70.0;
-	(*lif_p).v_reset = -68.0;
-	(*lif_p).v_threshold = -54.0;
-	(*lif_p).r_m = 20.0;
-	(*lif_p).c_m = 0.001;
-	(*lif_p).sigma = 5.0; //3.5; 
-	(*lif_p).refrac_time = 20; //20;
+	(*lif_p).v_rest = LIF_V_REST;
+	(*lif_p).v_reset = LIF_V_RESET;
+	(*lif_p).v_threshold = LIF_V_THRESHOLD;
+	(*lif_p).r_m = LIF_RM;
+	(*lif_p).c_m = LIF_CM;
+	(*lif_p).sigma = LIF_SIGMA; //5; 
+	(*lif_p).refrac_time = LIF_REFRAC_TIME; //20;
 	(*lif_p).dt = LIF_DT;
 	(*lif_p).no_lifs = NO_LIFS;
 	(*cl_lif_p).job_size = (*lif_p).no_lifs;
@@ -275,7 +275,7 @@ int main (int argc, const char * argv[]) {
 	(*syn_p).rho = malloc(sizeof(float) * (*syn_const_p).no_syns);
 	(*syn_p).ca = malloc(sizeof(float) * (*syn_const_p).no_syns);
 	(*syn_p).gauss = calloc((*syn_const_p).no_syns, sizeof(float));
-	(*syn_const_p).delay = CALCIUM_DELAY; // measured in multiples of dt
+	(*syn_const_p).delay = SYN_CALCIUM_DELAY; // measured in multiples of dt
 
 	(*syn_p).preT = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
 	(*syn_p).postT = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
@@ -290,16 +290,16 @@ int main (int argc, const char * argv[]) {
 	}
 	
 
-	(*syn_const_p).gamma_p = 725.085;
-	(*syn_const_p).gamma_d = 331.909;
-	(*syn_const_p).theta_p = 1.3;
-	(*syn_const_p).theta_d = 1.0;
-	(*syn_const_p).sigma = 0; //3.35; //TODO: switch noise back on
-	(*syn_const_p).tau = 346.3615;
-	(*syn_const_p).tau_ca = 0.0226936;
-	(*syn_const_p).c_pre = 0.5617539;
-	(*syn_const_p).c_post = 1.23964;
-	(*syn_const_p).dt = 0.001;
+	(*syn_const_p).gamma_p = SYN_GAMMA_P;
+	(*syn_const_p).gamma_d = SYN_GAMMA_D;
+	(*syn_const_p).theta_p = SYN_THETA_P;
+	(*syn_const_p).theta_d = SYN_THETA_D;
+	(*syn_const_p).sigma = SYN_SIGMA;
+	(*syn_const_p).tau = SYN_TAU;
+	(*syn_const_p).tau_ca = SYN_TAU_CA;
+	(*syn_const_p).c_pre = SYN_C_PRE;
+	(*syn_const_p).c_post = SYN_C_POST;
+	(*syn_const_p).dt = SYN_DT;
 	
 	
 	char *k_name_syn = "synapse";
@@ -326,22 +326,22 @@ int main (int argc, const char * argv[]) {
     //
 	for ( i = 0; i < (*lif_p).no_lifs; i++){
 		//CONSIDER: initialising V and time_since_spike to random values (within reasonable ranges)
-		(*lif_p).V[i] = -66.0;
+		(*lif_p).V[i] = LIF_V_INITIAL;
 		(*lif_p).I[i] = external_voltage;
 		(*lif_p).time_since_spike[i] = (*lif_p).refrac_time;
-		(*rnd_lif_p).d_z[i] = 362436069 - i + 2; //TODO: changed to -i and +2 (was +i and +1)
-		(*rnd_lif_p).d_w[i] = 521288629 - i + 2;
-		(*rnd_lif_p).d_jsr[i] = 123456789 - i + 2;
-		(*rnd_lif_p).d_jcong[i] = 380116160 - i + 2;
+		(*rnd_lif_p).d_z[i] = 362436069 + i + 1 + PARALLEL_SEED; //TODO: changed to -i and +2 (was +i and +1) and back again
+		(*rnd_lif_p).d_w[i] = 521288629 + i + 1 + PARALLEL_SEED;
+		(*rnd_lif_p).d_jsr[i] = 123456789 + i + 1 + PARALLEL_SEED;
+		(*rnd_lif_p).d_jcong[i] = 380116160 + i + 1 + PARALLEL_SEED;
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//TODO: store rho_init, when it becomes a non constant initial value
-		(*syn_p).rho[i] = 1;
-		(*syn_p).ca[i] = 5;
-		(*rnd_syn_p).d_z[i] = 362436069 - i;
-		(*rnd_syn_p).d_w[i] = 521288629 - i;
-		(*rnd_syn_p).d_jsr[i] = 123456789 - i;
-		(*rnd_syn_p).d_jcong[i] = 380116160 - i;
+		(*syn_p).rho[i] = SYN_RHO_INITIAL;
+		(*syn_p).ca[i] = SYN_CA_INITIAL;
+		(*rnd_syn_p).d_z[i] = 362436069 - i + PARALLEL_SEED;
+		(*rnd_syn_p).d_w[i] = 521288629 - i + PARALLEL_SEED;
+		(*rnd_syn_p).d_jsr[i] = 123456789 - i + PARALLEL_SEED;
+		(*rnd_syn_p).d_jcong[i] = 380116160 - i + PARALLEL_SEED;
 	}
 	
 	
@@ -613,8 +613,9 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_
 	free((*fixed_syn_p).post_lif);
 	
 	free((*spike_queue_p).no_events);
-	for(int i = 0; i < CALCIUM_DELAY; i++){
+	for(int i = 0; i < SYN_CALCIUM_DELAY; i++){
 		free((*spike_queue_p).neuron_id[i]);
 	}
 	free((*spike_queue_p).neuron_id);
+	//TODO: free memory for debugging variables
 }
