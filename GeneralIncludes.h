@@ -40,8 +40,8 @@
 #define LIF_V_REST (-70.0)
 #define LIF_V_RESET (-68.0)
 #define LIF_V_THRESHOLD (-54.0)
-#define LIF_CM (20.0)
-#define LIF_RM (0.001)
+#define LIF_CM (0.001)
+#define LIF_RM (20.0)
 #define LIF_SIGMA (5)
 #define LIF_REFRAC_TIME (20) /*timesteps*/
 
