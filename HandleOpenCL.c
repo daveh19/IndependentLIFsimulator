@@ -273,7 +273,7 @@ int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	// Enqueue data for copying to Input buffers
 	//
 	
-	printf("enqueueing LIF input buffer...\n");
+	//printf("enqueueing LIF input buffer...\n");
 	
     // Write our data set into the input array in device memory
     //
@@ -432,6 +432,7 @@ int setSynKernelArgs(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const){
 
 int getMaxWorkSize(CL *cl){
 	// Get the maximum work group size for executing the kernel on the device
+	// and pad global work size such that it is a multiple of local
 	//
 	//size_t my_local_var;
 	
@@ -447,6 +448,16 @@ int getMaxWorkSize(CL *cl){
 	}
 	printf("CL_KERNEL_WORK_GROUP_SIZE: %d\n", (int)(*cl).local);
 	//printf("CL_KERNEL_LOCAL_MEM_SIZE: %ld\n", (long)my_local_var);
+	
+	(*cl).global = (*cl).job_size;
+	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
+	while( (*cl).global % (*cl).local != 0){
+		// Pad the global number of work items such that it is divided evenly by local
+		(*cl).global++;
+		//printf("New value for global: %d\n", (*cl).global);
+	}
+	printf("Setting global work size: %d, local work group size: %d, real no jobs %d\n", (int)(*cl).global, (int)(*cl).local, (*cl).job_size);
+	
 	return !(EXIT_FAILURE);
 }
 
@@ -472,10 +483,11 @@ int enqueueLifKernel(CL *cl){
 	// using the maximum number of work group items for this device
 	//
 	
-	printf("sending the LIF kernel to the process queue...\n");
+	//printf("sending the LIF kernel to the process queue...\n");
 	if((*cl).err){
 		printf("Error already occurred\n");
 	}
+	/*
 	(*cl).global = (*cl).job_size;
 	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
 	while( (*cl).global % (*cl).local != 0){
@@ -484,7 +496,8 @@ int enqueueLifKernel(CL *cl){
 		//printf("New value for global: %d\n", (*cl).global);
 	}
 	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, (*cl).job_size);
-
+	*/
+	
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
 	{
@@ -503,6 +516,7 @@ int enqueueSynKernel(CL *cl){
 	if((*cl).err){
 		printf("Error already occurred\n");
 	}
+	/*
 	(*cl).global = (*cl).job_size;
 	(*cl).local = fmin((*cl).local, (*cl).global); // Copes with case global < local
 	while( (*cl).global % (*cl).local != 0){
@@ -511,7 +525,8 @@ int enqueueSynKernel(CL *cl){
 		//printf("New value for global: %d\n", (*cl).global);
 	}
 	printf("Executing with global: %d, local: %d, real no jobs: %d\n", (int)(*cl).global, (int)(*cl).local, (*cl).job_size);
-
+	*/
+	
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
 	{
@@ -525,7 +540,7 @@ void waitForKernel(CL *cl){
 	// Wait for the command commands to get serviced before reading back results
 	//
 	
-	printf("waiting for kernel to finish...\n");
+	//printf("waiting for kernel to finish...\n");
 	
 	clFinish((*cl).commands);
 }
@@ -549,7 +564,7 @@ int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	// Enqueue Kernel outputs for reading from buffers to system memory
 	//
 	
-	printf("reading output from LIF kernel...\n");
+	//printf("reading output from LIF kernel...\n");
 	
 	//(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).output_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
 	//(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );

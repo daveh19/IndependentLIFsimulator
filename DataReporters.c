@@ -140,7 +140,7 @@ void print_synapses_final_state(cl_Synapse *syn, SynapseConsts *syn_const){
 
 
 void print_lif_debug(cl_LIFNeuron *lif){
-	printf("\n-------------DEBUG (to file)-----------------------------\n");
+	printf("\nLIF Debug: saving connection statistics to file...\n");
 	for(int i = 0; i < (*lif).no_lifs; i++){
 		fprintf(lif_debug_output, "%d %f %d %f %d %d %f %d %f %d %f %d %f %d %d %d %d\n", i, lif_mean_destination[i], (*lif).no_outgoing_synapses[i], lif_gauss_totals[i], (*lif).no_outgoing_ee_synapses[i], lif_debug_no_EE[i], lif_mean_dest_EE[i], lif_debug_no_EI[i], lif_mean_dest_EI[i], lif_debug_no_IE[i], lif_mean_dest_IE[i], lif_debug_no_II[i], lif_mean_dest_II[i], lif_in_EE[i], lif_in_EI[i], lif_in_IE[i], lif_in_II[i]);
 		//printf("%d %f %d %f\n", i, lif_mean_destination[i], (*lif).no_outgoing_synapses[i], lif_gauss_totals[i]);
