@@ -1,0 +1,22 @@
+Finish recorders - done
+Check membrane dynamics are taken account of in spike transfer - done
+Check dt is correctly applied in kernels - done for LIF
+Get params from last year's work and Nicolas' papers - done
+Check results with sim by nicolas (fixed synapse strengths) - done
+
+Speed check with Nicolas sim (remove synapse updates and add timer to inner loop) - done
+Is there a memory effect of not calling waitForKernel() (does it grow?) 
+
+Consider separating currents into separate variables
+Consider adding parallel spike transfer
+Add delay to spike transfer
+Stop recalculating local workgroup size on each enqueueNDRangeKernel() - done
+Separate drives to EXC and INH populations
+Separate timestepping for Synapse (ms) vs Neuron (sub-ms) [inner loop for neuron steps]
+Compare Marsaglia and Random123 using DIEHARD
+Change to Random123 based on card random number generator
+Consider using exp() rather than simple Euler
+
+Consider changing lif-lif dereferencing system (it's inefficient)
+Event-based synapse updates
+

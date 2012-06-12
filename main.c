@@ -477,6 +477,7 @@ int main (int argc, const char * argv[]) {
 		// Update LIFs: spike detection/propagation to post-synaptic lifs as well as pre- and post-lif neurons
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			if((*lif_p).time_since_spike[i] == 0){
+				//CONSIDER: using local variables to point to I[], post_lif[], Jx[], etc. it cuts down on dereferencing!
 				//TODO: strongly consider implementing parallel spike transfer system
 				/*if(i==0){
 					printf("%d spiked\n", i);
@@ -596,7 +597,7 @@ int main (int argc, const char * argv[]) {
 	
 	printf("done.\nAnd final state of synapses...");
 	// Print final state of synapse strengths
-	print_synapses_final_state(syn_p, syn_const_p);
+	//print_synapses_final_state(syn_p, syn_const_p);
 	//printf("done.\n");
 	
 	//Debug
