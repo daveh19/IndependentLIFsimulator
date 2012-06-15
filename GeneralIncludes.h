@@ -1,6 +1,8 @@
 #ifndef GENERAL_INCLUDES_H_
 #define GENERAL_INCLUDES_H_
 
+#define DEBUG_MODE
+
 #define FILE_NAME_LENGTH (50)
 #define TEXT_BUFFER_LENGTH (100)
 #define EPSILLON (0.0000001)

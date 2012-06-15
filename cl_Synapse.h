@@ -23,6 +23,7 @@ typedef struct Synapse{
     float * rho;
     float * ca;
 	float * gauss;
+	unsigned int * time_of_last_update;
     //unsigned int ** preT;
 	unsigned int * preT;
     unsigned int * postT;
