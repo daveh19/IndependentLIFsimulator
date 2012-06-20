@@ -14,6 +14,8 @@
 #define USE_GPU (1) /* 1=gpu, 0=cpu */
 #define NETWORK_SEED (-14)
 #define PARALLEL_SEED (0)
+#define GAUSSIAN_SYNAPTIC_SEED (-12)
+#define UNIFORM_SYNAPTIC_SEED (-10)
 
 #define MAX_TIME_STEPS (30000) /*no of timesteps, each of size dt*/
 
@@ -55,7 +57,7 @@
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)
 #define SYN_THETA_D (1.0)
-#define SYN_SIGMA (0) /*3.35;*/ /*TODO: switch synapse noise back on*/
+#define SYN_SIGMA (3.35) /*3.35;*/ /*TODO: switch synapse noise back on*/
 #define SYN_TAU (346.3615)
 #define SYN_TAU_CA (0.0226936)
 #define SYN_C_PRE (0.5617539)

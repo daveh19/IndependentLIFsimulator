@@ -35,21 +35,25 @@
 #define MZ 0
 #define FAC (1.0/MBIG)
 
+// ran0 returns a Uniform(0,1) value
+// Minimal Park and Miller method: multiplicative congruential algorithm (I_{j+1} = a I_j \mod m )
 float ran0(long *idum)
 {
 	long k;
 	float ans;
 
-	*idum ^= MASK;
+	*idum ^= MASK; // Masking XOR allows use of 0 in seed
 	k=(*idum)/IQ;
-	*idum=IA*(*idum-k*IQ)-IR*k;
+	*idum=IA*(*idum-k*IQ)-IR*k; // compute idum=(IA*idum)%IM without overflow
 	if (*idum < 0) *idum += IM;
-	ans=AM*(*idum);
-	*idum ^= MASK;
+	ans=AM*(*idum); // Convert to float
+	*idum ^= MASK; // Unmasking XOR
 	return ans;
 }
 
 
+// ran1 returns a Uniform(0,1) value
+// Minimal Park, Miller alg with Bays-Durham shuffle and extras
 float ran1(long *idum)
 {
 	int j;
@@ -61,7 +65,7 @@ float ran1(long *idum)
 	if (*idum <= 0 || !iy) {
 		if (-(*idum) < 1) *idum=1;
 		else *idum = -(*idum);
-		for (j=NTAB+7;j>=0;j--) {
+		for (j=NTAB+7;j>=0;j--) { // prepare shuffle table
 			k=(*idum)/IQ;
 			*idum=IA*(*idum-k*IQ)-IR*k;
 			if (*idum < 0) *idum += IM;
@@ -70,16 +74,19 @@ float ran1(long *idum)
 		iy=iv[0];
 	}
 	k=(*idum)/IQ;
-	*idum=IA*(*idum-k*IQ)-IR*k;
+	*idum=IA*(*idum-k*IQ)-IR*k; // compute idum=(IA*idum)%IM without overflow
 	if (*idum < 0) *idum += IM;
-	j=iy/NDIV;
-	iy=iv[j];
+	j=iy/NDIV; // in range 0..NTAB-1
+	iy=iv[j]; // output previously stored value and refill shuffle table
 	iv[j] = *idum;
-	if ((temp=AM*iy) > RNMX) return RNMX;
+	if ((temp=AM*iy) > RNMX) return RNMX; // do not return end-point value
 	else return temp;
 }
 
 
+// ran2 returns a Uniform(0,1) distributed value
+// L'Ecuyer combination method, with particularly long period
+// Combination: two linear congruential generators and Bays-Durham shuffle
 float ran2(long *idum)
 {
 	int j;
@@ -93,7 +100,7 @@ float ran2(long *idum)
 		if (-(*idum) < 1) *idum=1;
 		else *idum = -(*idum);
 		idum2=(*idum);
-		for (j=NTAB+7;j>=0;j--) {
+		for (j=NTAB+7;j>=0;j--) { // prepare shuffle table
 			k=(*idum)/IQ1;
 			*idum=IA1*(*idum-k*IQ1)-k*IR1;
 			if (*idum < 0) *idum += IM1;
@@ -102,20 +109,23 @@ float ran2(long *idum)
 		iy=iv[0];
 	}
 	k=(*idum)/IQ1;
-	*idum=IA1*(*idum-k*IQ1)-k*IR1;
+	*idum=IA1*(*idum-k*IQ1)-k*IR1; // compute idum=(IA1*idum)%IM1 without overflow
 	if (*idum < 0) *idum += IM1;
 	k=idum2/IQ2;
-	idum2=IA2*(idum2-k*IQ2)-k*IR2;
+	idum2=IA2*(idum2-k*IQ2)-k*IR2; // compute idum2=(IA2*idum2)%IM2 without overflow
 	if (idum2 < 0) idum2 += IM2;
-	j=iy/NDIV;
-	iy=iv[j]-idum2;
+	j=iy/NDIV; // in range 0..NTAB-1
+	iy=iv[j]-idum2; // shuffle idum and combine with idum2 for output
 	iv[j] = *idum;
 	if (iy < 1) iy += IMM1;
-	if ((temp=AM*iy) > RNMX) return RNMX;
+	if ((temp=AM*iy) > RNMX) return RNMX; // do not return end-point value
 	else return temp;
 }
 
 
+// ran3 returns Uniform(0,1) value
+// Knuth suggested subtractive method
+// (what is: ? 55 seed addition Lagged Fibonacci generator ?)
 float ran3(long *idum)
 {
 	static int inext,inextp;
@@ -124,37 +134,39 @@ float ran3(long *idum)
 	long mj,mk;
 	int i,ii,k;
 
-	if (*idum < 0 || iff == 0) {
+	if (*idum < 0 || iff == 0) { // initialise
 		iff=1;
 		mj=labs(MSEED-labs(*idum));
 		mj %= MBIG;
 		ma[55]=mj;
 		mk=1;
-		for (i=1;i<=54;i++) {
+		for (i=1;i<=54;i++) { // initialise table with not so random numbers
 			ii=(21*i) % 55;
 			ma[ii]=mk;
 			mk=mj-mk;
 			if (mk < MZ) mk += MBIG;
 			mj=ma[ii];
 		}
-		for (k=1;k<=4;k++)
+		for (k=1;k<=4;k++) // randomise the table elements a little more
 			for (i=1;i<=55;i++) {
 				ma[i] -= ma[1+(i+30) % 55];
 				if (ma[i] < MZ) ma[i] += MBIG;
 			}
-		inext=0;
+		inext=0;  // indices
 		inextp=31;
 		*idum=1;
 	}
 	if (++inext == 56) inext=1;
 	if (++inextp == 56) inextp=1;
-	mj=ma[inext]-ma[inextp];
-	if (mj < MZ) mj += MBIG;
-	ma[inext]=mj;
+	mj=ma[inext]-ma[inextp]; // subtractively generate new random number
+	if (mj < MZ) mj += MBIG; // make sure it's in range
+	ma[inext]=mj; // store it
 	return mj*FAC;
 }
 
 
+// ran4 returns Uniform(0,1) value
+// random deviates from DES-like hashing
 float ran4(long *idum)
 {
 	void psdes(unsigned long *lword, unsigned long *irword);
@@ -174,13 +186,14 @@ float ran4(long *idum)
 	}
 	irword=(*idum);
 	lword=idums;
-	psdes(&lword,&irword);
-	itemp=jflone | (jflmsk & irword);
+	psdes(&lword,&irword); // pseudo-DES encode words
+	itemp=jflone | (jflmsk & irword); // Mask to a floating number between 1 and 2
 	++(*idum);
-	return (*(float *)&itemp)-1.0;
+	return (*(float *)&itemp)-1.0; // Move range to (0,1)
 }
 
 
+// pseudo-DES hash function
 void psdes(unsigned long *lword, unsigned long *irword)
 {
 	unsigned long i,ia,ib,iswap,itmph=0,itmpl=0;
@@ -201,6 +214,7 @@ void psdes(unsigned long *lword, unsigned long *irword)
 }
 
 
+// gasdev returns a Normal(0,1) distributed value
 float gasdev(long *idum)
 {
 	float ran2(long *idum);
@@ -209,19 +223,23 @@ float gasdev(long *idum)
 	float fac,rsq,v1,v2;
 
 	if (*idum < 0) iset=0;
-	if  (iset == 0) {
-		do {
-			v1=2.0*ran2(idum)-1.0;
+	if (iset == 0){ // we don't have a value saved from last time
+		do{
+			v1=2.0*ran2(idum)-1.0; // Pick 2 Uni(-1,1) values
 			v2=2.0*ran2(idum)-1.0;
-			rsq=v1*v1+v2*v2;
-		} while (rsq >= 1.0 || rsq == 0.0);
-		fac=sqrt(-2.0*log(rsq)/rsq);
-		gset=v1*fac;
+			rsq=v1*v1+v2*v2; // See if they're inside unit circle
+		}while (rsq >= 1.0 || rsq == 0.0); // if not, do again
+		//CONSIDER: is it faster to repeat this while loop, or to use polar coordinates to guarantee membership of unit circle?
+		
+		fac=sqrt(-2.0*log(rsq)/rsq); // Box-Muller transform
+		gset=v1*fac; // save second value for next time
+		
 		iset=1;
 		return v2*fac;
-	} else {
-		iset=0;
-		return gset;
+	}
+	else{ // return the value we saved from last time
+		iset=0; 
+		return gset; 
 	}
 }
 
@@ -252,8 +270,8 @@ float gamdev(int ia, long *idum)
 		x = -log(x);
 	} else {
 		do {
-			do {
-				do {
+			do { 
+				do { 
 					v1=ran2(idum);
 					v2=2.0*ran2(idum)-1.0;
 				} while (v1*v1+v2*v2 > 1.0);

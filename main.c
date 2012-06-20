@@ -193,6 +193,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 int main (int argc, const char * argv[]) {
 	int i, j, k;
 	int offset;
+	long uniform_synaptic_seed = UNIFORM_SYNAPTIC_SEED;
 	
 	clock_t start_t,finish_t;
 	double totaltime;
@@ -285,6 +286,7 @@ int main (int argc, const char * argv[]) {
 	//End network generation
 	
 	(*syn_p).rho = malloc(sizeof(float) * (*syn_const_p).no_syns);
+	(*syn_p).rho_initial = malloc(sizeof(float) * (*syn_const_p).no_syns);
 	(*syn_p).ca = malloc(sizeof(float) * (*syn_const_p).no_syns);
 	(*syn_p).gauss = calloc((*syn_const_p).no_syns, sizeof(float));
 	(*syn_const_p).delay = SYN_CALCIUM_DELAY; // measured in multiples of dt
@@ -348,8 +350,9 @@ int main (int argc, const char * argv[]) {
 		(*rnd_lif_p).d_jcong[i] = 380116160 + i + 1 + PARALLEL_SEED;
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
-		//TODO: store rho_init, when it becomes a non constant initial value
-		(*syn_p).rho[i] = SYN_RHO_INITIAL;
+		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
+		(*syn_p).rho[i] = (*syn_p).rho_initial[i] = ran2(&uniform_synaptic_seed);
+		
 		(*syn_p).ca[i] = SYN_CA_INITIAL;
 		(*rnd_syn_p).d_z[i] = 362436069 - i + PARALLEL_SEED;
 		(*rnd_syn_p).d_w[i] = 521288629 - i + PARALLEL_SEED;
@@ -631,15 +634,27 @@ int main (int argc, const char * argv[]) {
 
 
 void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_id, int current_time){
-	float theta_upper = (*syn_const).theta_p;
+	//TODO: debug event-based update to make sure all numbers are calculated correctly (add some breakpoints and check variable values)
+	static long gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
+	float theta_upper = fmax((*syn_const).theta_d, (*syn_const).theta_p);
+	float theta_lower = fmin((*syn_const).theta_d, (*syn_const).theta_p);
+	float gamma_upper = fmax((*syn_const).gamma_d, (*syn_const).gamma_p);
+	float gamma_lower = fmin((*syn_const).gamma_d, (*syn_const).gamma_p);
+	/*float theta_upper = (*syn_const).theta_p;
 	float theta_lower = (*syn_const).theta_d;
+	float gamma_upper = (*syn_const).theta_p;
+	float gamma_lower = (*syn_const).theta_d;*/
+	float w_stoch, w_deter, w;
+	float c_initial, c_end;
+	
 	int time_since_update = current_time - (*syn).time_of_last_update[syn_id];
 	
-	float c_initial = (*syn).ca[syn_id];
+	c_initial = (*syn).ca[syn_id];
+	w = (*syn).rho[syn_id];
+	w_stoch = w_deter = 0;
 	
-	float c_end;
 	//if(syn_id == RECORDER_SYNAPSE_ID){
-		printf("w_initial: %f, c_initial: %f, ", (*syn).rho[syn_id], c_initial);
+		printf("seed: %ld, w_initial: %f, c_initial: %f, ", gaussian_synaptic_seed, (*syn).rho[syn_id], c_initial);
 		if(time_since_update > 1){ // for graphing, fill in Ca value just before potential Ca influx
 			c_end = c_initial * exp(-((double)(time_since_update - 1) / (*syn_const).tau_ca));
 			//TODO: print this out its the Recorder Synapse
@@ -691,11 +706,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	}
 	
 	// Weight update
-	float w_mean, w_stoch, w_deter, w;
-	w_mean = w_stoch = w_deter = 0;
-	w = (*syn).rho[syn_id];
-	// Stochastic update
-	if(t_lower > 0 || t_upper > 0){
+	/*if(t_lower > 0 || t_upper > 0){
 		float GammaP, GammaD, t_b, w_bar, tau_prime, sig_bar, sig_sq;
 		// Lower threshold depression, upper threshold potentiation
 		GammaP = (t_upper) * (*syn_const).gamma_p;
@@ -708,8 +719,25 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		
 		sig_bar = ((*syn_const).sigma / (2 * (GammaD + GammaP) ) );
 		sig_sq = pow(sig_bar,2) * (1 - exp(-(2*t_b)/tau_prime));
-		w_stoch = 0;//TODO: gaussian(0,sig_sq) distribution 
+		w_stoch = 0; // gaussian(0,sig_sq) distribution 
 		w = w_mean + w_stoch; // update here so deterministic update can follow on from stochastic one
+	}*/
+	// Stochastic update
+	double rnd;
+	if (t_upper > 0){
+		w_stoch = (gamma_upper / (gamma_lower + gamma_upper)) * ( 1 - exp(-(t_upper * (gamma_lower + gamma_upper) ) / (*syn_const).tau));
+		w_stoch += w * exp(-(t_upper * (gamma_lower + gamma_upper) ) / (*syn_const).tau);
+		rnd = gasdev(&gaussian_synaptic_seed);
+		printf("rnd1: %f, ", rnd);
+		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * (gamma_lower + gamma_upper) * t_upper) / (*syn_const).tau) / (2 * (gamma_lower + gamma_upper) ) ) );
+		w = w_stoch;
+	}
+	if (t_lower > 0){
+		w_stoch = w * exp(-(t_lower * gamma_lower) / (*syn_const).tau);
+		rnd = gasdev(&gaussian_synaptic_seed);
+		printf("rnd2: %f, ", rnd);
+		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) / (2 * gamma_lower) ) );
+		w = w_stoch;
 	}
 	// Deterministic update
 	if (t_deter > 0){
@@ -732,6 +760,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	(*syn).postT[syn_id] = 0;
 	(*syn).time_of_last_update[syn_id] = current_time;
 	(*syn).ca[syn_id] = c_end;
+	//TODO: should I put hard bounds on rho? (sigma=3.35 is too large otherwise)
 	(*syn).rho[syn_id] = w;
 }
 
@@ -754,6 +783,7 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_
 	
 	// Synapse variables
 	free((*syn_p).rho);
+	free((*syn_p).rho_initial);
 	free((*syn_p).ca);
 	free((*syn_p).gauss);
 	free((*syn_p).time_of_last_update);

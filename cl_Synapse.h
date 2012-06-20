@@ -21,6 +21,7 @@ typedef struct SynapseConstsStruct{
 
 typedef struct Synapse{
     float * rho;
+	float * rho_initial; // for debugging, comparison, etc.
     float * ca;
 	float * gauss;
 	unsigned int * time_of_last_update;

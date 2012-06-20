@@ -230,3 +230,108 @@ while(j < MAX_TIME_STEPS){
 	//offset = (++offset) % (*syn_const_p).delay;
 	j++;
 }
+
+void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_id, int current_time){
+	float theta_upper = (*syn_const).theta_p;
+	float theta_lower = (*syn_const).theta_d;
+	int time_since_update = current_time - (*syn).time_of_last_update[syn_id];
+	
+	float c_initial = (*syn).ca[syn_id];
+	
+	float c_end;
+	//if(syn_id == RECORDER_SYNAPSE_ID){
+	printf("w_initial: %f, c_initial: %f, ", (*syn).rho[syn_id], c_initial);
+	if(time_since_update > 1){ // for graphing, fill in Ca value just before potential Ca influx
+		c_end = c_initial * exp(-((double)(time_since_update - 1) / (*syn_const).tau_ca));
+		//TODO: print this out its the Recorder Synapse
+		printf("time_since_update: %d, c_end before influx: %f, ", time_since_update, c_end);
+		//(*syn).ca[current_time - 1] = c_end;
+	}
+	//}
+	c_end = c_initial * exp(-((double)(time_since_update) / (*syn_const).tau_ca));
+	
+	//CONSIDER: test for time_since_update > 0 for rest of function (probably would take more clock cycles than allowing the calculation to proceed on that rare occasion)
+	float t_upper, t_lower, t_deter;
+	if (c_initial > theta_upper){
+		if(c_end > theta_upper){
+			//update tupper, tlower, tdeter and call stochastic update
+			t_upper = time_since_update;
+			t_lower = 0;
+			t_deter = 0;
+		}
+		else if (c_end > theta_lower){ // && c_end <= theta_upper
+			//update tupper, tlower, tdeter and call stochastic update
+			t_upper = (*syn_const).tau_ca * log( c_initial/theta_upper );
+			t_lower = time_since_update - t_upper;
+			t_deter = 0;
+		}
+		else{ // c_end <= theta_lower
+			//update tupper, tlower, tdeter and call stochastic update, then call deterministic update
+			t_upper = (*syn_const).tau_ca * log( c_initial/theta_upper );
+			t_lower = (*syn_const).tau_ca * log( theta_upper/theta_lower );
+			t_deter = time_since_update - t_upper - t_lower;
+		}
+	}
+	else if (c_initial <= theta_lower){
+		//update tupper=0, tlower=0, tdeter and call deterministic update
+		t_upper = 0;
+		t_lower = 0;
+		t_deter = time_since_update;
+	}
+	else if (c_end <= theta_lower){ // && c_initial > theta_lower && c_initial <= theta_upper
+		//update tupper, tlower, tdeter and call stochastic update, then call deterministic update
+		t_upper = 0;
+		t_lower = (*syn_const).tau_ca * log( c_initial/theta_lower );
+		t_deter = time_since_update - t_lower;
+	}
+	else{ // c_initial > theta_lower && c_initial <= theta_upper && c_end > theta_lower && c_end <= theta_upper
+		//update tupper, tlower, tdeter and call stochastic update
+		t_upper = 0;
+		t_lower = time_since_update;
+		t_deter = 0;
+	}
+	
+	// Weight update
+	float w_mean, w_stoch, w_deter, w;
+	w_mean = w_stoch = w_deter = 0;
+	w = (*syn).rho[syn_id];
+	// Stochastic update
+	if(t_lower > 0 || t_upper > 0){
+		float GammaP, GammaD, t_b, w_bar, tau_prime, sig_bar, sig_sq;
+		// Lower threshold depression, upper threshold potentiation
+		GammaP = (t_upper) * (*syn_const).gamma_p;
+		GammaD = (t_upper + t_lower) * (*syn_const).gamma_d;
+		t_b = t_upper + t_lower;
+		
+		w_bar = GammaP / (GammaD + GammaP);
+		tau_prime = (*syn_const).tau / (GammaD + GammaP);
+		w_mean = w_bar + (w - w_bar) * exp(-t_b/tau_prime);
+		
+		sig_bar = ((*syn_const).sigma / (2 * (GammaD + GammaP) ) );
+		sig_sq = pow(sig_bar,2) * (1 - exp(-(2*t_b)/tau_prime));
+		w_stoch = 0;//TODO: gaussian(0,sig_sq) distribution 
+		w = w_mean + w_stoch; // update here so deterministic update can follow on from stochastic one
+	}
+	// Deterministic update
+	if (t_deter > 0){
+		float X_0 = pow(w - 0.5, 2) / ( w * (w - 1));
+		if (w < 0.5){
+			w_deter = 0.5 - (0.5 * sqrt( (1 + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1)) ) ) );
+		}
+		else{
+			w_deter = 0.5 + (0.5 * sqrt( (1 + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1)) ) ) );
+		}
+		w = w_deter;
+	}
+	
+	c_end = c_end + ((*syn).preT[syn_id] * (*syn_const).c_pre) + ((*syn).postT[syn_id] * (*syn_const).c_post);
+	//if(syn_id == RECORDER_SYNAPSE_ID){
+	printf("after influx: %f, w_final: %f\n", c_end, w);
+	//}
+	// Reset preT and postT, so that calcium influx can only be applied once!
+	(*syn).preT[syn_id] = 0;
+	(*syn).postT[syn_id] = 0;
+	(*syn).time_of_last_update[syn_id] = current_time;
+	(*syn).ca[syn_id] = c_end;
+	(*syn).rho[syn_id] = w;
+}
