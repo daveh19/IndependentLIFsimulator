@@ -634,12 +634,12 @@ int main (int argc, const char * argv[]) {
 
 
 void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_id, int current_time){
-	//TODO: debug event-based update to make sure all numbers are calculated correctly (add some breakpoints and check variable values)
 	static long gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
 	float theta_upper = fmax((*syn_const).theta_d, (*syn_const).theta_p);
 	float theta_lower = fmin((*syn_const).theta_d, (*syn_const).theta_p);
 	float gamma_upper = fmax((*syn_const).gamma_d, (*syn_const).gamma_p);
 	float gamma_lower = fmin((*syn_const).gamma_d, (*syn_const).gamma_p);
+	float gamma_sum = gamma_upper + gamma_lower;
 	/*float theta_upper = (*syn_const).theta_p;
 	float theta_lower = (*syn_const).theta_d;
 	float gamma_upper = (*syn_const).theta_p;
@@ -647,23 +647,24 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	float w_stoch, w_deter, w;
 	float c_initial, c_end;
 	
-	int time_since_update = current_time - (*syn).time_of_last_update[syn_id];
+	float time_since_update = (*syn_const).dt * (current_time - (*syn).time_of_last_update[syn_id]);
 	
 	c_initial = (*syn).ca[syn_id];
 	w = (*syn).rho[syn_id];
 	w_stoch = w_deter = 0;
 	
+	//TODO: Re-enable Recorder Synapse recording
 	//if(syn_id == RECORDER_SYNAPSE_ID){
-		printf("seed: %ld, w_initial: %f, c_initial: %f, ", gaussian_synaptic_seed, (*syn).rho[syn_id], c_initial);
-		if(time_since_update > 1){ // for graphing, fill in Ca value just before potential Ca influx
-			c_end = c_initial * exp(-((double)(time_since_update - 1) / (*syn_const).tau_ca));
-			//TODO: print this out its the Recorder Synapse
-			printf("time_since_update: %d, c_end before influx: %f, ", time_since_update, c_end);
+		printf("(SYN %d) seed: %ld, w_initial: %f, c_initial: %f, ", syn_id, gaussian_synaptic_seed, (*syn).rho[syn_id], c_initial);
+		/*if(time_since_update > (*syn_const).dt){ // for graphing, fill in Ca value just before potential Ca influx
+			c_end = c_initial * exp(-((double)(time_since_update - (*syn_const).dt) / (*syn_const).tau_ca));
+			printf("time_since_update: %f, c_end before influx: %f, ", time_since_update, c_end);
 			//(*syn).ca[current_time - 1] = c_end;
-		}
+		}*/
 	//}
 	c_end = c_initial * exp(-((double)(time_since_update) / (*syn_const).tau_ca));
-
+	printf("time_since_update: %f, c_end before influx: %f, ", time_since_update, c_end);
+	
 	//CONSIDER: test for time_since_update > 0 for rest of function (probably would take more clock cycles than allowing the calculation to proceed on that rare occasion)
 	float t_upper, t_lower, t_deter;
 	if (c_initial > theta_upper){
@@ -705,49 +706,70 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		t_deter = 0;
 	}
 	
-	// Weight update
-	/*if(t_lower > 0 || t_upper > 0){
-		float GammaP, GammaD, t_b, w_bar, tau_prime, sig_bar, sig_sq;
-		// Lower threshold depression, upper threshold potentiation
-		GammaP = (t_upper) * (*syn_const).gamma_p;
-		GammaD = (t_upper + t_lower) * (*syn_const).gamma_d;
-		t_b = t_upper + t_lower;
-		
-		w_bar = GammaP / (GammaD + GammaP);
-		tau_prime = (*syn_const).tau / (GammaD + GammaP);
-		w_mean = w_bar + (w - w_bar) * exp(-t_b/tau_prime);
-		
-		sig_bar = ((*syn_const).sigma / (2 * (GammaD + GammaP) ) );
-		sig_sq = pow(sig_bar,2) * (1 - exp(-(2*t_b)/tau_prime));
-		w_stoch = 0; // gaussian(0,sig_sq) distribution 
-		w = w_mean + w_stoch; // update here so deterministic update can follow on from stochastic one
-	}*/
+	// Weight updates
 	// Stochastic update
 	double rnd;
 	if (t_upper > 0){
-		w_stoch = (gamma_upper / (gamma_lower + gamma_upper)) * ( 1 - exp(-(t_upper * (gamma_lower + gamma_upper) ) / (*syn_const).tau));
-		w_stoch += w * exp(-(t_upper * (gamma_lower + gamma_upper) ) / (*syn_const).tau);
+		//float random_part, rho_bar;
+		//rho_bar = (gamma_upper / gamma_sum);
+		float in_exp, my_exp;
+		in_exp = -(t_upper * gamma_sum) / (*syn_const).tau;
+		my_exp = exp(in_exp);
+		
+		w_stoch = (gamma_upper / gamma_sum) * ( 1 - my_exp);
+		w_stoch += w * my_exp;
+		//printf("\nt_upper: %f, rho_bar: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_upper, rho_bar, in_exp, my_exp, w_stoch);
 		rnd = gasdev(&gaussian_synaptic_seed);
 		printf("rnd1: %f, ", rnd);
-		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * (gamma_lower + gamma_upper) * t_upper) / (*syn_const).tau) / (2 * (gamma_lower + gamma_upper) ) ) );
+		//random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
+		
+		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
+		//printf("random: %f, w_stoch: %f\n", random_part, w_stoch);
 		w = w_stoch;
 	}
 	if (t_lower > 0){
-		w_stoch = w * exp(-(t_lower * gamma_lower) / (*syn_const).tau);
+		//float random_part;
+		float in_exp, my_exp;
+		in_exp = -(t_lower * gamma_lower) / (*syn_const).tau;
+		my_exp = exp(in_exp);
+		
+		w_stoch = w * my_exp;
+		//printf("\nt_lower: %f, w: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_lower, w, in_exp, my_exp, w_stoch);
 		rnd = gasdev(&gaussian_synaptic_seed);
 		printf("rnd2: %f, ", rnd);
-		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) / (2 * gamma_lower) ) );
+		//random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) ) / (2 * gamma_lower) );
+		
+		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) ) / (2 * gamma_lower) );
+		//printf("random: %f, w_stoch: %f\n", random_part, w_stoch);
 		w = w_stoch;
 	}
 	// Deterministic update
 	if (t_deter > 0){
+		/*float denominator = w * (w - 1);
+		float numerator = pow(w - 0.5, 2);
+		float X_0 = numerator / denominator;
+		printf("\nt_deter: %f, w: %f, num: %f, den: %f, X_0: %f\n", t_deter, w, numerator, denominator, X_0);
+		float in_exp, my_exp, X_exp, denom2, division, in_sqt, my_sqt, multiple, whole;
+		in_exp = t_deter/(2 * (*syn_const).tau);
+		my_exp = exp( in_exp );
+		X_exp = X_0 * my_exp;
+		denom2 = (X_exp - 1.);
+		division = 1 / denom2;
+		in_sqt = (1. + division ) ;
+		my_sqt = sqrt(in_sqt);
+		multiple = 0.5 * my_sqt;*/
+		
 		float X_0 = pow(w - 0.5, 2) / ( w * (w - 1));
+		
 		if (w < 0.5){
-			w_deter = 0.5 - (0.5 * sqrt( (1 + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1)) ) ) );
+			//whole = 0.5 - multiple;
+			w_deter = 0.5 - (0.5 * sqrt( (1. + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1.)) ) ) );
 		}
 		else{
-			w_deter = 0.5 + (0.5 * sqrt( (1 + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1)) ) ) );
+			//whole = 0.5 + multiple;
+			w_deter = 0.5 + (0.5 * sqrt( (1. + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1.)) ) ) );
 		}
+		//printf("in_exp: %f, my_exp: %f, X_exp: %f, denom2: %f, division: %f, in_sqt: %f, my_sqt: %f, multiple: %f, w_deter: %f\n", in_exp, my_exp, X_exp, denom2, division, in_sqt, my_sqt, multiple, whole);
 		w = w_deter;
 	}
 	
@@ -760,7 +782,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	(*syn).postT[syn_id] = 0;
 	(*syn).time_of_last_update[syn_id] = current_time;
 	(*syn).ca[syn_id] = c_end;
-	//TODO: should I put hard bounds on rho? (sigma=3.35 is too large otherwise)
+	//TODO: should I put hard bounds on rho?
 	(*syn).rho[syn_id] = w;
 }
 
