@@ -1,7 +1,12 @@
 #ifndef GENERAL_INCLUDES_H_
 #define GENERAL_INCLUDES_H_
 
-#define DEBUG_MODE
+//#define DEBUG_MODE // not currently used
+//#define DEBUG_MODE_MAIN // screen display of timestep based change of V and RHO
+//#define DEBUG_MODE_NETWORK // print to file of connectivity statistics
+//#define DEBUG_MODE_SPIKES // screen display of spike transfers
+//#define DEBUG_MODE_SYNAPSE // screen display of synapse updates
+
 
 #define FILE_NAME_LENGTH (50)
 #define TEXT_BUFFER_LENGTH (100)
@@ -9,7 +14,7 @@
 
 // Data reporters
 #define RECORDER_NEURON_ID (100)
-#define RECORDER_SYNAPSE_ID (0)
+#define RECORDER_SYNAPSE_ID (10)
 
 #define USE_GPU (1) /* 1=gpu, 0=cpu */
 #define NETWORK_SEED (-14)
@@ -17,7 +22,7 @@
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (30000) /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (1000) /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
@@ -26,7 +31,7 @@
 #define CONNECTIVITY_PROBABILITY (0.05)
 
 // Time step sizes and statistical bin widths
-#define LIF_DT (0.0001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
+#define LIF_DT (0.001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
 #define SYN_DT LIF_DT /*TODO: at a later stage I will have the synapse update more slowly than the lif*/
 #define BIN_SIZE (0.1)
 
@@ -47,12 +52,12 @@
 #define LIF_CM (0.001)
 #define LIF_RM (20.0)
 #define LIF_SIGMA (5)
-#define LIF_REFRAC_TIME (200) /*timesteps*/
+#define LIF_REFRAC_TIME (20) /*timesteps*/
 
 // Synapse model specific
 #define SYN_RHO_INITIAL (1.0)
 #define SYN_CA_INITIAL (0.0)
-#define SYN_CALCIUM_DELAY (50) /*5*/ /*timesteps (needs to be modified when DT is modified above*/
+#define SYN_CALCIUM_DELAY (5) /*5*/ /*timesteps (needs to be modified when DT is modified above*/
 #define SYN_GAMMA_P (725.085)
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)

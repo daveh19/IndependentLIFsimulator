@@ -37,7 +37,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	(*fixed_syn_p).Jx = calloc(estimated_total_synapses, sizeof(float));
 	(*fixed_syn_p).post_lif = calloc(estimated_total_synapses, sizeof(signed int));
 	
-	printf("mean_ee_syn_per_neuron: %d, est_ee_syn_per_neuron: %d, est_total_ee_synapses: %d, est_total_syn_per_neuron: %d\n", mean_ee_synapses_per_neuron, estimated_ee_synapses_per_neuron, estimated_total_ee_synapses, estimated_total_synapses_per_neuron);
+	printf("Space allocation, mean_ee_syn_per_neuron: %d, est_ee_syn_per_neuron: %d, est_total_ee_synapses: %d, est_total_syn_per_neuron: %d\n", mean_ee_synapses_per_neuron, estimated_ee_synapses_per_neuron, estimated_total_ee_synapses, estimated_total_synapses_per_neuron);
 	
 	printf("Generating network structure...\n");
 	//start = clock();
@@ -83,11 +83,12 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					//printf("in_id: %d, no_in: %d \n", (*lif_p).incoming_synapse_index[j][(*lif_p).no_incoming_synapses[j]-1], (*lif_p).no_incoming_synapses[j]);
 					
 					total_ee_synapses++;
-					//Debug code
-					/*lif_mean_destination[i] += j;
-					lif_mean_dest_EE[i] += j;
-					lif_debug_no_EE[i]++;
-					lif_in_EE[j]++;*/
+					#ifdef DEBUG_MODE_NETWORK
+						lif_mean_destination[i] += j;
+						lif_mean_dest_EE[i] += j;
+						lif_debug_no_EE[i]++;
+						lif_in_EE[j]++;
+					#endif /* DEBUG_MODE_NETWORK */
 				}
 			}
 		}
@@ -106,11 +107,12 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					(*lif_p).no_outgoing_synapses[i]++;
 				
 					total_fixed_synapses++;
-					//Debug code
-					/*lif_mean_destination[i] += j;
-					lif_mean_dest_IE[i] += j;
-					lif_debug_no_IE[i]++;
-					lif_in_IE[j]++;*/
+					#ifdef DEBUG_MODE_NETWORK
+						lif_mean_destination[i] += j;
+						lif_mean_dest_IE[i] += j;
+						lif_debug_no_IE[i]++;
+						lif_in_IE[j]++;
+					#endif /* DEBUG_MODE_NETWORK */
 				}
 			}
 		}
@@ -128,11 +130,12 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					(*lif_p).no_outgoing_synapses[i]++;
 					
 					total_fixed_synapses++;
-					//Debug code
-					/*lif_mean_destination[i] += j;
-					lif_mean_dest_EI[i] += j;
-					lif_debug_no_EI[i]++;
-					lif_in_EI[j]++;*/
+					#ifdef DEBUG_MODE_NETWORK
+						lif_mean_destination[i] += j;
+						lif_mean_dest_EI[i] += j;
+						lif_debug_no_EI[i]++;
+						lif_in_EI[j]++;
+					#endif /* DEBUG_MODE_NETWORK */
 				}
 			}
 		}
@@ -148,11 +151,12 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					(*lif_p).no_outgoing_synapses[i]++;
 					
 					total_fixed_synapses++;	
-					//Debug code
-					/*lif_mean_destination[i] += j;
-					lif_mean_dest_II[i] += j;
-					lif_debug_no_II[i]++;
-					lif_in_II[j]++;*/
+					#ifdef DEBUG_MODE_NETWORK
+						lif_mean_destination[i] += j;
+						lif_mean_dest_II[i] += j;
+						lif_debug_no_II[i]++;
+						lif_in_II[j]++;
+					#endif /* DEBUG_MODE_NETWORK */
 				}
 			}
 		}
@@ -169,20 +173,17 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	(*syn_p).post_lif = realloc((*syn_p).post_lif, sizeof(signed int) * total_ee_synapses);
 	(*fixed_syn_p).Jx = realloc((*fixed_syn_p).Jx, sizeof(float) * total_fixed_synapses);
 	(*fixed_syn_p).post_lif = realloc((*fixed_syn_p).post_lif, sizeof(signed int) * total_fixed_synapses);
-	//FILE *fp = fopen("output/test_network.dat", "a");
-	//fprintf(fp, "# Test of net (no incomming EE, no outgoing, no outgoing EE, (no out - no out EE))\n");
 	for(int i = 0; i < NO_LIFS; i++){
 		(*lif_p).incoming_synapse_index[i] = realloc((*lif_p).incoming_synapse_index[i], sizeof(signed int) * (*lif_p).no_incoming_synapses[i]);
 		(*lif_p).outgoing_synapse_index[i] = realloc((*lif_p).outgoing_synapse_index[i], sizeof(signed int) * (*lif_p).no_outgoing_synapses[i]);
-		//Debug
-		//fprintf(fp, "%d %d %d %d %d\n", i, (*lif_p).no_incoming_synapses[i], (*lif_p).no_outgoing_synapses[i], (*lif_p).no_outgoing_ee_synapses[i], ((*lif_p).no_outgoing_synapses[i] - (*lif_p).no_outgoing_ee_synapses[i]));
-		/*lif_mean_destination[i] /= (*lif_p).no_outgoing_synapses[i];
-		lif_mean_dest_EE[i] /= lif_debug_no_EE[i];
-		lif_mean_dest_IE[i] /= lif_debug_no_IE[i];
-		lif_mean_dest_EI[i] /= lif_debug_no_EI[i];
-		lif_mean_dest_II[i] /= lif_debug_no_II[i];*/
+		#ifdef DEBUG_MODE_NETWORK
+			lif_mean_destination[i] /= (*lif_p).no_outgoing_synapses[i];
+			lif_mean_dest_EE[i] /= lif_debug_no_EE[i];
+			lif_mean_dest_IE[i] /= lif_debug_no_IE[i];
+			lif_mean_dest_EI[i] /= lif_debug_no_EI[i];
+			lif_mean_dest_II[i] /= lif_debug_no_II[i];
+		#endif /* DEBUG_MODE_NETWORK */
 	}
-	//fclose(fp);
 	
 	(*fixed_syn_p).total_fixed_synapses = total_fixed_synapses;
 	
@@ -317,7 +318,7 @@ int main (int argc, const char * argv[]) {
 	(*syn_const_p).dt = SYN_DT;
 	
 	
-	char *k_name_syn = "synapse";
+	//char *k_name_syn = "synapse";
 	
 	// Random number generator streams
 	//for LIF
@@ -365,46 +366,46 @@ int main (int argc, const char * argv[]) {
 	if( setupCL(cl_lif_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
-	if( setupCL(cl_syn_p) == EXIT_FAILURE){
+	/*if( setupCL(cl_syn_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
-	}
+	}*/
 
 	if( makeProgram(cl_lif_p, KernelSource, k_name_lif) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
-	if( makeProgram(cl_syn_p, KernelSource, k_name_syn) == EXIT_FAILURE){
+	/*if( makeProgram(cl_syn_p, KernelSource, k_name_syn) == EXIT_FAILURE){
 		return EXIT_FAILURE;
-	}
+	}*/
 	
 	// OpenCL data IO
 	if( createLifIObufs(cl_lif_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
-	if( createSynIObufs(cl_syn_p) == EXIT_FAILURE){
+	/*if( createSynIObufs(cl_syn_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
-	}
+	}*/
 	
 	
 	if( enqueueLifInputBuf(cl_lif_p, lif_p, rnd_lif_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
-	if( enqueueSynInputBuf(cl_syn_p, syn_p, syn_const_p, rnd_syn_p) == EXIT_FAILURE){
+	/*if( enqueueSynInputBuf(cl_syn_p, syn_p, syn_const_p, rnd_syn_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
-	}
+	}*/
 	
 	if( setLifKernelArgs(cl_lif_p, lif_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
-	if( setSynKernelArgs(cl_syn_p, syn_p, syn_const_p) == EXIT_FAILURE){
+	/*if( setSynKernelArgs(cl_syn_p, syn_p, syn_const_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
-	}
+	}*/
 	
 	if( getMaxWorkSize(cl_lif_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
-	if( getMaxWorkSize(cl_syn_p) == EXIT_FAILURE){
+	/*if( getMaxWorkSize(cl_syn_p) == EXIT_FAILURE){
 		return EXIT_FAILURE;
-	}	
+	}*/	
 	
 	
 	// Do the OpenCL processing
@@ -414,6 +415,8 @@ int main (int argc, const char * argv[]) {
 	//double totaltime;
 	printf("Go\n");
 	start_t = clock();
+	// Print initial state of a single recorder synapse
+	print_synapse_activity(j, syn_p);
 	while(j < MAX_TIME_STEPS){
 		
 		// -----Process LIF Kernel-------
@@ -441,15 +444,15 @@ int main (int argc, const char * argv[]) {
 		 
 	
 		// Output results
-#ifdef DEBUG_MODE
-		printf("V(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[RECORDER_NEURON_ID], j, (*lif_p).time_since_spike[RECORDER_NEURON_ID], (*lif_p).gauss[RECORDER_NEURON_ID]);
-		printf("rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[RECORDER_NEURON_ID], j, (*syn_p).ca[RECORDER_NEURON_ID], j, (*syn_p).preT[RECORDER_NEURON_ID], j, (*syn_p).postT[RECORDER_NEURON_ID], (*syn_p).gauss[RECORDER_NEURON_ID]);
-#endif /* DEBUG_MODE */
+		#ifdef DEBUG_MODE_MAIN
+			printf("V(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[RECORDER_NEURON_ID], j, (*lif_p).time_since_spike[RECORDER_NEURON_ID], (*lif_p).gauss[RECORDER_NEURON_ID]);
+			printf("rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[RECORDER_NEURON_ID], j, (*syn_p).ca[RECORDER_NEURON_ID], j, (*syn_p).preT[RECORDER_NEURON_ID], j, (*syn_p).postT[RECORDER_NEURON_ID], (*syn_p).gauss[RECORDER_NEURON_ID]);
+		#endif /* DEBUG_MODE_MAIN */
 		
 		// ---- Prepare next run ----
 		
 		
-		//TODO: Event-based 1 (Update synapse: Delayed forward propagation)
+		// Event-based 1 (Update synapse: Delayed forward propagation)
 		// Transfer delayed pre-synaptic spikes to EE synapses
 		for( i = 0; i < (*spike_queue_p).no_events[offset]; i++){
 			//printf("number of events: %d\n", (*spike_queue_p).no_events[offset]);
@@ -461,11 +464,13 @@ int main (int argc, const char * argv[]) {
 				//	printf("transferring delayed pre-synaptic spike to synapse(%d)\n", (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k]); 
 				//}
 				(*syn_p).preT[ (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k] ] = 1;
-				printf("Pre Spike (LIF %d) ", (*spike_queue_p).neuron_id[offset][i]);
+				#ifdef DEBUG_MODE_SPIKES
+					printf("Pre Spike (LIF %d) ", (*spike_queue_p).neuron_id[offset][i]);
+				#endif /* DEBUG_MODE_SPIKES */
 				updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k], j);
 			}
 		}
-		//TODO: Event-based 2 (Reset delayed event queue)
+		// Event-based 2 (Reset delayed event queue)
 		// Reset delayed event queue
 		(*spike_queue_p).no_events[offset] = 0;
 		
@@ -474,8 +479,9 @@ int main (int argc, const char * argv[]) {
 		for( i = 0; i < (*lif_p).no_lifs; i++){
 			// Fixed external current
 			(*lif_p).I[i] = external_voltage;
-			//Debug code
-			//lif_gauss_totals[i] += (*lif_p).gauss[i];
+			#ifdef DEBUG_MODE_NETWORK
+				lif_gauss_totals[i] += (*lif_p).gauss[i];
+			#endif /* DEBUG_MODE_NETWORK */
 		}
 		
 		// Print to intracellular recorder file
@@ -491,12 +497,14 @@ int main (int argc, const char * argv[]) {
 				/*if(i==0){
 					printf("%d spiked\n", i);
 				}*/
-				//TODO: Event-based 3 (Update synapse: Backpropagation to synapse)
+				// Event-based 3 (Update synapse: Backpropagation to synapse)
 				// Post-synaptic spike should backpropagate to its synapses with no delay
 				for ( k = 0; k < (*lif_p).no_incoming_synapses[i]; k++){
 					// as non EE based lifs are not added to incoming_synapses lists this is safe
 					(*syn_p).postT[(*lif_p).incoming_synapse_index[i][k]] = 1;
-					printf("Post Spike (LIF %d) ", i);
+					#ifdef DEBUG_MODE_SPIKES
+						printf("Post Spike (LIF %d) ", i);
+					#endif /* DEBUG_MODE_SPIKES */
 					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).incoming_synapse_index[i][k], j);
 					//if(i==0){
 					//	printf("backprop to pre-lif synapse(%d)\n", (*lif_p).incoming_synapse_index[i][k]);
@@ -505,13 +513,17 @@ int main (int argc, const char * argv[]) {
 				// Transfer voltage change to post-synaptic neurons
 				for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[i]; k++){
 					// across plastic synapses
-					//Debug code
-					if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
-						//local_count++;
-						lif_currents_EE[j] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-					}
-					//TODO: Event-based 4 (Update synapse: Update in advance of current transfer)
-					printf("Spike transfer (LIF %d) ", i);
+					//#ifdef DEBUG_MODE_NETWORK
+						//Debug code
+						if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
+							//local_count++;
+							lif_currents_EE[j] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
+						}
+					//#endif /* DEBUG_MODE_NETWORK */
+					// Event-based 4 (Update synapse: Update in advance of current transfer)
+					#ifdef DEBUG_MODE_SPIKES
+						printf("Spike transfer (LIF %d) ", i);
+					#endif /* DEBUG_MODE_SPIKES */
 					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					/*if(i==0){
@@ -520,26 +532,30 @@ int main (int argc, const char * argv[]) {
 				}
 				for ( k = (*lif_p).no_outgoing_ee_synapses[i]; k < (*lif_p).no_outgoing_synapses[i]; k++){
 					// across fixed synapses
-					//Debug code
-					if((*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] == RECORDER_NEURON_ID){
-						//local_count--;
-						if((i < NO_EXC) && (RECORDER_NEURON_ID >= NO_EXC)){ //E->I
-							lif_currents_IE[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
+					//#ifdef DEBUG_MODE_NETWORK
+						//Debug code
+						if((*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] == RECORDER_NEURON_ID){
+							//local_count--;
+							if((i < NO_EXC) && (RECORDER_NEURON_ID >= NO_EXC)){ //E->I
+								lif_currents_IE[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
+							}
+							else if((i >= NO_EXC) && (RECORDER_NEURON_ID >= NO_EXC)){ //I->I
+								lif_currents_II[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
+							}
+							else if((i >= NO_EXC) && (RECORDER_NEURON_ID < NO_EXC)){ //I->E
+								lif_currents_EI[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
+							}
 						}
-						else if((i >= NO_EXC) && (RECORDER_NEURON_ID >= NO_EXC)){ //I->I
-							lif_currents_II[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-						}
-						else if((i >= NO_EXC) && (RECORDER_NEURON_ID < NO_EXC)){ //I->E
-							lif_currents_EI[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-						}
-					}
+					//#endif /* DEBUG_MODE_NETWORK */
 					// Alternative dereferencing for fixed synapses
 					(*lif_p).I[(*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] ] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-					//if(i==0){
-					//	printf("current transfer, I: %f, via fixed syn(%d) to post-synaptic neuron(%d)\n", ((*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ]), (*lif_p).outgoing_synapse_index[i][k]-(*syn_const_p).no_syns, (*fixed_syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns]);
-					//}					
+					#ifdef DEBUG_MODE_SPIKES
+						if(i==RECORDER_NEURON_ID){
+							printf("current transfer, I: %f, via fixed syn(%d) to post-synaptic neuron(%d)\n", ((*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ]), (*lif_p).outgoing_synapse_index[i][k]-(*syn_const_p).no_syns, (*fixed_syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns]);
+						}		
+					#endif /* DEBUG_MODE_SPIKES */
 				}
-				//TODO: Event-based 5 (Add spike to delayed processing event queue)
+				// Event-based 5 (Add spike to delayed processing event queue)
 				// Add to pre-spike event queue
 				//CONSIDER: don't add non EE events to event queue (relative efficiencies depend on NO_INH<<NO_EXC and nu_i>nu_e)
 				(*spike_queue_p).neuron_id[offset][(*spike_queue_p).no_events[offset]] = i;
@@ -576,13 +592,14 @@ int main (int argc, const char * argv[]) {
 		fprintf(intracellular_output, "%f %f %f %f %f\n", (*lif_p).I[RECORDER_NEURON_ID], lif_currents_EE[j], lif_currents_IE[j], lif_currents_EI[j], lif_currents_II[j]);
 		
 		// Print state of a single synapse
-		print_synapse_activity(j, syn_p);
+		// Moved to updateEventBasedSynapse()
+		//print_synapse_activity(j, syn_p); 
 		
 		
-#ifdef DEBUG_MODE
-		printf("after transfer V(%d): %f, I(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[RECORDER_NEURON_ID], j, (*lif_p).I[RECORDER_NEURON_ID], j, (*lif_p).time_since_spike[RECORDER_NEURON_ID], (*lif_p).gauss[RECORDER_NEURON_ID]);
-		printf("after transfer rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[RECORDER_NEURON_ID], j, (*syn_p).ca[RECORDER_NEURON_ID], j, (*syn_p).preT[RECORDER_NEURON_ID], j, (*syn_p).postT[RECORDER_NEURON_ID], (*syn_p).gauss[RECORDER_NEURON_ID]);
-#endif /* DEBUG_MODE */
+		#ifdef DEBUG_MODE_MAIN
+			printf("after transfer V(%d): %f, I(%d): %f, time_since_spike(%d): %d, gauss: %f\n", j, (*lif_p).V[RECORDER_NEURON_ID], j, (*lif_p).I[RECORDER_NEURON_ID], j, (*lif_p).time_since_spike[RECORDER_NEURON_ID], (*lif_p).gauss[RECORDER_NEURON_ID]);
+			printf("after transfer rho(%d): %f, ca(%d): %f, preT(%d): %d, postT(%d): %d, gauss: %f\n", j, (*syn_p).rho[RECORDER_NEURON_ID], j, (*syn_p).ca[RECORDER_NEURON_ID], j, (*syn_p).preT[RECORDER_NEURON_ID], j, (*syn_p).postT[RECORDER_NEURON_ID], (*syn_p).gauss[RECORDER_NEURON_ID]);
+		#endif /* DEBUG_MODE_MAIN */
 		
 		// Setup next LIF Kernel
 		// this is the part I was able to comment out and sim still worked! (most of the time!)
@@ -596,7 +613,7 @@ int main (int argc, const char * argv[]) {
 		}
 		 */
 		
-		//TODO: Event-based 6 (Update event queue offset variable)
+		// Event-based 6 (Update event queue offset variable)
 		offset = (++offset) % (*syn_const_p).delay;
 		j++;
 	}
@@ -609,22 +626,26 @@ int main (int argc, const char * argv[]) {
 	
 	printf("Simulation finished, printing summary of network activity...\n");
 	// Print summary of excitatory and inhibitory activity
+	//TODO: consider cycling through all synapses to do a final update of their states
+	updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
 	print_network_summary_activity();
-	
 	printf("done.\nAnd final state of synapses...");
 	// Print final state of synapse strengths
 	print_synapses_final_state(syn_p, syn_const_p);
+	
 	printf("done.\n");
 	
-	//Debug
-	//print_lif_debug(lif_p);
+	#ifdef DEBUG_MODE_NETWORK
+		//Debug of lif connectivity and activity
+		print_lif_debug(lif_p);
+	#endif /* DEBUG_MODE_NETWORK */
 	
 	printf("done\n");
 	// Close output files
 	reporters_close();
 	
     shutdownLifKernel(cl_lif_p);
-	shutdownSynKernel(cl_syn_p);
+	//shutdownSynKernel(cl_syn_p);
 	
 	freeMemory(lif_p, syn_p, fixed_syn_p, spike_queue_p);
 	
@@ -653,17 +674,20 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	w = (*syn).rho[syn_id];
 	w_stoch = w_deter = 0;
 	
-	//TODO: Re-enable Recorder Synapse recording
-	//if(syn_id == RECORDER_SYNAPSE_ID){
+	#ifdef DEBUG_MODE_SYNAPSE
 		printf("(SYN %d) seed: %ld, w_initial: %f, c_initial: %f, ", syn_id, gaussian_synaptic_seed, (*syn).rho[syn_id], c_initial);
-		/*if(time_since_update > (*syn_const).dt){ // for graphing, fill in Ca value just before potential Ca influx
-			c_end = c_initial * exp(-((double)(time_since_update - (*syn_const).dt) / (*syn_const).tau_ca));
-			printf("time_since_update: %f, c_end before influx: %f, ", time_since_update, c_end);
-			//(*syn).ca[current_time - 1] = c_end;
-		}*/
-	//}
+	#endif /* DEBUG_MODE_SYNAPSE */
+
 	c_end = c_initial * exp(-((double)(time_since_update) / (*syn_const).tau_ca));
-	printf("time_since_update: %f, c_end before influx: %f, ", time_since_update, c_end);
+	if(syn_id == RECORDER_SYNAPSE_ID){
+		(*syn).ca[syn_id] = c_end;
+		// Print state of a single synapse
+		print_synapse_activity(current_time - 1, syn);
+	}
+	
+	#ifdef DEBUG_MODE_SYNAPSE
+		printf("time_since_update: %f, c_end before influx: %f, ", time_since_update, c_end);
+	#endif /* DEBUG_MODE_SYNAPSE */
 	
 	//CONSIDER: test for time_since_update > 0 for rest of function (probably would take more clock cycles than allowing the calculation to proceed on that rare occasion)
 	float t_upper, t_lower, t_deter;
@@ -710,73 +734,91 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	// Stochastic update
 	double rnd;
 	if (t_upper > 0){
-		//float random_part, rho_bar;
-		//rho_bar = (gamma_upper / gamma_sum);
+		#ifdef DEBUG_MODE_SYNAPSE
+			float random_part, rho_bar;
+			rho_bar = (gamma_upper / gamma_sum);
+		#endif /* DEBUG_MODE_SYNAPSE */
 		float in_exp, my_exp;
 		in_exp = -(t_upper * gamma_sum) / (*syn_const).tau;
 		my_exp = exp(in_exp);
 		
 		w_stoch = (gamma_upper / gamma_sum) * ( 1 - my_exp);
 		w_stoch += w * my_exp;
-		//printf("\nt_upper: %f, rho_bar: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_upper, rho_bar, in_exp, my_exp, w_stoch);
 		rnd = gasdev(&gaussian_synaptic_seed);
-		printf("rnd1: %f, ", rnd);
-		//random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
-		
+		#ifdef DEBUG_MODE_SYNAPSE
+			printf("\nt_upper: %f, rho_bar: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_upper, rho_bar, in_exp, my_exp, w_stoch);
+			random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
+		#endif /* DEBUG_MODE_SYNAPSE */
 		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
-		//printf("random: %f, w_stoch: %f\n", random_part, w_stoch);
+		#ifdef DEBUG_MODE_SYNAPSE
+			printf("rnd1: %f, random: %f, w_stoch: %f\n", rnd, random_part, w_stoch);
+		#endif /* DEBUG_MODE_SYNAPSE */
 		w = w_stoch;
 	}
 	if (t_lower > 0){
-		//float random_part;
+		#ifdef DEBUG_MODE_SYNAPSE
+			float random_part;
+		#endif /* DEBUG_MODE_SYNAPSE */
 		float in_exp, my_exp;
 		in_exp = -(t_lower * gamma_lower) / (*syn_const).tau;
 		my_exp = exp(in_exp);
 		
 		w_stoch = w * my_exp;
-		//printf("\nt_lower: %f, w: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_lower, w, in_exp, my_exp, w_stoch);
 		rnd = gasdev(&gaussian_synaptic_seed);
-		printf("rnd2: %f, ", rnd);
-		//random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) ) / (2 * gamma_lower) );
-		
+		#ifdef DEBUG_MODE_SYNAPSE
+			printf("\nt_lower: %f, w: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_lower, w, in_exp, my_exp, w_stoch);
+			random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) ) / (2 * gamma_lower) );
+		#endif /* DEBUG_MODE_SYNAPSE */
 		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_lower * t_lower) / (*syn_const).tau) ) / (2 * gamma_lower) );
-		//printf("random: %f, w_stoch: %f\n", random_part, w_stoch);
+		#ifdef DEBUG_MODE_SYNAPSE
+			printf("rnd2: %f, random: %f, w_stoch: %f\n", rnd, random_part, w_stoch);
+		#endif /* DEBUG_MODE_SYNAPSE */
 		w = w_stoch;
 	}
 	// Deterministic update
 	if (t_deter > 0){
-		/*float denominator = w * (w - 1);
-		float numerator = pow(w - 0.5, 2);
-		float X_0 = numerator / denominator;
-		printf("\nt_deter: %f, w: %f, num: %f, den: %f, X_0: %f\n", t_deter, w, numerator, denominator, X_0);
-		float in_exp, my_exp, X_exp, denom2, division, in_sqt, my_sqt, multiple, whole;
-		in_exp = t_deter/(2 * (*syn_const).tau);
-		my_exp = exp( in_exp );
-		X_exp = X_0 * my_exp;
-		denom2 = (X_exp - 1.);
-		division = 1 / denom2;
-		in_sqt = (1. + division ) ;
-		my_sqt = sqrt(in_sqt);
-		multiple = 0.5 * my_sqt;*/
-		
 		float X_0 = pow(w - 0.5, 2) / ( w * (w - 1));
 		
+		#ifdef DEBUG_MODE_SYNAPSE
+			float denominator = w * (w - 1);
+			float numerator = pow(w - 0.5, 2);
+			X_0 = numerator / denominator;
+			printf("\nt_deter: %f, w: %f, num: %f, den: %f, X_0: %f\n", t_deter, w, numerator, denominator, X_0);
+			float in_exp, my_exp, X_exp, denom2, division, in_sqt, my_sqt, multiple, whole;
+			in_exp = t_deter/(2 * (*syn_const).tau);
+			my_exp = exp( in_exp );
+			X_exp = X_0 * my_exp;
+			denom2 = (X_exp - 1.);
+			division = 1 / denom2;
+			in_sqt = (1. + division ) ;
+			my_sqt = sqrt(in_sqt);
+			multiple = 0.5 * my_sqt;
+		#endif /* DEBUG_MODE_SYNAPSE */
+		
+		
 		if (w < 0.5){
-			//whole = 0.5 - multiple;
+			#ifdef DEBUG_MODE_SYNAPSE
+				whole = 0.5 - multiple;
+			#endif /* DEBUG_MODE_SYNAPSE */
 			w_deter = 0.5 - (0.5 * sqrt( (1. + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1.)) ) ) );
 		}
 		else{
-			//whole = 0.5 + multiple;
+			#ifdef DEBUG_MODE_SYNAPSE
+				whole = 0.5 + multiple;
+			#endif /* DEBUG_MODE_SYNAPSE */
 			w_deter = 0.5 + (0.5 * sqrt( (1. + (1. / (X_0 * exp( t_deter/(2 * (*syn_const).tau) ) - 1.)) ) ) );
 		}
-		//printf("in_exp: %f, my_exp: %f, X_exp: %f, denom2: %f, division: %f, in_sqt: %f, my_sqt: %f, multiple: %f, w_deter: %f\n", in_exp, my_exp, X_exp, denom2, division, in_sqt, my_sqt, multiple, whole);
+		#ifdef DEBUG_MODE_SYNAPSE
+			printf("in_exp: %f, my_exp: %f, X_exp: %f, denom2: %f, division: %f, in_sqt: %f, my_sqt: %f, multiple: %f, w_deter: %f\n", in_exp, my_exp, X_exp, denom2, division, in_sqt, my_sqt, multiple, whole);
+		#endif /* DEBUG_MODE_SYNAPSE */
 		w = w_deter;
 	}
 	
 	c_end = c_end + ((*syn).preT[syn_id] * (*syn_const).c_pre) + ((*syn).postT[syn_id] * (*syn_const).c_post);
-	//if(syn_id == RECORDER_SYNAPSE_ID){
+	#ifdef DEBUG_MODE_SYNAPSE
 		printf("after influx: %f, w_final: %f\n", c_end, w);
-	//}
+	#endif /* DEBUG_MODE_SYNAPSE */
+	
 	// Reset preT and postT, so that calcium influx can only be applied once!
 	(*syn).preT[syn_id] = 0;
 	(*syn).postT[syn_id] = 0;
@@ -784,6 +826,10 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	(*syn).ca[syn_id] = c_end;
 	//TODO: should I put hard bounds on rho?
 	(*syn).rho[syn_id] = w;
+	if(syn_id == RECORDER_SYNAPSE_ID){
+		// Print state of a single synapse
+		print_synapse_activity(current_time, syn);
+	}
 }
 
 
@@ -826,24 +872,26 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynapse *fixed_syn_
 	// Reporter variables
 	free(summary_exc_spikes);
 	free(summary_inh_spikes);
-	
-	// Debugging variables
-	free(lif_gauss_totals);
-	free(lif_mean_destination);
-	free(lif_debug_no_EE);
-	free(lif_debug_no_IE);
-	free(lif_debug_no_EI);
-	free(lif_debug_no_II);
-	free(lif_mean_dest_EE);
-	free(lif_mean_dest_IE);
-	free(lif_mean_dest_EI);
-	free(lif_mean_dest_II);
-	free(lif_in_EE);
-	free(lif_in_IE);
-	free(lif_in_EI);
-	free(lif_in_II);
 	free(lif_currents_EE);
 	free(lif_currents_IE);
 	free(lif_currents_EI);
 	free(lif_currents_II);
+	
+	#ifdef DEBUG_MODE_NETWORK
+		// Debugging variables
+		free(lif_gauss_totals);
+		free(lif_mean_destination);
+		free(lif_debug_no_EE);
+		free(lif_debug_no_IE);
+		free(lif_debug_no_EI);
+		free(lif_debug_no_II);
+		free(lif_mean_dest_EE);
+		free(lif_mean_dest_IE);
+		free(lif_mean_dest_EI);
+		free(lif_mean_dest_II);
+		free(lif_in_EE);
+		free(lif_in_IE);
+		free(lif_in_EI);
+		free(lif_in_II);
+	#endif /* DEBUG_MODE_NETWORK */
 }
