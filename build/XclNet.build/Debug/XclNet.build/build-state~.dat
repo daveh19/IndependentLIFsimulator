@@ -1,556 +1,0 @@
-TXclNet
-v7
-r0
-t341234635.936905
-cCheck dependencies
-cCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" normal x86_64 c com.apple.compilers.gcc.4_2
-cCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" normal x86_64 c com.apple.compilers.gcc.4_2
-
-N/Developer/SDKs/MacOSX10.6.sdk
-c000000004BF4701900000000000000EE
-t1274310681
-s238
-
-N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/OpenCL.framework/Headers/opencl.h
-c000000004B45127B000000000000022A
-t1262817915
-s554
-
-N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/OpenCL.framework/OpenCL
-c000000004D5A2791000000000000A23C
-t1297754001
-s41532
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/errno.h
-c000000004AC59C8100000000000003EB
-t1254464641
-s1003
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/fcntl.h
-c000000004AC59C8100000000000003EA
-t1254464641
-s1002
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/math.h
-c000000004AC599B500000000000004F1
-t1254463925
-s1265
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
-c000000004AC59C820000000000004174
-t1254464642
-s16756
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdlib.h
-c000000004AC59C820000000000002DF5
-t1254464642
-s11765
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/string.h
-c000000004AC59C820000000000001731
-t1254464642
-s5937
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/stat.h
-c000000004B90BBAA0000000000004A1D
-t1267776426
-s18973
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/types.h
-c000000004B90BBAB0000000000002905
-t1267776427
-s10501
-
-N/Developer/SDKs/MacOSX10.6.sdk/usr/include/unistd.h
-c000000004AC59C82000000000000563E
-t1254464642
-s22078
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c
-c000000004E9EDC61000000000000006E
-t1319033953
-s110
-i"GeneralIncludes.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.c
-c000000004E8AD14D0000000000005F0B
-t1317720397
-s24331
-i"GeneralIncludes.h"
-i"DataTools.h"
-i"SpikeTrains.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.h
-c000000004E8AD164000000000000046F
-t1317720420
-s1135
-i"Synapse.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c
-c000000004DDE5D3C00000000000004A3
-t1306418492
-s1187
-i"GeneralIncludes.h"
-i"ExternalCurrents.h"
-i"LIFNeuron.h"
-i"NumericalTools.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.h
-c000000004DDCD265000000000000009B
-t1306317413
-s155
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/GeneralIncludes.h
-c000000004E9EDB860000000000000327
-t1319033734
-s807
-i<stdio.h>
-i<errno.h>
-i<stdlib.h>
-i<fcntl.h>
-i<math.h>
-i<string.h>
-i<sys/types.h>
-i<sys/stat.h>
-i<unistd.h>
-i<OpenCL/opencl.h>
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c
-c000000004EA69BD90000000000000862
-t1319541721
-s2146
-i"HandleOpenCL.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h
-c000000004EA687F100000000000005A7
-t1319536625
-s1447
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c
-c000000004DDE56710000000000003017
-t1306416753
-s12311
-i"GeneralIncludes.h"
-i"LIFNeuron.h"
-i"DataTools.h"
-i"NumericalTools.h"
-i"SpikeTrains.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.h
-c000000004DDE62B400000000000005E6
-t1306419892
-s1510
-i"GeneralIncludes.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c
-c000000004DDE6BEA00000000000023F2
-t1306422250
-s9202
-i"GeneralIncludes.h"
-i"DataTools.h"
-i"LIFNeuron.h"
-i"Synapse.h"
-i"NumericalTools.h"
-i"SpikeTrains.h"
-i"ExternalCurrents.h"
-i"NetworkTopology.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.c
-c000000004DDE5D3F000000000000089A
-t1306418495
-s2202
-i"GeneralIncludes.h"
-i"NetworkTopology.h"
-i"NumericalTools.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.h
-c000000004DDCD265000000000000014E
-t1306317413
-s334
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.c
-c000000004DE639530000000000001CA9
-t1306933587
-s7337
-i"NumericalTools.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.h
-c000000004DE6395300000000000001C3
-t1306933587
-s451
-i<stdlib.h>
-i<stdio.h>
-i<math.h>
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.c
-c000000004E98440300000000000068A4
-t1318601731
-s26788
-i"SpikeTrains.h"
-i"Synapse.h"
-i"NumericalTools.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.h
-c000000004E89AF6F0000000000000E87
-t1317646191
-s3719
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.c
-c000000004E8AD126000000000000259A
-t1317720358
-s9626
-i"GeneralIncludes.h"
-i"Synapse.h"
-i"DataTools.h"
-i"NumericalTools.h"
-i"SpikeTrains.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h
-c000000004DE639530000000000000635
-t1306933587
-s1589
-i"GeneralIncludes.h"
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet
-t2
-s0
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/CLNet.o
-t1319034661
-s2732
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/DataTools.o
-t1319034661
-s29704
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/ExternalCurrents.o
-t1319034661
-s3864
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o
-t2
-s0
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/LIFNeuron.o
-t1319034661
-s15528
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkSim.o
-t2
-s0
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkTopology.o
-t1319034661
-s5020
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NumericalTools.o
-t1319034661
-s19396
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/SpikeTrains.o
-t1319034661
-s24108
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/Synapse.o
-t1319034661
-s18632
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/XclNet.LinkFileList
-c000000004EA69C4B0000000000000112
-t1319541835
-s274
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/hello.o
-t1319034661
-s8812
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o
-t2
-s0
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c
-c000000004E9EDCC10000000000002773
-t1319034049
-s10099
-i<fcntl.h>
-i<stdio.h>
-i<stdlib.h>
-i<string.h>
-i<math.h>
-i<unistd.h>
-i<sys/types.h>
-i<sys/stat.h>
-i<OpenCL/opencl.h>
-
-N/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c
-c000000004EA69BD500000000000011B7
-t1319541717
-s4535
-i"GeneralIncludes.h"
-i"HandleOpenCL.h"
-
-CCheck dependencies
-r0
-lSLF07#2@18"Check dependencies341234635#341234635#0(0"0(0#1#0"8614651840#0"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/CLNet.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.412882
-e340727461.510842
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/CLNet.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@81"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c340727461#340727461#0(0"0(0#0#73"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c8603868512#1573"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/CLNet.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/CLNet.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/DataTools.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.414039
-e340727461.558126
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/DataTools.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@85"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.c340727461#340727461#0(0"0(0#0#77"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.c8601779104#1581"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/DataTools.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/DataTools.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/ExternalCurrents.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.510958
-e340727461.570972
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/ExternalCurrents.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@92"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c340727461#340727461#0(0"0(0#0#84"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c8603724832#1595"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/ExternalCurrents.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/ExternalCurrents.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s341234635.895424
-e341234635.909508
-r0
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-oIn file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:10:
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h:22: error: expected specifier-qualifier-list before 'size_t'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h:43: error: expected ')' before 'cl'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'populateCLstruct':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:13: error: expected expression before 'CL'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:15: warning: control reaches end of non-void function
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'connectToComputeDevice':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: warning: implicit declaration of function 'clGetDeviceIDs'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'NULL' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: (Each undeclared identifier is reported only once
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: for each function it appears in.)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'CL_DEVICE_TYPE_GPU' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'CL_DEVICE_TYPE_CPU' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'CL' has no member named 'device_id'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:22: error: 'CL_SUCCESS' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:24: warning: implicit declaration of function 'printf'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:24: warning: incompatible implicit declaration of built-in function 'printf'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:25: error: 'EXIT_FAILURE' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:28: warning: control reaches end of non-void function
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'createComputeContext':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: error: 'CL' has no member named 'context'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: warning: implicit declaration of function 'clCreateContext'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: error: 'CL' has no member named 'device_id'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: error: 'NULL' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:34: error: 'CL' has no member named 'context'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:36: warning: incompatible implicit declaration of built-in function 'printf'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:37: error: 'EXIT_FAILURE' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:40: warning: control reaches end of non-void function
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'createCommandQueue':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'commands' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: warning: implicit declaration of function 'clCreateCommandQueue'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'context' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'device_id' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'err' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:48: warning: incompatible implicit declaration of built-in function 'printf'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:49: error: 'EXIT_FAILURE' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:52: warning: control reaches end of non-void function
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'createProgram':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: error: 'CL' has no member named 'program'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: warning: implicit declaration of function 'clCreateProgramWithSource'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: error: 'CL' has no member named 'context'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: error: 'NULL' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:58: error: 'CL' has no member named 'program'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:60: warning: incompatible implicit declaration of built-in function 'printf'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:61: error: 'EXIT_FAILURE' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:63: warning: control reaches end of non-void function
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'buildProgram':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:68: warning: implicit declaration of function 'clBuildProgram'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:68: error: 'CL' has no member named 'program'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:68: error: 'NULL' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:69: error: 'CL_SUCCESS' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:71: error: 'size_t' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:71: error: expected ';' before 'len'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:74: warning: incompatible implicit declaration of built-in function 'printf'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: warning: implicit declaration of function 'clGetProgramBuildInfo'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'CL' has no member named 'program'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'CL' has no member named 'device_id'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'CL_PROGRAM_BUILD_LOG' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'len' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:77: warning: implicit declaration of function 'exit'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:77: warning: incompatible implicit declaration of built-in function 'exit'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:79: warning: control reaches end of non-void function
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: At top level:
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:81: error: expected ')' before 'cl'
-lSLF07#2@88"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234635#341234635#0(8710"In file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:10:/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h:22: error: expected specifier-qualifier-list before 'size_t'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h:43: error: expected ')' before 'cl'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'populateCLstruct':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:13: error: expected expression before 'CL'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:15: warning: control reaches end of non-void function/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'connectToComputeDevice':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: warning: implicit declaration of function 'clGetDeviceIDs'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'NULL' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: (Each undeclared identifier is reported only once/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: for each function it appears in.)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'CL_DEVICE_TYPE_GPU' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'CL_DEVICE_TYPE_CPU' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:21: error: 'CL' has no member named 'device_id'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:22: error: 'CL_SUCCESS' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:24: warning: implicit declaration of function 'printf'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:24: warning: incompatible implicit declaration of built-in function 'printf'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:25: error: 'EXIT_FAILURE' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:28: warning: control reaches end of non-void function/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'createComputeContext':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: error: 'CL' has no member named 'context'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: warning: implicit declaration of function 'clCreateContext'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: error: 'CL' has no member named 'device_id'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:33: error: 'NULL' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:34: error: 'CL' has no member named 'context'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:36: warning: incompatible implicit declaration of built-in function 'printf'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:37: error: 'EXIT_FAILURE' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:40: warning: control reaches end of non-void function/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'createCommandQueue':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'commands' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: warning: implicit declaration of function 'clCreateCommandQueue'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'context' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'device_id' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:45: error: 'err' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:48: warning: incompatible implicit declaration of built-in function 'printf'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:49: error: 'EXIT_FAILURE' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:52: warning: control reaches end of non-void function/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'createProgram':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: error: 'CL' has no member named 'program'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: warning: implicit declaration of function 'clCreateProgramWithSource'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: error: 'CL' has no member named 'context'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:57: error: 'NULL' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:58: error: 'CL' has no member named 'program'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:60: warning: incompatible implicit declaration of built-in function 'printf'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:61: error: 'EXIT_FAILURE' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:63: warning: control reaches end of non-void function/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: In function 'buildProgram':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:68: warning: implicit declaration of function 'clBuildProgram'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:68: error: 'CL' has no member named 'program'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:68: error: 'NULL' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:69: error: 'CL_SUCCESS' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:71: error: 'size_t' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:71: error: expected ';' before 'len'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:74: warning: incompatible implicit declaration of built-in function 'printf'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: warning: implicit declaration of function 'clGetProgramBuildInfo'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'CL' has no member named 'program'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'CL' has no member named 'device_id'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'CL_PROGRAM_BUILD_LOG' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:75: error: 'len' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:77: warning: implicit declaration of function 'exit'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:77: warning: incompatible implicit declaration of built-in function 'exit'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:79: warning: control reaches end of non-void function/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c: At top level:/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c:81: error: expected ')' before 'cl'55(4@49"Expected specifier-qualifier-list before 'size_t'341234635#107#142#2(7@102"In file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234635#18446744073709551615#0#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#10#0#10#0#0"0(13@133"Expected specifier-qualifier-list before 'size_t' in /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341234635#18446744073709551615#0#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341229425#22#0#22#0#0"0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341229425#22#0#22#0#19"expected * before *0(4@24"Expected ')' before 'cl'341234635#249#117#2(7@102"In file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234635#18446744073709551615#0#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#10#0#10#0#0"0(13@108"Expected ')' before 'cl' in /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341234635#18446744073709551615#0#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341229425#43#0#43#0#0"0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341229425#43#0#43#0#19"expected * before *0(4@31"Expected expression before 'CL'341234635#480#124#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#13#0#13#0#19"expected * before *0(22@40"Control reaches end of non-void function341234635#604#135#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#15#0#15#0#40"control reaches end of non-void function0(22@49"Implicit declaration of function 'clGetDeviceIDs'341234635#859#144#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#21#0#21#0#36"implicit declaration of function '*'0(4@46"'NULL' undeclared (first use in this function)341234635#1003#139#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#21#0#21#0#43"'*' undeclared (first use in this function)0(4@60"'CL_DEVICE_TYPE_GPU' undeclared (first use in this function)341234635#1410#153#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#21#0#21#0#43"'*' undeclared (first use in this function)0(4@60"'CL_DEVICE_TYPE_CPU' undeclared (first use in this function)341234635#1563#153#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#21#0#21#0#43"'*' undeclared (first use in this function)0(4@36"'CL' has no member named 'device_id'341234635#1716#129#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#21#0#21#0#27"'*' has no member named '*'0(4@52"'CL_SUCCESS' undeclared (first use in this function)341234635#1845#145#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#22#0#22#0#43"'*' undeclared (first use in this function)0(22@41"Implicit declaration of function 'printf'341234635#1990#136#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#24#0#24#0#36"implicit declaration of function '*'0(22@63"Incompatible implicit declaration of built-in function 'printf'341234635#2126#158#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#24#0#24#0#0"0(4@54"'EXIT_FAILURE' undeclared (first use in this function)341234635#2284#147#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#25#0#25#0#43"'*' undeclared (first use in this function)0(22@40"Control reaches end of non-void function341234635#2431#135#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#28#0#28#0#40"control reaches end of non-void function0(4@34"'CL' has no member named 'context'341234635#2684#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#33#0#33#0#27"'*' has no member named '*'0(22@50"Implicit declaration of function 'clCreateContext'341234635#2811#145#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#33#0#33#0#36"implicit declaration of function '*'0(4@36"'CL' has no member named 'device_id'341234635#2956#129#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#33#0#33#0#27"'*' has no member named '*'0(4@46"'NULL' undeclared (first use in this function)341234635#3085#139#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#33#0#33#0#43"'*' undeclared (first use in this function)0(4@34"'CL' has no member named 'context'341234635#3224#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#34#0#34#0#27"'*' has no member named '*'0(22@63"Incompatible implicit declaration of built-in function 'printf'341234635#3351#158#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#36#0#36#0#0"0(4@54"'EXIT_FAILURE' undeclared (first use in this function)341234635#3509#147#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#37#0#37#0#43"'*' undeclared (first use in this function)0(22@40"Control reaches end of non-void function341234635#3656#135#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#40#0#40#0#40"control reaches end of non-void function0(4@50"'commands' undeclared (first use in this function)341234635#3907#143#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#45#0#45#0#43"'*' undeclared (first use in this function)0(22@55"Implicit declaration of function 'clCreateCommandQueue'341234635#4050#150#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#45#0#45#0#36"implicit declaration of function '*'0(4@49"'context' undeclared (first use in this function)341234635#4200#142#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#45#0#45#0#43"'*' undeclared (first use in this function)0(4@51"'device_id' undeclared (first use in this function)341234635#4342#144#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#45#0#45#0#43"'*' undeclared (first use in this function)0(4@45"'err' undeclared (first use in this function)341234635#4486#138#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#45#0#45#0#43"'*' undeclared (first use in this function)0(22@63"Incompatible implicit declaration of built-in function 'printf'341234635#4624#158#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#48#0#48#0#0"0(4@54"'EXIT_FAILURE' undeclared (first use in this function)341234635#4782#147#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#49#0#49#0#43"'*' undeclared (first use in this function)0(22@40"Control reaches end of non-void function341234635#4929#135#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#52#0#52#0#40"control reaches end of non-void function0(4@34"'CL' has no member named 'program'341234635#5175#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#57#0#57#0#27"'*' has no member named '*'0(22@60"Implicit declaration of function 'clCreateProgramWithSource'341234635#5302#155#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#57#0#57#0#36"implicit declaration of function '*'0(4@34"'CL' has no member named 'context'341234635#5457#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#57#0#57#0#27"'*' has no member named '*'0(4@46"'NULL' undeclared (first use in this function)341234635#5584#139#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#57#0#57#0#43"'*' undeclared (first use in this function)0(4@34"'CL' has no member named 'program'341234635#5723#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#58#0#58#0#27"'*' has no member named '*'0(22@63"Incompatible implicit declaration of built-in function 'printf'341234635#5850#158#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#60#0#60#0#0"0(4@54"'EXIT_FAILURE' undeclared (first use in this function)341234635#6008#147#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#61#0#61#0#43"'*' undeclared (first use in this function)0(22@40"Control reaches end of non-void function341234635#6155#135#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#63#0#63#0#40"control reaches end of non-void function0(22@49"Implicit declaration of function 'clBuildProgram'341234635#6400#144#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#68#0#68#0#36"implicit declaration of function '*'0(4@34"'CL' has no member named 'program'341234635#6544#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#68#0#68#0#27"'*' has no member named '*'0(4@46"'NULL' undeclared (first use in this function)341234635#6671#139#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#68#0#68#0#43"'*' undeclared (first use in this function)0(4@52"'CL_SUCCESS' undeclared (first use in this function)341234635#6810#145#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#69#0#69#0#43"'*' undeclared (first use in this function)0(4@48"'size_t' undeclared (first use in this function)341234635#6955#141#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#71#0#71#0#43"'*' undeclared (first use in this function)0(4@25"Expected ';' before 'len'341234635#7096#118#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#71#0#71#0#19"expected * before *0(22@63"Incompatible implicit declaration of built-in function 'printf'341234635#7214#158#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#74#0#74#0#0"0(22@56"Implicit declaration of function 'clGetProgramBuildInfo'341234635#7372#151#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#75#0#75#0#36"implicit declaration of function '*'0(4@34"'CL' has no member named 'program'341234635#7523#127#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#75#0#75#0#27"'*' has no member named '*'0(4@36"'CL' has no member named 'device_id'341234635#7650#129#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#75#0#75#0#27"'*' has no member named '*'0(4@62"'CL_PROGRAM_BUILD_LOG' undeclared (first use in this function)341234635#7779#155#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#75#0#75#0#43"'*' undeclared (first use in this function)0(4@45"'len' undeclared (first use in this function)341234635#7934#138#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#75#0#75#0#43"'*' undeclared (first use in this function)0(22@39"Implicit declaration of function 'exit'341234635#8072#134#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#77#0#77#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'exit'341234635#8206#156#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#77#0#77#0#0"0(22@40"Control reaches end of non-void function341234635#8362#135#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#79#0#79#0#40"control reaches end of non-void function0(23@13"At top level:341234635#8497#96#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#0#0#0#0#0"0(4@24"Expected ')' before 'cl'341234635#8593#117#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c341234521#81#0#81#0#19"expected * before *0(0#0#80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c8611634304#1587"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/HandleOpenCL.o"1#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/LIFNeuron.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.518988
-e340727461.583356
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/LIFNeuron.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@85"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c340727461#340727461#0(0"0(0#0#77"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c8606264288#1581"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/LIFNeuron.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/LIFNeuron.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkSim.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727508.739403
-e340727508.784547
-r0
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkSim.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:13: error: conflicting types for 'finalise'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h:66: error: previous declaration of 'finalise' was here
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c: In function 'main':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:28: error: 'syn_time_of_last_save' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:28: error: (Each undeclared identifier is reported only once
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:28: error: for each function it appears in.)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:32: warning: implicit declaration of function 'neuron_checkpoint_init'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:32: warning: assignment makes pointer from integer without a cast
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:44: warning: implicit declaration of function 'saveTopologyToFile'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:50: warning: implicit declaration of function 'synapse_checkpoint_init'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:50: warning: assignment makes pointer from integer without a cast
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:69: warning: implicit declaration of function 'createRasterOutputFileHeader'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:69: error: 'current_transfer_delay' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:69: error: 'current_transfer_const' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:123: warning: implicit declaration of function 'saveRasterOutput'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:139: warning: implicit declaration of function 'synapse_checkpoint_save'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:140: warning: implicit declaration of function 'neuron_checkpoint_save'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:178: error: too few arguments to function 'saveSynapseOutputFile'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:184: warning: implicit declaration of function 'saveNeuronOutputFile'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c: At top level:
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:236: error: conflicting types for 'finalise'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h:66: error: previous declaration of 'finalise' was here
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c: In function 'finalise':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:240: warning: implicit declaration of function 'synapse_finalise'
-lSLF07#2@86"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c340727508#340727508#0(3315"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:13: error: conflicting types for 'finalise'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h:66: error: previous declaration of 'finalise' was here/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c: In function 'main':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:28: error: 'syn_time_of_last_save' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:28: error: (Each undeclared identifier is reported only once/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:28: error: for each function it appears in.)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:32: warning: implicit declaration of function 'neuron_checkpoint_init'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:32: warning: assignment makes pointer from integer without a cast/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:44: warning: implicit declaration of function 'saveTopologyToFile'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:50: warning: implicit declaration of function 'synapse_checkpoint_init'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:50: warning: assignment makes pointer from integer without a cast/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:69: warning: implicit declaration of function 'createRasterOutputFileHeader'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:69: error: 'current_transfer_delay' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:69: error: 'current_transfer_const' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:123: warning: implicit declaration of function 'saveRasterOutput'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:139: warning: implicit declaration of function 'synapse_checkpoint_save'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:140: warning: implicit declaration of function 'neuron_checkpoint_save'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:178: error: too few arguments to function 'saveSynapseOutputFile'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:184: warning: implicit declaration of function 'saveNeuronOutputFile'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c: At top level:/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:236: error: conflicting types for 'finalise'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h:66: error: previous declaration of 'finalise' was here/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c: In function 'finalise':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c:240: warning: implicit declaration of function 'synapse_finalise'20(4@32"Conflicting types for 'finalise'340727508#0#123#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#13#0#13#0#25"conflicting types for '*'0(13@43"Previous declaration of 'finalise' was here340727508#123#131#0(6@75"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h328626387#66#0#66#0#0"0(4@63"'syn_time_of_last_save' undeclared (first use in this function)340727508#354#154#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#28#0#28#0#43"'*' undeclared (first use in this function)0(22@57"Implicit declaration of function 'neuron_checkpoint_init'340727508#772#150#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#32#0#32#0#36"implicit declaration of function '*'0(22@52"Assignment makes pointer from integer without a cast340727508#922#145#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#32#0#32#0#0"0(22@53"Implicit declaration of function 'saveTopologyToFile'340727508#1067#146#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#44#0#44#0#36"implicit declaration of function '*'0(22@58"Implicit declaration of function 'synapse_checkpoint_init'340727508#1213#151#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#50#0#50#0#36"implicit declaration of function '*'0(22@52"Assignment makes pointer from integer without a cast340727508#1364#145#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#50#0#50#0#0"0(22@63"Implicit declaration of function 'createRasterOutputFileHeader'340727508#1509#156#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#69#0#69#0#36"implicit declaration of function '*'0(4@64"'current_transfer_delay' undeclared (first use in this function)340727508#1665#155#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#69#0#69#0#43"'*' undeclared (first use in this function)0(4@64"'current_transfer_const' undeclared (first use in this function)340727508#1820#155#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#69#0#69#0#43"'*' undeclared (first use in this function)0(22@51"Implicit declaration of function 'saveRasterOutput'340727508#1975#145#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#123#0#123#0#36"implicit declaration of function '*'0(22@58"Implicit declaration of function 'synapse_checkpoint_save'340727508#2120#152#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#139#0#139#0#36"implicit declaration of function '*'0(22@57"Implicit declaration of function 'neuron_checkpoint_save'340727508#2272#151#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#140#0#140#0#36"implicit declaration of function '*'0(4@53"Too few arguments to function 'saveSynapseOutputFile'340727508#2423#145#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#178#0#178#0#33"too few arguments to function '*'0(22@55"Implicit declaration of function 'saveNeuronOutputFile'340727508#2568#149#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#184#0#184#0#36"implicit declaration of function '*'0(23@13"At top level:340727508#2717#94#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#0#0#0#0#0"0(4@32"Conflicting types for 'finalise'340727508#2811#124#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#236#0#236#0#25"conflicting types for '*'0(13@43"Previous declaration of 'finalise' was here340727508#2935#131#0(6@75"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.h328626387#66#0#66#0#0"0(22@51"Implicit declaration of function 'synapse_finalise'340727508#3170#145#0(6@78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c328115050#240#0#240#0#36"implicit declaration of function '*'0(0#0#78"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c7299823947311167488#1583"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkSim.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkSim.o"1#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkTopology.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.468570
-e340727461.536421
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkTopology.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@91"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.c340727461#340727461#0(0"0(0#0#83"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.c8606407680#1593"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NetworkTopology.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NetworkTopology.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NumericalTools.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.415483
-e340727461.520203
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NumericalTools.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@90"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.c340727461#340727461#0(0"0(0#0#82"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.c8606447552#1591"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/NumericalTools.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/NumericalTools.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/SpikeTrains.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.413437
-e340727461.559549
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/SpikeTrains.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@87"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.c340727461#340727461#0(0"0(0#0#79"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.c8602857728#1585"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/SpikeTrains.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/SpikeTrains.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/Synapse.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.414818
-e340727461.538661
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/Synapse.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@83"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.c340727461#340727461#0(0"0(0#0#75"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.c8603695744#1577"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/Synapse.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/Synapse.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/hello.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s340727461.412286
-e340727461.524669
-r1
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/hello.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@81"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c340727461#340727461#0(0"0(0#0#73"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c8604381600#1573"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/hello.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/hello.o"0#
-
-CCompileC build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" normal x86_64 c com.apple.compilers.gcc.4_2
-s341234635.894812
-e341234635.936843
-r0
-xCompileC
-xbuild/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.gcc.4_2
-oIn file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:2:
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h:43: error: expected ')' before 'cl'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c: In function 'main':
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:50: warning: implicit declaration of function 'createKernel'
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:122: error: 'correct' undeclared (first use in this function)
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:122: error: (Each undeclared identifier is reported only once
-o/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:122: error: for each function it appears in.)
-lSLF07#2@80"Compile /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341234635#341234635#0(832"In file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:2:/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h:43: error: expected ')' before 'cl'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c: In function 'main':/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:50: warning: implicit declaration of function 'createKernel'/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:122: error: 'correct' undeclared (first use in this function)/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:122: error: (Each undeclared identifier is reported only once/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c:122: error: for each function it appears in.)3(4@24"Expected ')' before 'cl'341234635#98#117#2(7@94"In file included from /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341234635#18446744073709551615#0#0(6@72"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341234517#2#0#2#0#0"0(13@108"Expected ')' before 'cl' in /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341234635#18446744073709551615#0#0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341229425#43#0#43#0#0"0(6@80"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/HandleOpenCL.h341229425#43#0#43#0#19"expected * before *0(22@47"Implicit declaration of function 'createKernel'341234635#309#134#0(6@72"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341234517#50#0#50#0#36"implicit declaration of function '*'0(4@49"'correct' undeclared (first use in this function)341234635#443#135#0(6@72"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c341234517#122#0#122#0#43"'*' undeclared (first use in this function)0(0#0#72"/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c8611780928#1571"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-generated-files.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-own-target-headers.hmap" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-all-target-headers.hmap" -iquote "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/XclNet-project-headers.hmap" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/include" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources/x86_64" "-I/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/DerivedSources" -c "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/main.c" -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/main.o"1#
-
-CLd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet" normal x86_64
-s340727839.287636
-e340727839.301051
-r1
-xLd
-x/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet
-xnormal
-xx86_64
-lSLF07#2@89"Link /Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet340727839#340727839#0(0"0(0#0#0"8612171040#657"    cd "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet"    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk "-L/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" "-F/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug" -filelist "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/XclNet.build/Debug/XclNet.build/Objects-normal/x86_64/XclNet.LinkFileList" -mmacosx-version-min=10.6 -framework OpenCL -o "/Users/davidhiggins/Research/C code/OpenCL LIF Syn Network/XclNet/build/Debug/XclNet"0#
-

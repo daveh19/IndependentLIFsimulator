@@ -22,7 +22,7 @@
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (1000) /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (300000) /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
@@ -36,7 +36,7 @@
 #define BIN_SIZE (0.1)
 
 // Transfer voltages
-#define J_EE (0.1)
+#define J_EE (0.2) /*(0.1)*/
 #define J_IE (0.2)
 #define J_II (-0.8)
 #define J_EI (-0.4)
