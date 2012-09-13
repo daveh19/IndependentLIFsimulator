@@ -825,7 +825,17 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	(*syn).time_of_last_update[syn_id] = current_time;
 	(*syn).ca[syn_id] = c_end;
 	//TODO: should I put hard bounds on rho?
-	(*syn).rho[syn_id] = w;
+	if (w > 0){
+		if ( w < 1){
+			(*syn).rho[syn_id] = w;
+		}
+		else{
+			(*syn).rho[syn_id] = 1;
+		}
+	}
+	else{
+		(*syn).rho[syn_id] = 0;
+	}
 	if(syn_id == RECORDER_SYNAPSE_ID){
 		// Print state of a single synapse
 		print_synapse_activity(current_time, syn);

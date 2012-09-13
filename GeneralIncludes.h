@@ -31,7 +31,7 @@
 #define CONNECTIVITY_PROBABILITY (0.05)
 
 // Time step sizes and statistical bin widths
-#define LIF_DT (0.001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
+#define LIF_DT (0.0001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
 #define SYN_DT LIF_DT /*TODO: at a later stage I will have the synapse update more slowly than the lif*/
 #define BIN_SIZE (0.1)
 
@@ -52,12 +52,12 @@
 #define LIF_CM (0.001)
 #define LIF_RM (20.0)
 #define LIF_SIGMA (5)
-#define LIF_REFRAC_TIME (20) /*timesteps*/
+#define LIF_REFRAC_TIME (200) /*timesteps*/
 
 // Synapse model specific
 #define SYN_RHO_INITIAL (1.0)
 #define SYN_CA_INITIAL (0.0)
-#define SYN_CALCIUM_DELAY (5) /*5*/ /*timesteps (needs to be modified when DT is modified above*/
+#define SYN_CALCIUM_DELAY (50) /*5*/ /*timesteps (needs to be modified when DT is modified above*/
 #define SYN_GAMMA_P (725.085)
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)
