@@ -13,7 +13,7 @@
 #define EPSILLON (0.0000001)
 
 // Data reporters
-#define RECORDER_NEURON_ID (100)
+#define RECORDER_NEURON_ID (201)
 #define RECORDER_SYNAPSE_ID (10)
 
 #define USE_GPU (1) /* 1=gpu, 0=cpu */

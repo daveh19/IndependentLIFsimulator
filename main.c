@@ -352,7 +352,7 @@ int main (int argc, const char * argv[]) {
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
-		(*syn_p).rho[i] = (*syn_p).rho_initial[i] = ran2(&uniform_synaptic_seed);
+		(*syn_p).rho[i] = (*syn_p).rho_initial[i] = 0.377491; //ran2(&uniform_synaptic_seed);
 		
 		(*syn_p).ca[i] = SYN_CA_INITIAL;
 		(*rnd_syn_p).d_z[i] = 362436069 - i + PARALLEL_SEED;
@@ -465,7 +465,7 @@ int main (int argc, const char * argv[]) {
 				//}
 				(*syn_p).preT[ (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k] ] = 1;
 				#ifdef DEBUG_MODE_SPIKES
-					printf("Pre Spike (LIF %d) ", (*spike_queue_p).neuron_id[offset][i]);
+					printf("Pre Spike (LIF %d) \n", (*spike_queue_p).neuron_id[offset][i]);
 				#endif /* DEBUG_MODE_SPIKES */
 				updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k], j);
 			}
@@ -488,7 +488,7 @@ int main (int argc, const char * argv[]) {
 		// print: time, voltage, input current
 		fprintf(intracellular_output, "%d %f %d %f %f ", j, (*lif_p).V[RECORDER_NEURON_ID], (*lif_p).time_since_spike[RECORDER_NEURON_ID], (*lif_p).I[RECORDER_NEURON_ID], (*lif_p).gauss[RECORDER_NEURON_ID]);
 		
-		//int local_count = 0;
+		int local_count = 0;
 		// Update LIFs: spike detection/propagation to post-synaptic lifs as well as pre- and post-lif neurons
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			if((*lif_p).time_since_spike[i] == 0){
@@ -503,7 +503,7 @@ int main (int argc, const char * argv[]) {
 					// as non EE based lifs are not added to incoming_synapses lists this is safe
 					(*syn_p).postT[(*lif_p).incoming_synapse_index[i][k]] = 1;
 					#ifdef DEBUG_MODE_SPIKES
-						printf("Post Spike (LIF %d) ", i);
+						printf("Post Spike (LIF %d) \n", i);
 					#endif /* DEBUG_MODE_SPIKES */
 					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).incoming_synapse_index[i][k], j);
 					//if(i==0){
@@ -518,11 +518,14 @@ int main (int argc, const char * argv[]) {
 						if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
 							//local_count++;
 							lif_currents_EE[j] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
+							//printf("DEBUG: synaptic transfer voltage: %f, rho: %f, transfer voltage: %fc\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]], transfer_voltage);
+							//printf("DEBUG: total transfer voltage: %f, time: %f\n", lif_currents_EE[j], (j * LIF_DT));
+							local_count++;
 						}
 					//#endif /* DEBUG_MODE_NETWORK */
 					// Event-based 4 (Update synapse: Update in advance of current transfer)
 					#ifdef DEBUG_MODE_SPIKES
-						printf("Spike transfer (LIF %d) ", i);
+						printf("Spike transfer (LIF %d) \n", i);
 					#endif /* DEBUG_MODE_SPIKES */
 					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
@@ -587,6 +590,8 @@ int main (int argc, const char * argv[]) {
 			*/
 		} // end of loop over neurons
 		//printf("count: %d\n", local_count);
+		
+		//printf("local_count: %d, time: %f\n", local_count, (j*LIF_DT));
 		
 		// Print total I to intracellular recorder file
 		fprintf(intracellular_output, "%f %f %f %f %f\n", (*lif_p).I[RECORDER_NEURON_ID], lif_currents_EE[j], lif_currents_IE[j], lif_currents_EI[j], lif_currents_II[j]);
