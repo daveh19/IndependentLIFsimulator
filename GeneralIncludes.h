@@ -41,6 +41,8 @@
 #define J_II (-0.8)
 #define J_EI (-0.4)
 
+#define RHO_FIXED (0.5) /*testing fixed transfer strength for Mean Field comparison*/
+
 #define J_EXT (10.)
 //TODO: separate drive to exc and inh pops
 
