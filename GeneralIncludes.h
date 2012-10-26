@@ -22,7 +22,7 @@
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (300000) /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (30000) /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
@@ -31,7 +31,7 @@
 #define CONNECTIVITY_PROBABILITY (0.05)
 
 // Time step sizes and statistical bin widths
-#define LIF_DT (0.0001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
+#define LIF_DT (0.001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
 #define SYN_DT LIF_DT /*TODO: at a later stage I will have the synapse update more slowly than the lif*/
 #define BIN_SIZE (0.1)
 
@@ -41,7 +41,7 @@
 #define J_II (-0.8)
 #define J_EI (-0.4)
 
-#define RHO_FIXED (0.5) /*testing fixed transfer strength for Mean Field comparison*/
+//#define RHO_FIXED (0.5) /*testing fixed transfer strength for Mean Field comparison*/
 
 #define J_EXT (10.)
 //TODO: separate drive to exc and inh pops
@@ -54,12 +54,12 @@
 #define LIF_CM (0.001)
 #define LIF_RM (20.0)
 #define LIF_SIGMA (5)
-#define LIF_REFRAC_TIME (200) /*timesteps*/
+#define LIF_REFRAC_TIME (20) /*timesteps*/
 
 // Synapse model specific
 #define SYN_RHO_INITIAL (1.0)
 #define SYN_CA_INITIAL (0.0)
-#define SYN_CALCIUM_DELAY (50) /*5*/ /*timesteps (needs to be modified when DT is modified above*/
+#define SYN_CALCIUM_DELAY (5)  /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
 #define SYN_GAMMA_P (725.085)
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)
