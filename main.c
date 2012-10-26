@@ -519,7 +519,7 @@ int main (int argc, const char * argv[]) {
 						//Debug code
 						if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
 							//local_count++;
-							//TODO: reenable plastic effect on transfer voltage
+							//TODO: change plastic versus fixed transfer voltage here
 							lif_currents_EE[j] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 							//lif_currents_EE[j] += transfer_voltage * RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
 							
@@ -533,7 +533,7 @@ int main (int argc, const char * argv[]) {
 						printf("Spike transfer (LIF %d) \n", i);
 					#endif /* DEBUG_MODE_SPIKES */
 					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j); // moved in advance of printed output above
-					//TODO: reenable plastic effect on transfer voltage
+					//TODO: change plastic versus fixed transfer voltage here
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					//(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					/*if(i==0){
@@ -670,7 +670,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	static long gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
 	float theta_upper = fmax((*syn_const).theta_d, (*syn_const).theta_p);
 	float theta_lower = fmin((*syn_const).theta_d, (*syn_const).theta_p);
-	float gamma_upper = fmax((*syn_const).gamma_d, (*syn_const).gamma_p);
+	float gamma_upper = fmax((*syn_const).gamma_d, (*syn_const).gamma_p); //what??? We're always assuming that the gamma related to the upper threshold is greater than gamma for the lower threshold
 	float gamma_lower = fmin((*syn_const).gamma_d, (*syn_const).gamma_p);
 	float gamma_sum = gamma_upper + gamma_lower;
 	/*float theta_upper = (*syn_const).theta_p;
@@ -837,6 +837,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	(*syn).time_of_last_update[syn_id] = current_time;
 	(*syn).ca[syn_id] = c_end;
 	//TODO: should I put hard bounds on rho?
+	//(*syn).rho[syn_id] = w;
 	if (w > 0){
 		if ( w < 1){
 			(*syn).rho[syn_id] = w;
