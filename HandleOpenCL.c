@@ -35,6 +35,9 @@ int setupCL(CL *cl){
 	// Create initial OpenCL context and queue
 	//
 	
+	if( getPlatformIDs(cl) == EXIT_FAILURE){
+		return EXIT_FAILURE;
+	}
 	if( connectToComputeDevice(cl) == EXIT_FAILURE){
 		return EXIT_FAILURE;
 	}
@@ -50,6 +53,28 @@ int setupCL(CL *cl){
 	return !(EXIT_FAILURE);
 }
 
+int getPlatformIDs(CL *cl){
+	// Get platform IDs
+	//
+	
+	
+	printf("getting platform IDs...\n");
+	
+	//TODO: more than one platform?
+	(*cl).err = clGetPlatformIDs(1, &(*cl).platform, NULL);
+	//printf("DEBUG platform id: %d\n", (*cl).platform);
+	
+	if ((*cl).err != CL_SUCCESS)
+	{
+		printf("Error: Failed to get platform ID!\n%s\n", print_cl_errstring((*cl).err));
+		return EXIT_FAILURE;
+	}
+	//clGetDeviceInfo((*cl).device_id, CL_DEVICE_MAX_CONSTANT_ARGS, sizeof(cl_ulong), &dev_info, NULL);
+	//printf("Max no args: %d\n", (unsigned int)dev_info);
+	//printf("test %d\n", !(EXIT_FAILURE));
+	return !(EXIT_FAILURE);
+}
+
 int connectToComputeDevice(CL *cl){
 	// Connect to a compute device
 	//
@@ -57,13 +82,16 @@ int connectToComputeDevice(CL *cl){
 	//cl_uint dev_info;
 	
 	printf("connecting to compute device...\n");
-	
+
 	printf("gpu: %d\n", gpu);
 	
-	(*cl).err = clGetDeviceIDs(NULL, (gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU), 1, &(*cl).device_id, NULL);
+	//TODO: more than one device?
+	(*cl).err = clGetDeviceIDs((*cl).platform, (gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU), 1, &(*cl).device_id, NULL);
+	//printf("DEBUG device id: %d\n", (*cl).device_id);
+	
 	if ((*cl).err != CL_SUCCESS)
 	{
-		printf("Error: Failed to create a device group!\n");
+		printf("Error: Failed to create a device group!\n%s\n", print_cl_errstring((*cl).err));
 		return EXIT_FAILURE;
 	}
 	//clGetDeviceInfo((*cl).device_id, CL_DEVICE_MAX_CONSTANT_ARGS, sizeof(cl_ulong), &dev_info, NULL);
@@ -81,7 +109,7 @@ int createComputeContext(CL *cl){
     (*cl).context = clCreateContext(0, 1, &(*cl).device_id, NULL, NULL, &(*cl).err);
     if (!(*cl).context)
     {
-        printf("Error: Failed to create a compute context!\n");
+        printf("Error: Failed to create a compute context!\n%s\n", print_cl_errstring((*cl).err));
         return EXIT_FAILURE;
     }
 	return !(EXIT_FAILURE);
@@ -96,7 +124,7 @@ int createCommandQueue(CL *cl){
     (*cl).commands = clCreateCommandQueue((*cl).context, (*cl).device_id, 0, &(*cl).err);
     if (!(*cl).commands)
     {
-        printf("Error: Failed to create a command commands!\n");
+        printf("Error: Failed to create a command commands!\n%s\n", print_cl_errstring((*cl).err));
         return EXIT_FAILURE;
     }
 	return !(EXIT_FAILURE);
@@ -136,7 +164,7 @@ int createProgram(CL *cl, char ** KernelSource){
     (*cl).program = clCreateProgramWithSource((*cl).context, 1, (const char **) KernelSource, NULL, &(*cl).err);
     if (!(*cl).program)
     {
-        printf("Error: Failed to create compute program!\n");
+        printf("Error: Failed to create compute program!\n%s\n", print_cl_errstring((*cl).err));
         return EXIT_FAILURE;
     }
 	return !(EXIT_FAILURE);
@@ -154,7 +182,7 @@ int buildProgram(CL *cl){
 		size_t len;
 		char buffer[2048];
 		
-		printf("Error: Failed to build program executable!\n");
+		printf("Error: Failed to build program executable!\n%s\n", print_cl_errstring((*cl).err));
 		clGetProgramBuildInfo((*cl).program, (*cl).device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
 		printf("%s\n", buffer);
 		exit(1);
@@ -171,7 +199,7 @@ int createKernel(CL *cl, char * k_name){
 	(*cl).kernel = clCreateKernel((*cl).program, k_name, &(*cl).err);
 	if (!(*cl).kernel || (*cl).err != CL_SUCCESS)
 	{
-		printf("Error: Failed to create compute kernel!\n");
+		printf("Error: Failed to create compute kernel!\n%s\n", print_cl_errstring((*cl).err));
 		exit(1);
 	}
 	return !(EXIT_FAILURE);
@@ -288,7 +316,7 @@ int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).d_jcong, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_jcong, 0, NULL, NULL);
     if ((*cl).err != CL_SUCCESS)
     {
-        printf("Error: Failed to write to source array!\n");
+        printf("Error: Failed to write to source array!\n%s\n", print_cl_errstring((*cl).err));
         exit(1);
     }
 	return !(EXIT_FAILURE);
@@ -315,7 +343,7 @@ int enqueueSynInputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const, cl_Mar
 	
 	if ((*cl).err != CL_SUCCESS)
     {
-        printf("Error: Failed to write to source array!\n");
+        printf("Error: Failed to write to source array!\n%s\n", print_cl_errstring((*cl).err));
         exit(1);
     }
 	return !(EXIT_FAILURE);
@@ -375,7 +403,7 @@ int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
 	
     if ((*cl).err != CL_SUCCESS)
     {
-        printf("Error: Failed to set kernel arguments! %d\n", (*cl).err);
+        printf("Error: Failed to set kernel arguments!\n%s\n", print_cl_errstring((*cl).err));
         exit(1);
     }
 	return !(EXIT_FAILURE);
@@ -424,7 +452,7 @@ int setSynKernelArgs(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const){
 	
     if ((*cl).err != CL_SUCCESS)
     {
-        printf("Error: Failed to set kernel arguments! %d\n", (*cl).err);
+        printf("Error: Failed to set kernel arguments!\n%s\n", print_cl_errstring((*cl).err));
         exit(1);
     }
 	return !(EXIT_FAILURE);
@@ -485,7 +513,7 @@ int enqueueLifKernel(CL *cl){
 	
 	//printf("sending the LIF kernel to the process queue...\n");
 	if((*cl).err){
-		printf("Error already occurred\n");
+		printf("Error already occurred\n%s\n", print_cl_errstring((*cl).err));
 	}
 	/*
 	(*cl).global = (*cl).job_size;
@@ -501,7 +529,7 @@ int enqueueLifKernel(CL *cl){
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
 	{
-		printf("Error: Failed to execute kernel!\n");
+		printf("Error: Failed to execute kernel!\n%s\n", print_cl_errstring((*cl).err));
 		return EXIT_FAILURE;
 	}
 	return !(EXIT_FAILURE);
@@ -514,7 +542,7 @@ int enqueueSynKernel(CL *cl){
 	
 	printf("sending the Synapse kernel to the process queue...\n");
 	if((*cl).err){
-		printf("Error already occurred\n");
+		printf("Error already occurred\n%s\n", print_cl_errstring((*cl).err));
 	}
 	/*
 	(*cl).global = (*cl).job_size;
@@ -530,7 +558,7 @@ int enqueueSynKernel(CL *cl){
 	(*cl).err = clEnqueueNDRangeKernel((*cl).commands, (*cl).kernel, 1, NULL, &(*cl).global, &(*cl).local, 0, NULL, NULL);
 	if ((*cl).err)
 	{
-		printf("Error: Failed to execute kernel!\n");
+		printf("Error: Failed to execute kernel!\n%s\n", print_cl_errstring((*cl).err));
 		return EXIT_FAILURE;
 	}
 	return !(EXIT_FAILURE);
@@ -578,7 +606,7 @@ int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).d_jcong, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_jcong, 0, NULL, NULL );
 	if ((*cl).err != CL_SUCCESS)
 	{
-		printf("Error: Failed to read output array! %d\n", (*cl).err);
+		printf("Error: Failed to read output array!\n%s\n", print_cl_errstring((*cl).err));
 		exit(1);
 	}
 	return !(EXIT_FAILURE);
@@ -602,7 +630,7 @@ int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const, cl_Ma
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).d_jcong, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*rnd).d_jcong, 0, NULL, NULL );
 	if ((*cl).err != CL_SUCCESS)
 	{
-		printf("Error: Failed to read output array! %d\n", (*cl).err);
+		printf("Error: Failed to read output array!\n%s\n", print_cl_errstring((*cl).err));
 		exit(1);
 	}
 	return !(EXIT_FAILURE);
@@ -671,4 +699,56 @@ void shutdownSynKernel(CL *cl){
 	clReleaseContext((*cl).context);
 	
 	printf("done\n");
+}
+
+static char *print_cl_errstring(cl_int err) {
+    switch (err) {
+        case CL_SUCCESS:                          return strdup("Success!");
+        case CL_DEVICE_NOT_FOUND:                 return strdup("Device not found.");
+        case CL_DEVICE_NOT_AVAILABLE:             return strdup("Device not available");
+        case CL_COMPILER_NOT_AVAILABLE:           return strdup("Compiler not available");
+        case CL_MEM_OBJECT_ALLOCATION_FAILURE:    return strdup("Memory object allocation failure");
+        case CL_OUT_OF_RESOURCES:                 return strdup("Out of resources");
+        case CL_OUT_OF_HOST_MEMORY:               return strdup("Out of host memory");
+        case CL_PROFILING_INFO_NOT_AVAILABLE:     return strdup("Profiling information not available");
+        case CL_MEM_COPY_OVERLAP:                 return strdup("Memory copy overlap");
+        case CL_IMAGE_FORMAT_MISMATCH:            return strdup("Image format mismatch");
+        case CL_IMAGE_FORMAT_NOT_SUPPORTED:       return strdup("Image format not supported");
+        case CL_BUILD_PROGRAM_FAILURE:            return strdup("Program build failure");
+        case CL_MAP_FAILURE:                      return strdup("Map failure");
+        case CL_INVALID_VALUE:                    return strdup("Invalid value");
+        case CL_INVALID_DEVICE_TYPE:              return strdup("Invalid device type");
+        case CL_INVALID_PLATFORM:                 return strdup("Invalid platform");
+        case CL_INVALID_DEVICE:                   return strdup("Invalid device");
+        case CL_INVALID_CONTEXT:                  return strdup("Invalid context");
+        case CL_INVALID_QUEUE_PROPERTIES:         return strdup("Invalid queue properties");
+        case CL_INVALID_COMMAND_QUEUE:            return strdup("Invalid command queue");
+        case CL_INVALID_HOST_PTR:                 return strdup("Invalid host pointer");
+        case CL_INVALID_MEM_OBJECT:               return strdup("Invalid memory object");
+        case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:  return strdup("Invalid image format descriptor");
+        case CL_INVALID_IMAGE_SIZE:               return strdup("Invalid image size");
+        case CL_INVALID_SAMPLER:                  return strdup("Invalid sampler");
+        case CL_INVALID_BINARY:                   return strdup("Invalid binary");
+        case CL_INVALID_BUILD_OPTIONS:            return strdup("Invalid build options");
+        case CL_INVALID_PROGRAM:                  return strdup("Invalid program");
+        case CL_INVALID_PROGRAM_EXECUTABLE:       return strdup("Invalid program executable");
+        case CL_INVALID_KERNEL_NAME:              return strdup("Invalid kernel name");
+        case CL_INVALID_KERNEL_DEFINITION:        return strdup("Invalid kernel definition");
+        case CL_INVALID_KERNEL:                   return strdup("Invalid kernel");
+        case CL_INVALID_ARG_INDEX:                return strdup("Invalid argument index");
+        case CL_INVALID_ARG_VALUE:                return strdup("Invalid argument value");
+        case CL_INVALID_ARG_SIZE:                 return strdup("Invalid argument size");
+        case CL_INVALID_KERNEL_ARGS:              return strdup("Invalid kernel arguments");
+        case CL_INVALID_WORK_DIMENSION:           return strdup("Invalid work dimension");
+        case CL_INVALID_WORK_GROUP_SIZE:          return strdup("Invalid work group size");
+        case CL_INVALID_WORK_ITEM_SIZE:           return strdup("Invalid work item size");
+        case CL_INVALID_GLOBAL_OFFSET:            return strdup("Invalid global offset");
+        case CL_INVALID_EVENT_WAIT_LIST:          return strdup("Invalid event wait list");
+        case CL_INVALID_EVENT:                    return strdup("Invalid event");
+        case CL_INVALID_OPERATION:                return strdup("Invalid operation");
+        case CL_INVALID_GL_OBJECT:                return strdup("Invalid OpenGL object");
+        case CL_INVALID_BUFFER_SIZE:              return strdup("Invalid buffer size");
+        case CL_INVALID_MIP_LEVEL:                return strdup("Invalid mip-map level");
+        default:                                  return strdup("Unknown");
+    }
 }

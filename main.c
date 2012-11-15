@@ -353,7 +353,7 @@ int main (int argc, const char * argv[]) {
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
 		//TODO: currently fixing rho_initial to 0.377491
-		(*syn_p).rho[i] = (*syn_p).rho_initial[i] = 0.377491; //ran2(&uniform_synaptic_seed);
+		(*syn_p).rho[i] = (*syn_p).rho_initial[i] = ran2(&uniform_synaptic_seed);//0.377491; //
 		
 		(*syn_p).ca[i] = SYN_CA_INITIAL;
 		(*rnd_syn_p).d_z[i] = 362436069 - i + PARALLEL_SEED;

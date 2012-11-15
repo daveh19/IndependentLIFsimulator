@@ -28,6 +28,7 @@ typedef struct cl_struct{
     size_t global;                      // global domain size for our calculation: work size per dimension
     size_t local;                       // local domain size for our calculation: work-group size per dimension
 	
+	cl_platform_id platform;	
     cl_device_id device_id;             // compute device id
     cl_context context;                 // compute context
     cl_command_queue commands;          // compute command queue
@@ -61,7 +62,9 @@ typedef struct cl_struct{
 } CL;
 
 
+static char *print_cl_errstring(cl_int err);
 char* readKernelSource(char * filename);
+int getPlatformIDs(CL *cl);
 int connectToComputeDevice(CL *cl);
 int createComputeContext(CL *cl);
 int createCommandQueue(CL *cl);
