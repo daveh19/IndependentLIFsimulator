@@ -352,8 +352,13 @@ int main (int argc, const char * argv[]) {
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
-		//TODO: currently fixing rho_initial to 0.377491
-		(*syn_p).rho[i] = (*syn_p).rho_initial[i] = ran2(&uniform_synaptic_seed);//0.377491; //
+		//TODO: set rho_initial here
+		if(i == RECORDER_SYNAPSE_ID){
+			(*syn_p).rho[i] = (*syn_p).rho_initial[i] = 1;
+		}
+		else{
+			(*syn_p).rho[i] = (*syn_p).rho_initial[i] = SYN_RHO_INITIAL;//ran2(&uniform_synaptic_seed);//0.377491; //
+		}
 		
 		(*syn_p).ca[i] = SYN_CA_INITIAL;
 		(*rnd_syn_p).d_z[i] = 362436069 - i + PARALLEL_SEED;
@@ -521,7 +526,7 @@ int main (int argc, const char * argv[]) {
 							//local_count++;
 							//TODO: change plastic versus fixed transfer voltage here
 							lif_currents_EE[j] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-							//lif_currents_EE[j] += transfer_voltage * RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
+							//lif_currents_EE[j] += transfer_voltage * SYN_RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
 							
 							//printf("DEBUG: synaptic transfer voltage: %f, rho: %f, transfer voltage: %fc\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]], transfer_voltage);
 							//printf("DEBUG: total transfer voltage: %f, time: %f\n", lif_currents_EE[j], (j * LIF_DT));
@@ -535,7 +540,7 @@ int main (int argc, const char * argv[]) {
 					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j); // moved in advance of printed output above
 					//TODO: change plastic versus fixed transfer voltage here
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-					//(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
+					//(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * SYN_RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					/*if(i==0){
 						printf("current transfer, I: %f, to post-synaptic neuron(%d)\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
 					}*/				
@@ -787,7 +792,23 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		#endif /* DEBUG_MODE_SYNAPSE */
 		w = w_stoch;
 	}
-	// Deterministic update
+	
+	//TODO: flat-well potential hack here
+	t_deter = 0;
+	//TODO: comment out following section if double-well desired
+	// Deterministic update for piecewise-quadratic potential well
+	/*if (t_deter > 0){
+	 if ( w < 0.5){
+	 w_deter = w * exp(-t_deter / (*syn_const).tau);
+	 }
+	 else{
+	 w_deter = 1 + (w - 1) * exp(-t_deter / (*syn_const).tau);
+	 }
+	 w = w_deter;
+	 }*/
+	//TODO: reenable double-well by commenting out following line
+	//t_deter = 0;
+	// Deterministic update for double-well potential
 	if (t_deter > 0){
 		float X_0 = pow(w - 0.5, 2) / ( w * (w - 1));
 		

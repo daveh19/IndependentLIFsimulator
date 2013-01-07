@@ -14,7 +14,7 @@
 
 // Data reporters
 #define RECORDER_NEURON_ID (6328)
-#define RECORDER_SYNAPSE_ID (2532102)
+#define RECORDER_SYNAPSE_ID (1500)
 
 #define USE_GPU (1) /* 1=gpu, 0=cpu */
 #define NETWORK_SEED (-14)
@@ -22,13 +22,13 @@
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (300000) /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (12000000) /*(300000)*/ /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
 #define NO_INH (2000)
 #define NO_LIFS (NO_EXC + NO_INH) 
-#define CONNECTIVITY_PROBABILITY (0.05)
+#define CONNECTIVITY_PROBABILITY (0.05) /*(0.05)*/
 
 // Time step sizes and statistical bin widths
 #define LIF_DT (0.0001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
@@ -41,9 +41,8 @@
 #define J_II (-0.8)
 #define J_EI (-0.4)
 
-//#define RHO_FIXED (0.5) /*testing fixed transfer strength for Mean Field comparison*/
 
-#define J_EXT (10.)
+#define J_EXT (7.2) /*(10.)*/
 //TODO: separate drive to exc and inh pops
 
 // LIF specific
@@ -54,12 +53,12 @@
 #define LIF_CM (0.001)
 #define LIF_RM (20.0)
 #define LIF_SIGMA (5)
-#define LIF_REFRAC_TIME (200) /*timesteps*/
+#define LIF_REFRAC_TIME (200) /*200*/ /*timesteps*/
 
 // Synapse model specific
-#define SYN_RHO_INITIAL (1.0)
+#define SYN_RHO_INITIAL (0.176923) /*(1.0)*/
 #define SYN_CA_INITIAL (0.0)
-#define SYN_CALCIUM_DELAY (46)  /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
+#define SYN_CALCIUM_DELAY (46) /*46*/ /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
 #define SYN_GAMMA_P (725.085)
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)
@@ -69,6 +68,8 @@
 #define SYN_TAU_CA (0.0226936)
 #define SYN_C_PRE (0.5617539)
 #define SYN_C_POST (1.23964)
+
+//#define SYN_RHO_FIXED (0.5)
 
 
 
