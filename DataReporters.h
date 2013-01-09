@@ -33,9 +33,17 @@ FILE *average_activity_ouput; //network_activity_output
 FILE *synaptic_activity_output; //single_synapse_output
 FILE *synaptic_strength_output; //final_synaptic_strength_output
 
+// Summary variables for monitoring network firing rate
+//CONSIDER: since we use a timestepping approach these variables could be condensed
+// to single value variables and printed out during the simulation
 float *summary_exc_spikes;
 float *summary_inh_spikes;
 unsigned int no_spiking_bins;
+// Summary variables for monitoring multiple recorder synapses
+float *summary_rho;
+float *summary_M;
+float *summary_S;
+unsigned int *summary_n;
 
 //Debugging variables
 float *lif_gauss_totals;

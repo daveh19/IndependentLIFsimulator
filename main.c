@@ -353,9 +353,12 @@ int main (int argc, const char * argv[]) {
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
 		//TODO: set rho_initial here
-		if(i == RECORDER_SYNAPSE_ID){
+		if((i % RECORDER_MULTI_SYNAPSE_SKIP) == RECORDER_SYNAPSE_ID){
 			(*syn_p).rho[i] = (*syn_p).rho_initial[i] = 1;
 		}
+		/*if(i == RECORDER_SYNAPSE_ID){
+			(*syn_p).rho[i] = (*syn_p).rho_initial[i] = 1;
+		}*/
 		else{
 			(*syn_p).rho[i] = (*syn_p).rho_initial[i] = SYN_RHO_INITIAL;//ran2(&uniform_synaptic_seed);//0.377491; //
 		}
@@ -519,6 +522,7 @@ int main (int argc, const char * argv[]) {
 				// Transfer voltage change to post-synaptic neurons
 				for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[i]; k++){
 					// across plastic synapses
+					// Event-based 4 (Update synapse: Update in advance of current transfer)
 					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
 					//#ifdef DEBUG_MODE_NETWORK
 						//Debug code
@@ -533,11 +537,9 @@ int main (int argc, const char * argv[]) {
 							local_count++;
 						}
 					//#endif /* DEBUG_MODE_NETWORK */
-					// Event-based 4 (Update synapse: Update in advance of current transfer)
 					#ifdef DEBUG_MODE_SPIKES
 						printf("Spike transfer (LIF %d) \n", i);
 					#endif /* DEBUG_MODE_SPIKES */
-					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j); // moved in advance of printed output above
 					//TODO: change plastic versus fixed transfer voltage here
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					//(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * SYN_RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
@@ -644,7 +646,12 @@ int main (int argc, const char * argv[]) {
 	printf("Simulation finished, printing summary of network activity...\n");
 	// Print summary of excitatory and inhibitory activity
 	//TODO: consider cycling through all synapses to do a final update of their states
-	updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
+	//TODO: disable updating of multi-recorder synapses here
+	for (i = RECORDER_SYNAPSE_ID; i < (*syn_const_p).no_syns; i+= RECORDER_MULTI_SYNAPSE_SKIP){
+		updateEventBasedSynapse(syn_p, syn_const_p, i, j);
+	}
+	//TODO: reenable final update of recorder synapse here
+	//updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
 	print_network_summary_activity();
 	printf("done.\nAnd final state of synapses...");
 	// Print final state of synapse strengths
@@ -873,6 +880,25 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	if(syn_id == RECORDER_SYNAPSE_ID){
 		// Print state of a single synapse
 		print_synapse_activity(current_time, syn);
+	}
+	//Update multisynapse summary variables
+	if((syn_id % RECORDER_MULTI_SYNAPSE_SKIP) == RECORDER_SYNAPSE_ID){
+		int time_bin_index = (int)( ( (*syn_const).dt / BIN_SIZE ) * current_time + EPSILLON);
+		summary_rho[time_bin_index] += (*syn).rho[syn_id];
+		summary_n[time_bin_index]++;
+		
+		if(summary_M[time_bin_index] == 0){ // initialise on first entry to time bin
+			summary_M[time_bin_index] = (*syn).rho[syn_id];
+			summary_S[time_bin_index] = 0;
+		}
+		else{
+			//Mk = Mk-1+ (xk - Mk-1)/k
+			//Sk = Sk-1 + (xk - Mk-1)*(xk - Mk).
+			float Mk;
+			Mk = summary_M[time_bin_index] + ((*syn).rho[syn_id] - summary_M[time_bin_index])/summary_n[time_bin_index];
+			summary_S[time_bin_index] = summary_S[time_bin_index] + ((*syn).rho[syn_id] - summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
+			summary_M[time_bin_index] = Mk;
+		}
 	}
 }
 

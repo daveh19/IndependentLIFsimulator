@@ -63,7 +63,12 @@ void reporters_setup(){
 	no_spiking_bins = (LIF_DT / BIN_SIZE) * MAX_TIME_STEPS;
 	summary_exc_spikes = calloc(no_spiking_bins, sizeof(float));
 	summary_inh_spikes = calloc(no_spiking_bins, sizeof(float));
-	fprintf(average_activity_ouput, "\n\n\n\n\n# Summary network activity (time bin (ms), TotSpikes, ExcSpikes, InhSpikes, InstantaneousExcRate, InstantaneousInhRate)\n# all normalised to their respective population sizes\n");
+	//TODO: new code for monitoring multiple synapses here
+	summary_rho = calloc(no_spiking_bins, sizeof(float));
+	summary_M = calloc(no_spiking_bins, sizeof(float));
+	summary_S = calloc(no_spiking_bins, sizeof(float));
+	summary_n = calloc(no_spiking_bins, sizeof(unsigned int));
+	fprintf(average_activity_ouput, "\n\n\n\n\n# Summary network activity (time bin (ms), TotSpikes, ExcSpikes, InhSpikes, InstantaneousExcRate, InstantaneousInhRate, RhoAv, N, RhoStdev)\n# all normalised to their respective population sizes\n");
 	
 	// Detailed recording from single synapse
 	strcpy(outfile, "output/");
@@ -126,7 +131,7 @@ void print_network_summary_activity(){
 	// bin_id_ms, no_spikes, no_exc_spikes, no_inh_spikes, exc_freq, inh_freq
 	printf("Outputting network summary activity\n");
 	for(int i = 0; i < no_spiking_bins; i++){
-		fprintf(average_activity_ouput, "%d %f %f %f %f %f\n", i, ((summary_inh_spikes[i] + summary_exc_spikes[i]) / NO_LIFS), (summary_exc_spikes[i] / NO_EXC), (summary_inh_spikes[i] / NO_INH), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)), ((summary_inh_spikes[i] / NO_INH) * (1.0 / BIN_SIZE)) );
+		fprintf(average_activity_ouput, "%d %f %f %f %f %f %f %d %f\n", i, ((summary_inh_spikes[i] + summary_exc_spikes[i]) / NO_LIFS), (summary_exc_spikes[i] / NO_EXC), (summary_inh_spikes[i] / NO_INH), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)), ((summary_inh_spikes[i] / NO_INH) * (1.0 / BIN_SIZE)), summary_rho[i]/summary_n[i], summary_n[i], sqrt(summary_S[i]/(summary_n[i]-1)) );
 	}
 }
 
