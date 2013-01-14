@@ -26,7 +26,7 @@ char* readKernelSource(char * filename){
 	char *KernelSource = malloc(pos);
 	fread(KernelSource, pos, 1, f_kernel);
 	fclose(f_kernel);
-	printf("Source:\n %s", KernelSource);	
+	//printf("Source:\n %s", KernelSource);	
 	
 	return KernelSource;
 }
@@ -86,8 +86,44 @@ int connectToComputeDevice(CL *cl){
 	printf("gpu: %d\n", gpu);
 	
 	//TODO: more than one device?
-	(*cl).err = clGetDeviceIDs((*cl).platform, (gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU), 1, &(*cl).device_id, NULL);
+	cl_device_id local_device_ids[10];
+	unsigned int local_num_devices;
+	//(*cl).err = clGetDeviceIDs((*cl).platform, (gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU), 1, &(*cl).device_id, NULL);
+	(*cl).err = clGetDeviceIDs((*cl).platform, (gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU), 10, local_device_ids, &local_num_devices);
 	//printf("DEBUG device id: %d\n", (*cl).device_id);
+	
+	//Some Uchicago specific (Midway) code for selecting the assigned GPU for processing
+	int device = 0;
+	if (local_num_devices > 1){
+		char *p_midway_cuda_device_id;
+		char *p_using_midway_flags = getenv("DHIGGINS_USING_CUDA");
+		if (p_using_midway_flags != NULL){
+			if(!(p_midway_cuda_device_id = getenv("CUDA_VISIBLE_DEVICES"))){
+				printf("Error: should be using CUDA flags on midway but CUDA_VISIBLE_DEVICES not set");
+				return EXIT_FAILURE;
+			}
+			else{
+				if (!strcmp(p_midway_cuda_device_id, "0")){
+					printf("setting device to 0\n");
+					device = 0;
+				}
+				else if (!strcmp(p_midway_cuda_device_id, "1")){
+					printf("setting device to 1\n");
+					device = 1;
+				}
+				else{
+					printf("ALERT: non-standard device id set via environmental variable: %s\n", p_midway_cuda_device_id);
+				}
+			}
+		}
+		else{
+			printf("DEBUG: DHIGGINS_USING_CUDA not set\n Assuming we're not running on Midway and reverting to device 0\n");
+		}
+	}
+	(*cl).device_id = local_device_ids[device];
+	
+	printf("%d devices found, connecting to device: %d\n", local_num_devices, device);
+	fflush(stdout);
 	
 	if ((*cl).err != CL_SUCCESS)
 	{
