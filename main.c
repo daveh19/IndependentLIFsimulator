@@ -645,12 +645,12 @@ int main (int argc, const char * argv[]) {
 	
 	printf("Simulation finished, printing summary of network activity...\n");
 	// Print summary of excitatory and inhibitory activity
-	//TODO: consider cycling through all synapses to do a final update of their states
+	//TODO: consider cycling through all synapses (not just recorder synapses) to do a final update of their states
 	//TODO: disable updating of multi-recorder synapses here
 	for (i = RECORDER_SYNAPSE_ID; i < (*syn_const_p).no_syns; i+= RECORDER_MULTI_SYNAPSE_SKIP){
 		updateEventBasedSynapse(syn_p, syn_const_p, i, j);
 	}
-	//TODO: reenable final update of recorder synapse here
+	//TODO: reenable final update of single recorder synapse here
 	//updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
 	print_network_summary_activity();
 	printf("done.\nAnd final state of synapses...");
@@ -773,7 +773,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 			printf("\nt_upper: %f, rho_bar: %f, in_exp: %f, my_exp: %f, w_stoch: %f, ", t_upper, rho_bar, in_exp, my_exp, w_stoch);
 			random_part = (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
 		#endif /* DEBUG_MODE_SYNAPSE */
-		w_stoch += (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
+		w_stoch += sqrt(2) * (*syn_const).sigma * rnd * sqrt( (1 - exp(-(2 * gamma_sum * t_upper) / (*syn_const).tau) ) / (2 * gamma_sum) );
 		#ifdef DEBUG_MODE_SYNAPSE
 			printf("rnd1: %f, random: %f, w_stoch: %f\n", rnd, random_part, w_stoch);
 		#endif /* DEBUG_MODE_SYNAPSE */

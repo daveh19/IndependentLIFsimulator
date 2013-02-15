@@ -17,13 +17,13 @@
 #define RECORDER_SYNAPSE_ID (200) /* for multiple synaptic recordings this needs to be less than 400*/
 #define RECORDER_MULTI_SYNAPSE_SKIP (450)
 
-#define USE_GPU (1) /* 1=gpu, 0=cpu */
+#define USE_GPU (0) /* 1=gpu, 0=cpu */
 #define NETWORK_SEED (-14)
 #define PARALLEL_SEED (0)
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (3000000) /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (12000000) /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
@@ -43,7 +43,7 @@
 #define J_EI (-0.4)
 
 
-#define J_EXT (7.2) /*(10.)*/
+#define J_EXT (6.95) /*(6.86)*/ /*(10.3) in-vivo*/ /*(7.2) 1hz in-vitro*/ /*(10.)*/
 //TODO: separate drive to exc and inh pops
 
 // LIF specific
@@ -54,12 +54,12 @@
 #define LIF_CM (0.001)
 #define LIF_RM (20.0)
 #define LIF_SIGMA (5)
-#define LIF_REFRAC_TIME (200) /*200*/ /*timesteps*/
+#define LIF_REFRAC_TIME (0) /*200*/ /*timesteps*/
 
 // Synapse model specific
-#define SYN_RHO_INITIAL (0.176923) /*(1.0)*/
+#define SYN_RHO_INITIAL (0.165171) /*(0.372029)*/ /*(0.176923)*/ /*(0.185)*/ /*(1.0)*/
 #define SYN_CA_INITIAL (0.0)
-#define SYN_CALCIUM_DELAY (46) /*46*/ /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
+#define SYN_CALCIUM_DELAY (92) /*46*/ /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
 #define SYN_GAMMA_P (725.085)
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)
@@ -67,10 +67,10 @@
 #define SYN_SIGMA (3.35) /*(3.35)*/ /*3.35;*/ /*TODO: switch synapse noise back on*/
 #define SYN_TAU (346.3615)
 #define SYN_TAU_CA (0.0226936)
-#define SYN_C_PRE (0.5617539)
-#define SYN_C_POST (1.23964)
+#define SYN_C_PRE (0.56175) /*(0.33705)*/ /*(0.5617539)*/
+#define SYN_C_POST (1.23964) /*(0.74378)*/ /*(1.23964)*/
 
-//#define SYN_RHO_FIXED (0.5)
+#define SYN_RHO_FIXED SYN_RHO_INITIAL /*(0.5)*/
 
 
 
