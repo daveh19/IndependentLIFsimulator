@@ -194,7 +194,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 int main (int argc, const char * argv[]) {
 	int i, j, k;
 	int offset;
-	long uniform_synaptic_seed = UNIFORM_SYNAPTIC_SEED;
+	//long uniform_synaptic_seed = UNIFORM_SYNAPTIC_SEED;
 	
 	clock_t start_t,finish_t;
 	double totaltime;
@@ -476,7 +476,8 @@ int main (int argc, const char * argv[]) {
 				#ifdef DEBUG_MODE_SPIKES
 					printf("Pre Spike (LIF %d) \n", (*spike_queue_p).neuron_id[offset][i]);
 				#endif /* DEBUG_MODE_SPIKES */
-				updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k], j);
+				//TODO: reenable updateEventBasedSynapse here
+				//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k], j);
 			}
 		}
 		// Event-based 2 (Reset delayed event queue)
@@ -514,7 +515,8 @@ int main (int argc, const char * argv[]) {
 					#ifdef DEBUG_MODE_SPIKES
 						printf("Post Spike (LIF %d) \n", i);
 					#endif /* DEBUG_MODE_SPIKES */
-					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).incoming_synapse_index[i][k], j);
+					//TODO: reenable updateEventBasedSynapse here
+					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).incoming_synapse_index[i][k], j);
 					//if(i==0){
 					//	printf("backprop to pre-lif synapse(%d)\n", (*lif_p).incoming_synapse_index[i][k]);
 					//}
@@ -523,7 +525,8 @@ int main (int argc, const char * argv[]) {
 				for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[i]; k++){
 					// across plastic synapses
 					// Event-based 4 (Update synapse: Update in advance of current transfer)
-					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
+					//TODO: reenable updateEventBasedSynapse here
+					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
 					//#ifdef DEBUG_MODE_NETWORK
 						//Debug code
 						if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
@@ -648,7 +651,8 @@ int main (int argc, const char * argv[]) {
 	//TODO: consider cycling through all synapses (not just recorder synapses) to do a final update of their states
 	//TODO: disable updating of multi-recorder synapses here
 	for (i = RECORDER_SYNAPSE_ID; i < (*syn_const_p).no_syns; i+= RECORDER_MULTI_SYNAPSE_SKIP){
-		updateEventBasedSynapse(syn_p, syn_const_p, i, j);
+		//TODO: reenable updateEventBasedSynapse here
+		//updateEventBasedSynapse(syn_p, syn_const_p, i, j);
 	}
 	//TODO: reenable final update of single recorder synapse here
 	//updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);

@@ -17,13 +17,13 @@
 #define RECORDER_SYNAPSE_ID (200) /* for multiple synaptic recordings this needs to be less than 400*/
 #define RECORDER_MULTI_SYNAPSE_SKIP (450)
 
-#define USE_GPU (0) /* 1=gpu, 0=cpu */
+#define USE_GPU (1) /* 1=gpu, 0=cpu */
 #define NETWORK_SEED (-14)
 #define PARALLEL_SEED (0)
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (12000000) /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (30000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
