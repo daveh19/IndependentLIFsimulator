@@ -39,11 +39,17 @@ FILE *synaptic_strength_output; //final_synaptic_strength_output
 float *summary_exc_spikes;
 float *summary_inh_spikes;
 unsigned int no_spiking_bins;
+
 // Summary variables for monitoring multiple recorder synapses
 float *summary_rho;
 float *summary_M;
 float *summary_S;
 unsigned int *summary_n;
+
+// Variables for manipulating subset of neurons
+unsigned int *lif_injection_list;
+float *lif_injection_spikes;
+int no_injection_lifs;
 
 //Debugging variables
 float *lif_gauss_totals;

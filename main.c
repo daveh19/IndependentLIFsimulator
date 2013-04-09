@@ -37,6 +37,9 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	(*fixed_syn_p).Jx = calloc(estimated_total_synapses, sizeof(float));
 	(*fixed_syn_p).post_lif = calloc(estimated_total_synapses, sizeof(signed int));
 	
+	no_injection_lifs = 0;
+	lif_injection_list = malloc(NO_LIFS * sizeof(unsigned int));
+	
 	printf("Space allocation, mean_ee_syn_per_neuron: %d, est_ee_syn_per_neuron: %d, est_total_ee_synapses: %d, est_total_syn_per_neuron: %d\n", mean_ee_synapses_per_neuron, estimated_ee_synapses_per_neuron, estimated_total_ee_synapses, estimated_total_synapses_per_neuron);
 	
 	printf("Generating network structure...\n");
@@ -81,6 +84,13 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					(*lif_p).incoming_synapse_index[j][(*lif_p).no_incoming_synapses[j]] = (int)total_ee_synapses; //syn id
 					(*lif_p).no_incoming_synapses[j]++;
 					//printf("in_id: %d, no_in: %d \n", (*lif_p).incoming_synapse_index[j][(*lif_p).no_incoming_synapses[j]-1], (*lif_p).no_incoming_synapses[j]);
+					
+					// Add a small subset of LIFs to manipulation list
+					if((total_ee_synapses % RECORDER_MULTI_SYNAPSE_SKIP) == RECORDER_SYNAPSE_ID){
+						lif_injection_list[no_injection_lifs++] = i;
+						lif_injection_list[no_injection_lifs++] = j;
+						//printf("i %d, j %d\n", i, j);
+					}
 					
 					total_ee_synapses++;
 					#ifdef DEBUG_MODE_NETWORK
@@ -167,6 +177,21 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	//printf("Time taken: %f, ", totaltime);
 	printf("Total EE synapses: %d, total fixed synapses: %d\n", total_ee_synapses, total_fixed_synapses);
 	
+	printf("No of LIFs to be manipulated: %d, removing duplicates...", no_injection_lifs);
+	// Remove duplicates from list of LIFs to be manipulated
+	for(int i = 0; i < no_injection_lifs; i++){
+		for(int j = i+1; j < no_injection_lifs; j++){
+			if(lif_injection_list[i] == lif_injection_list[j]){
+				lif_injection_list[j] = lif_injection_list[no_injection_lifs-1];
+				no_injection_lifs--;
+				//printf("DEBUG: no_injection_lifs %d, reading i %d, removing j %d, value %d, new_value %d\n", no_injection_lifs, i, j, lif_injection_list[i], lif_injection_list[j]);
+			}
+		}
+		//printf("%d %d\n", i, lif_injection_list[i]);
+	}
+	// Resize list of manipulation LIFs
+	lif_injection_list = realloc(lif_injection_list, sizeof(unsigned int) * no_injection_lifs);
+	printf("final no of current manipulation LIFs: %d\n", no_injection_lifs);
 	
 	// Shrink memory reserved to required sizes
 	(*syn_p).pre_lif = realloc((*syn_p).pre_lif, sizeof(signed int) * total_ee_synapses);
@@ -588,6 +613,13 @@ int main (int argc, const char * argv[]) {
 				// Add to average spiking activity bins
 				if(i < NO_EXC){
 					summary_exc_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
+					//CONSIDER: not keeping the following?
+					for(int k = 0; k < no_injection_lifs; k++){
+						if(i == lif_injection_list[k]){
+							lif_injection_spikes[(int) ( ( (*lif_p).dt / BIN_SIZE) * j + EPSILLON)]++;
+							break;
+						}
+					}
 				}
 				else{
 					summary_inh_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
