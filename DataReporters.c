@@ -133,7 +133,7 @@ void print_network_summary_activity(){
 	// bin_id_ms, no_spikes, no_exc_spikes, no_inh_spikes, exc_freq, inh_freq
 	printf("Outputting network summary activity\n");
 	for(int i = 0; i < no_spiking_bins; i++){
-		fprintf(average_activity_ouput, "%d %f %f %f %f %f %f %d %f\n", i, ((summary_inh_spikes[i] + summary_exc_spikes[i]) / NO_LIFS), (summary_exc_spikes[i] / NO_EXC), (summary_inh_spikes[i] / NO_INH), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)), ((summary_inh_spikes[i] / NO_INH) * (1.0 / BIN_SIZE)), summary_rho[i]/summary_n[i], summary_n[i], sqrt(summary_S[i]/(summary_n[i]-1)), ((lif_injection_spikes[i] / no_injection_lifs) * (1.0 / BIN_SIZE))  );
+		fprintf(average_activity_ouput, "%d %f %f %f %f %f %f %d %f %f\n", i, ((summary_inh_spikes[i] + summary_exc_spikes[i]) / NO_LIFS), (summary_exc_spikes[i] / NO_EXC), (summary_inh_spikes[i] / NO_INH), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)), ((summary_inh_spikes[i] / NO_INH) * (1.0 / BIN_SIZE)), summary_rho[i]/summary_n[i], summary_n[i], sqrt(summary_S[i]/(summary_n[i]-1)), ((lif_injection_spikes[i] / no_injection_lifs) * (1.0 / BIN_SIZE))  );
 	}
 }
 
@@ -141,14 +141,14 @@ void print_network_summary_activity(){
 void print_synapse_activity(int t, cl_Synapse *syn){
 	// in event-based model preT and postT here are one timestep in past wrt other variables
 	// t, rho, ca, preT, postT
-	fprintf(synaptic_activity_output, "%d %f %f %d %d\n", t, (*syn).rho[RECORDER_SYNAPSE_ID], (*syn).ca[RECORDER_SYNAPSE_ID], (*syn).preT[RECORDER_SYNAPSE_ID], (*syn).postT[RECORDER_SYNAPSE_ID]);
+	fprintf(synaptic_activity_output, "%d %f %f %d %d %d\n", t, (*syn).rho[RECORDER_SYNAPSE_ID], (*syn).ca[RECORDER_SYNAPSE_ID], (*syn).preT[RECORDER_SYNAPSE_ID], (*syn).postT[RECORDER_SYNAPSE_ID], (*syn).receives_stimulation_flag[RECORDER_SYNAPSE_ID]);
 }
 
 
 void print_synapses_final_state(cl_Synapse *syn, SynapseConsts *syn_const){
 	// syn_id, pre_lif_id, post_lif_id, rho_initial, rho_final
 	for(int i = 0; i < (*syn_const).no_syns; i++){
-		fprintf(synaptic_strength_output, "%d %d %d %f %f\n", i, (*syn).pre_lif[i], (*syn).post_lif[i], (*syn).rho_initial[i], (*syn).rho[i]);
+		fprintf(synaptic_strength_output, "%d %d %d %f %f %d\n", i, (*syn).pre_lif[i], (*syn).post_lif[i], (*syn).rho_initial[i], (*syn).rho[i], (*syn).receives_stimulation_flag[i]);
 	}
 }
 

@@ -37,8 +37,10 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	(*fixed_syn_p).Jx = calloc(estimated_total_synapses, sizeof(float));
 	(*fixed_syn_p).post_lif = calloc(estimated_total_synapses, sizeof(signed int));
 	
-	no_injection_lifs = 0;
-	lif_injection_list = malloc(NO_LIFS * sizeof(unsigned int));
+	// Setup population which will be manipulated
+	no_injection_lifs = 0; // required for calculating firing rates
+	(*lif_p).subpopulation_flag = calloc(NO_LIFS, sizeof(unsigned char));
+	(*syn_p).receives_stimulation_flag = calloc(estimated_total_synapses, sizeof(unsigned char));
 	
 	printf("Space allocation, mean_ee_syn_per_neuron: %d, est_ee_syn_per_neuron: %d, est_total_ee_synapses: %d, est_total_syn_per_neuron: %d\n", mean_ee_synapses_per_neuron, estimated_ee_synapses_per_neuron, estimated_total_ee_synapses, estimated_total_synapses_per_neuron);
 	
@@ -87,8 +89,10 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 					
 					// Add a small subset of LIFs to manipulation list
 					if((total_ee_synapses % RECORDER_MULTI_SYNAPSE_SKIP) == RECORDER_SYNAPSE_ID){
-						lif_injection_list[no_injection_lifs++] = i;
-						lif_injection_list[no_injection_lifs++] = j;
+						(*lif_p).subpopulation_flag[i] = 1;
+						(*lif_p).subpopulation_flag[j] = 1;
+						no_injection_lifs += 2;
+						(*syn_p).receives_stimulation_flag[total_ee_synapses] = 1;
 						//printf("i %d, j %d\n", i, j);
 					}
 					
@@ -177,7 +181,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	//printf("Time taken: %f, ", totaltime);
 	printf("Total EE synapses: %d, total fixed synapses: %d\n", total_ee_synapses, total_fixed_synapses);
 	
-	printf("No of LIFs to be manipulated: %d, removing duplicates...", no_injection_lifs);
+	/*printf("No of LIFs to be manipulated: %d, removing duplicates...", no_injection_lifs);
 	// Remove duplicates from list of LIFs to be manipulated
 	for(int i = 0; i < no_injection_lifs; i++){
 		for(int j = i+1; j < no_injection_lifs; j++){
@@ -191,13 +195,23 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	}
 	// Resize list of manipulation LIFs
 	lif_injection_list = realloc(lif_injection_list, sizeof(unsigned int) * no_injection_lifs);
-	printf("final no of current manipulation LIFs: %d\n", no_injection_lifs);
+	 */
+	printf("Presumed no of current manipulation LIFs (may double count): %d\n", no_injection_lifs);
+	no_injection_lifs = 0;
+	for(int i = 0; i < NO_LIFS; i++){
+		if((*lif_p).subpopulation_flag[i] == 1){
+			//printf("DEBUG: i: %d\n", i);
+			no_injection_lifs++;
+		}
+	}
+	printf("Actual no of current manipulation LIFs: %d\n", no_injection_lifs);
 	
 	// Shrink memory reserved to required sizes
 	(*syn_p).pre_lif = realloc((*syn_p).pre_lif, sizeof(signed int) * total_ee_synapses);
 	(*syn_p).post_lif = realloc((*syn_p).post_lif, sizeof(signed int) * total_ee_synapses);
 	(*fixed_syn_p).Jx = realloc((*fixed_syn_p).Jx, sizeof(float) * total_fixed_synapses);
 	(*fixed_syn_p).post_lif = realloc((*fixed_syn_p).post_lif, sizeof(signed int) * total_fixed_synapses);
+	(*syn_p).receives_stimulation_flag = realloc((*syn_p).receives_stimulation_flag, sizeof(unsigned char) * total_ee_synapses);
 	for(int i = 0; i < NO_LIFS; i++){
 		(*lif_p).incoming_synapse_index[i] = realloc((*lif_p).incoming_synapse_index[i], sizeof(signed int) * (*lif_p).no_incoming_synapses[i]);
 		(*lif_p).outgoing_synapse_index[i] = realloc((*lif_p).outgoing_synapse_index[i], sizeof(signed int) * (*lif_p).no_outgoing_synapses[i]);
@@ -518,6 +532,15 @@ int main (int argc, const char * argv[]) {
 				lif_gauss_totals[i] += (*lif_p).gauss[i];
 			#endif /* DEBUG_MODE_NETWORK */
 		}
+		// For a brief period apply stimulation to a subset of neurons
+		if((STIM_ON < (j * LIF_DT)) && ((j * LIF_DT) < STIM_OFF)){
+			for( i = 0; i < (*lif_p).no_lifs; i++){
+				if((*lif_p).subpopulation_flag[i] == 1){
+					(*lif_p).I[i] = J_STIM;
+					//printf("DEBUG: (j*LIF_DT) %f, i %d\n", (j*LIF_DT), i);
+				}
+			}
+		}
 		
 		// Print to intracellular recorder file
 		// print: time, voltage, input current
@@ -612,13 +635,12 @@ int main (int argc, const char * argv[]) {
 				
 				// Add to average spiking activity bins
 				if(i < NO_EXC){
-					summary_exc_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
-					//CONSIDER: not keeping the following?
-					for(int k = 0; k < no_injection_lifs; k++){
-						if(i == lif_injection_list[k]){
-							lif_injection_spikes[(int) ( ( (*lif_p).dt / BIN_SIZE) * j + EPSILLON)]++;
-							break;
-						}
+					// Separately monitor frequency of subpopulation
+					if ((*lif_p).subpopulation_flag[i] == 1){
+						lif_injection_spikes[(int) ( ( (*lif_p).dt / BIN_SIZE) * j + EPSILLON)]++;
+					}
+					else{
+						summary_exc_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
 					}
 				}
 				else{

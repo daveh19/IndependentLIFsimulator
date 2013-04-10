@@ -23,7 +23,7 @@
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (800000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (15000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
@@ -34,7 +34,12 @@
 // Time step sizes and statistical bin widths
 #define LIF_DT (0.00001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
 #define SYN_DT LIF_DT /*TODO: at a later stage I will have the synapse update more slowly than the lif*/
-#define BIN_SIZE (1.0) /*(0.1)*/
+#define BIN_SIZE (0.01) /*(0.1)*/
+
+// Stimulation of subpopulation /* using secs despite inconsistency with other parameter units */
+#define STIM_ON (0.01)
+#define STIM_OFF (0.1)
+#define J_STIM (23.) /*23mV approx 50Hz*/
 
 // Transfer voltages
 #define J_EE (0.2) /*(0.1)*/

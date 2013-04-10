@@ -47,7 +47,6 @@ float *summary_S;
 unsigned int *summary_n;
 
 // Variables for manipulating subset of neurons
-unsigned int *lif_injection_list;
 float *lif_injection_spikes;
 int no_injection_lifs;
 
