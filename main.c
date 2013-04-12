@@ -516,7 +516,7 @@ int main (int argc, const char * argv[]) {
 					printf("Pre Spike (LIF %d) \n", (*spike_queue_p).neuron_id[offset][i]);
 				#endif /* DEBUG_MODE_SPIKES */
 				//TODO: reenable updateEventBasedSynapse here
-				//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k], j);
+				updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[ (*spike_queue_p).neuron_id[offset][i] ][k], j);
 			}
 		}
 		// Event-based 2 (Reset delayed event queue)
@@ -564,7 +564,7 @@ int main (int argc, const char * argv[]) {
 						printf("Post Spike (LIF %d) \n", i);
 					#endif /* DEBUG_MODE_SPIKES */
 					//TODO: reenable updateEventBasedSynapse here
-					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).incoming_synapse_index[i][k], j);
+					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).incoming_synapse_index[i][k], j);
 					//if(i==0){
 					//	printf("backprop to pre-lif synapse(%d)\n", (*lif_p).incoming_synapse_index[i][k]);
 					//}
@@ -574,7 +574,7 @@ int main (int argc, const char * argv[]) {
 					// across plastic synapses
 					// Event-based 4 (Update synapse: Update in advance of current transfer)
 					//TODO: reenable updateEventBasedSynapse here
-					//updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
+					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
 					//#ifdef DEBUG_MODE_NETWORK
 						//Debug code
 						if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
@@ -706,10 +706,10 @@ int main (int argc, const char * argv[]) {
 	//TODO: disable updating of multi-recorder synapses here
 	for (i = RECORDER_SYNAPSE_ID; i < (*syn_const_p).no_syns; i+= RECORDER_MULTI_SYNAPSE_SKIP){
 		//TODO: reenable updateEventBasedSynapse here
-		//updateEventBasedSynapse(syn_p, syn_const_p, i, j);
+		updateEventBasedSynapse(syn_p, syn_const_p, i, j);
 	}
 	//TODO: reenable final update of single recorder synapse here
-	//updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
+	updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
 	print_network_summary_activity();
 	printf("done.\nAnd final state of synapses...");
 	// Print final state of synapse strengths
@@ -859,7 +859,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	}
 	
 	//TODO: flat-well potential hack here
-	t_deter = 0;
+	//t_deter = 0;
 	//TODO: comment out following section if double-well desired
 	// Deterministic update for piecewise-quadratic potential well
 	/*if (t_deter > 0){
@@ -956,6 +956,24 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 			Mk = summary_M[time_bin_index] + ((*syn).rho[syn_id] - summary_M[time_bin_index])/summary_n[time_bin_index];
 			summary_S[time_bin_index] = summary_S[time_bin_index] + ((*syn).rho[syn_id] - summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
 			summary_M[time_bin_index] = Mk;
+		}
+	}
+	else{
+		int time_bin_index = (int)( ( (*syn_const).dt / BIN_SIZE ) * current_time + EPSILLON);
+		pop_summary_rho[time_bin_index] += (*syn).rho[syn_id];
+		pop_summary_n[time_bin_index]++;
+		
+		if(pop_summary_M[time_bin_index] == 0){ // initialise on first entry to time bin
+			pop_summary_M[time_bin_index] = (*syn).rho[syn_id];
+			pop_summary_S[time_bin_index] = 0;
+		}
+		else{
+			//Mk = Mk-1+ (xk - Mk-1)/k
+			//Sk = Sk-1 + (xk - Mk-1)*(xk - Mk).
+			float Mk;
+			Mk = pop_summary_M[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index])/pop_summary_n[time_bin_index];
+			pop_summary_S[time_bin_index] = pop_summary_S[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
+			pop_summary_M[time_bin_index] = Mk;
 		}
 	}
 }

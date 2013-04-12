@@ -45,6 +45,11 @@ float *summary_rho;
 float *summary_M;
 float *summary_S;
 unsigned int *summary_n;
+// Summary variables for main population synapse recorders
+float *pop_summary_rho;
+float *pop_summary_M;
+float *pop_summary_S;
+unsigned int *pop_summary_n;
 
 // Variables for manipulating subset of neurons
 float *lif_injection_spikes;
