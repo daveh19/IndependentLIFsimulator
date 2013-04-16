@@ -17,13 +17,13 @@
 #define RECORDER_SYNAPSE_ID (201) /* for multiple synaptic recordings this needs to be less than 400*/
 #define RECORDER_MULTI_SYNAPSE_SKIP (64000) /*(450)*/
 
-#define USE_GPU (1) /* 1=gpu, 0=cpu */
+#define USE_GPU (0) /* 1=gpu, 0=cpu */
 #define NETWORK_SEED (-14)
 #define PARALLEL_SEED (0)
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (600000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (2000000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (8000) /*(400)*/ /*(10000)*/
@@ -32,13 +32,13 @@
 #define CONNECTIVITY_PROBABILITY (0.05) /*(0.05)*/
 
 // Time step sizes and statistical bin widths
-#define LIF_DT (0.00001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
+#define LIF_DT (0.0001) /* modify refrac time and calcium delay in tandem, also MAX_TIME_STEPS */
 #define SYN_DT LIF_DT /*TODO: at a later stage I will have the synapse update more slowly than the lif*/
 #define BIN_SIZE (1.) /*(0.1)*/
 
 // Stimulation of subpopulation /* using secs despite inconsistency with other parameter units */
-#define STIM_ON (0.1)
-#define STIM_OFF (3.1)
+#define STIM_ON (0.)
+#define STIM_OFF (0.)
 #define J_STIM (23.) /*23mV approx 50Hz*/
 
 // Transfer voltages
@@ -64,7 +64,7 @@
 // Synapse model specific
 #define SYN_RHO_INITIAL (0.16492) /*(0.372029)*/ /*(0.176923)*/ /*(0.185)*/ /*(1.0)*/
 #define SYN_CA_INITIAL (0.0)
-#define SYN_CALCIUM_DELAY (461) /*46*/ /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
+#define SYN_CALCIUM_DELAY (46) /*46*/ /*4.6098ms*/ /*timesteps (needs to be modified when DT is modified above*/
 #define SYN_GAMMA_P (725.085)
 #define SYN_GAMMA_D (331.909)
 #define SYN_THETA_P (1.3)
