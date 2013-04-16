@@ -9,6 +9,8 @@
  
 #define PI (4.*atan(1.))
 
+#include "/usr/local/include/Random123/philox.h"
+
 /*typedef struct SynapseConstsStruct{
 	float gamma_p;
 	float gamma_d;
@@ -132,10 +134,10 @@ __kernel void lif(
 	__global unsigned int* input_spike, // refractory period count down variable
 	
 	//State variables for random number generator
-	__global unsigned int* d_z,
+	/*__global unsigned int* d_z,
 	__global unsigned int* d_w,
 	__global unsigned int* d_jsr,
-	__global unsigned int* d_jcong,
+	__global unsigned int* d_jcong,*/
 	
 	const double v_rest, // resting membrane voltage
 	const double v_reset, // reset membrane voltage
@@ -145,7 +147,10 @@ __kernel void lif(
 	const double sigma, // size of noise
 	const float refrac_time, // duration of refractory period
 	const double dt, // time step size
-	const unsigned int no_lifs // number of lifs in simulation	
+	const unsigned int no_lifs, // number of lifs in simulation	
+	
+	const unsigned int time_step, // used for indexing the random number generator
+	const unsigned int random_seed // seed for the random number generator
 	)
 {
 	int i = get_global_id(0);
@@ -154,13 +159,30 @@ __kernel void lif(
 		double input_current = input_i[i];
 		unsigned int time_since_spike = input_spike[i];
 		
+		philox2x32_key_t key;
+		philox2x32_ctr_t ctr;
+		philox2x32_ctr_t rand_val;
+		float2 uni_rand;
+		
+		key.v[0] = i;
+		ctr.v[0] = time_step;
+		ctr.v[1] = random_seed;
+		rand_val = philox2x32_R(10, ctr, key);
+		// Convert to Uniform distribution (1/(2^32 +2))
+		uni_rand.x = rand_val.v[0] * 2.328306435454494e-10;
+		uni_rand.y = rand_val.v[1] * 2.328306435454494e-10;
+		// Box-Muller transform
+		double r = sqrt( (double)(-2.0*log(uni_rand.x)) );
+		double theta = 2.0 * PI * uni_rand.y;
+		double random_value = r * sin(theta);
+		
 		// Generate Gaussian(0,1) noise
-		MarsagliaStruct rnd;
+		/*MarsagliaStruct rnd;
 		rnd.d_z = d_z[i];
 		rnd.d_w = d_w[i];
 		rnd.d_jsr = d_jsr[i];
 		rnd.d_jcong = d_jcong[i];
-		Marsaglia_GetNormal(&rnd);
+		Marsaglia_GetNormal(&rnd);*/
 	
 		double new_v;
 		double dv = 0;
@@ -188,7 +210,7 @@ __kernel void lif(
 			dv += (input_current / tau_m);
 			// Apply noise
 			//noise = sqrt(dt / tau_m) * sigma * rnd.value;
-			noise = sqrt(dt / tau_m) * sigma * input_gauss[i];
+			noise = sqrt(dt / tau_m) * sigma * random_value;
 		}
 
 		new_v = v + (dv * dt) + noise;
@@ -207,11 +229,12 @@ __kernel void lif(
 			time_since_spike++;
 		}
 		
-		d_z[i] = rnd.d_z;
+		/*d_z[i] = rnd.d_z;
 		d_w[i] = rnd.d_w;
 		d_jsr[i] = rnd.d_jsr;
-		d_jcong[i] = rnd.d_jcong;
-		input_gauss[i] = rnd.value;
+		d_jcong[i] = rnd.d_jcong;*/
+		
+		input_gauss[i] = random_value;
 
 		input_spike[i] = time_since_spike;
 		input_v[i] = new_v;

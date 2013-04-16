@@ -265,6 +265,8 @@ int main (int argc, const char * argv[]) {
 	(*lif_p).refrac_time = LIF_REFRAC_TIME; //20;
 	(*lif_p).dt = LIF_DT;
 	(*lif_p).no_lifs = NO_LIFS;
+	(*lif_p).time_step = 0;
+	(*lif_p).random123_seed = PARALLEL_SEED;
 	(*cl_lif_p).job_size = (*lif_p).no_lifs;
 	
 	// Setup external and synaptic voltages/currents
@@ -365,10 +367,10 @@ int main (int argc, const char * argv[]) {
 	//for LIF
 	cl_MarsagliaStruct rnd_lif;
 	cl_MarsagliaStruct *rnd_lif_p = &rnd_lif;
-	(*rnd_lif_p).d_z = malloc((*lif_p).no_lifs * sizeof(unsigned int));
+	/*(*rnd_lif_p).d_z = malloc((*lif_p).no_lifs * sizeof(unsigned int));
 	(*rnd_lif_p).d_w = malloc((*lif_p).no_lifs * sizeof(unsigned int));
 	(*rnd_lif_p).d_jsr = malloc((*lif_p).no_lifs * sizeof(unsigned int));
-	(*rnd_lif_p).d_jcong = malloc((*lif_p).no_lifs * sizeof(unsigned int));
+	(*rnd_lif_p).d_jcong = malloc((*lif_p).no_lifs * sizeof(unsigned int));*/
 	//for Synapse
 	cl_MarsagliaStruct rnd_syn;
 	cl_MarsagliaStruct *rnd_syn_p = &rnd_syn;
@@ -386,12 +388,12 @@ int main (int argc, const char * argv[]) {
 		(*lif_p).V[i] = LIF_V_INITIAL;
 		(*lif_p).I[i] = external_voltage;
 		(*lif_p).time_since_spike[i] = (*lif_p).refrac_time;
-		(*rnd_lif_p).d_z[i] = 362436069 + i + 1 + PARALLEL_SEED;
+		/*(*rnd_lif_p).d_z[i] = 362436069 + i + 1 + PARALLEL_SEED;
 		(*rnd_lif_p).d_w[i] = 521288629 + i + 1 + PARALLEL_SEED;
 		(*rnd_lif_p).d_jsr[i] = 123456789 + i + 1 + PARALLEL_SEED;
-		(*rnd_lif_p).d_jcong[i] = 380116160 + i + 1 + PARALLEL_SEED;
+		(*rnd_lif_p).d_jcong[i] = 380116160 + i + 1 + PARALLEL_SEED;*/
 		
-		(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
+		//(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
@@ -697,6 +699,7 @@ int main (int argc, const char * argv[]) {
 		// Event-based 6 (Update event queue offset variable)
 		offset = (++offset) % (*syn_const_p).delay;
 		j++;
+		(*lif_p).time_step = j;
 	}
 	finish_t = clock();
 	printf("Stop\n");
