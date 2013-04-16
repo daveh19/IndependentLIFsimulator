@@ -234,6 +234,7 @@ int main (int argc, const char * argv[]) {
 	int i, j, k;
 	int offset;
 	//long uniform_synaptic_seed = UNIFORM_SYNAPTIC_SEED;
+	long gaussian_lif_seed = (GAUSSIAN_SYNAPTIC_SEED - 1);
 	
 	clock_t start_t,finish_t;
 	double totaltime;
@@ -389,6 +390,8 @@ int main (int argc, const char * argv[]) {
 		(*rnd_lif_p).d_w[i] = 521288629 + i + 1 + PARALLEL_SEED;
 		(*rnd_lif_p).d_jsr[i] = 123456789 + i + 1 + PARALLEL_SEED;
 		(*rnd_lif_p).d_jcong[i] = 380116160 + i + 1 + PARALLEL_SEED;
+		
+		(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
 	}
 	for( i = 0; i < (*syn_const_p).no_syns; i++){
 		//(*syn_p).rho[i] = SYN_RHO_INITIAL;
@@ -532,6 +535,7 @@ int main (int argc, const char * argv[]) {
 			#ifdef DEBUG_MODE_NETWORK
 				lif_gauss_totals[i] += (*lif_p).gauss[i];
 			#endif /* DEBUG_MODE_NETWORK */
+			(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
 		}
 		// For a brief period apply stimulation to a subset of neurons
 		if((STIM_ON < (j * LIF_DT)) && ((j * LIF_DT) < STIM_OFF)){

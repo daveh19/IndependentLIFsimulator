@@ -187,7 +187,8 @@ __kernel void lif(
 			// input_current is treated as a voltage step, despite the variable name, hence the division by tau_m
 			dv += (input_current / tau_m);
 			// Apply noise
-			noise = sqrt(dt / tau_m) * sigma * rnd.value;
+			//noise = sqrt(dt / tau_m) * sigma * rnd.value;
+			noise = sqrt(dt / tau_m) * sigma * input_gauss[i];
 		}
 
 		new_v = v + (dv * dt) + noise;
