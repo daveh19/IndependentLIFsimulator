@@ -126,9 +126,9 @@ void MWC_GetNormal(MWCRandomStruct *rnd)
 // Leaky integrate and fire kernel
 //
 __kernel void lif(
-	__global float* input_v, // membrane voltage
-	__global float* input_i, // input current
-	__global float* input_gauss, // gaussian noise on membrane potential
+	__global double* input_v, // membrane voltage
+	__global double* input_i, // input current
+	__global double* input_gauss, // gaussian noise on membrane potential
 	__global unsigned int* input_spike, // refractory period count down variable
 	
 	//State variables for random number generator
@@ -137,21 +137,21 @@ __kernel void lif(
 	__global unsigned int* d_jsr,
 	__global unsigned int* d_jcong,
 	
-	const float v_rest, // resting membrane voltage
-	const float v_reset, // reset membrane voltage
-	const float v_threshold, // threshold voltage for spiking
-	const float r_m, // membrane resistance
-	const float c_m, // membrane capacitance
-	const float sigma, // size of noise
+	const double v_rest, // resting membrane voltage
+	const double v_reset, // reset membrane voltage
+	const double v_threshold, // threshold voltage for spiking
+	const double tau_m, // membrane resistance
+	//const float c_m, // membrane capacitance
+	const double sigma, // size of noise
 	const float refrac_time, // duration of refractory period
-	const float dt, // time step size
+	const double dt, // time step size
 	const unsigned int no_lifs // number of lifs in simulation	
 	)
 {
 	int i = get_global_id(0);
 	if ( i < no_lifs ){
-		float v = input_v[i];
-		float input_current = input_i[i];
+		double v = input_v[i];
+		double input_current = input_i[i];
 		unsigned int time_since_spike = input_spike[i];
 		
 		// Generate Gaussian(0,1) noise
@@ -162,10 +162,10 @@ __kernel void lif(
 		rnd.d_jcong = d_jcong[i];
 		Marsaglia_GetNormal(&rnd);
 	
-		float new_v;
-		float dv = 0;
-		float noise = 0;
-		float tau_m = r_m * c_m;
+		double new_v;
+		double dv = 0;
+		double noise = 0;
+		//float tau_m = r_m * c_m;
 	
 		//REMINDER: initialise time_since_spike to refrac_time in main program,
 		// otherwise system always resets to V_reset upon initialisation

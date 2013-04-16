@@ -28,7 +28,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, FixedSynaps
 	unsigned int estimated_ee_synapses_per_neuron = (mean_ee_synapses_per_neuron) + (int)(mean_ee_synapses_per_neuron/2) + 1000; // mean + wide margin + constant (for small nets)
 	unsigned int estimated_total_synapses_per_neuron = (mean_total_synapses_per_neuron) + (int)(mean_total_synapses_per_neuron/2) + 2000; // mean + wide margin + constant (for small nets)
 	
-	float delta_spike_modifier = ((*lif_p).r_m * (*lif_p).c_m) / (*lif_p).dt;
+	float delta_spike_modifier = (*lif_p).tau_m / (*lif_p).dt;
 	//printf("DEBUG: delta_spike_modifier %f\n", delta_spike_modifier);
 	
 	(*syn_p).pre_lif = calloc(estimated_total_ee_synapses, sizeof(signed int));
@@ -249,16 +249,17 @@ int main (int argc, const char * argv[]) {
 	cl_LIFNeuron lif;
 	cl_LIFNeuron *lif_p = &lif;
 	
-	(*lif_p).V = malloc(sizeof(float) * NO_LIFS);
-	(*lif_p).I = malloc(sizeof(float) * NO_LIFS);
-	(*lif_p).gauss = calloc(NO_LIFS, sizeof(float));
+	(*lif_p).V = malloc(sizeof(double) * NO_LIFS);
+	(*lif_p).I = malloc(sizeof(double) * NO_LIFS);
+	(*lif_p).gauss = calloc(NO_LIFS, sizeof(double));
 	(*lif_p).time_since_spike = calloc(NO_LIFS, sizeof(unsigned int));
 	
 	(*lif_p).v_rest = LIF_V_REST;
 	(*lif_p).v_reset = LIF_V_RESET;
 	(*lif_p).v_threshold = LIF_V_THRESHOLD;
-	(*lif_p).r_m = LIF_RM;
-	(*lif_p).c_m = LIF_CM;
+	(*lif_p).tau_m = ((double)LIF_RM * (double)LIF_CM);
+	//(*lif_p).r_m = LIF_RM;
+	//(*lif_p).c_m = LIF_CM;
 	(*lif_p).sigma = LIF_SIGMA; //5; 
 	(*lif_p).refrac_time = LIF_REFRAC_TIME; //20;
 	(*lif_p).dt = LIF_DT;
@@ -266,10 +267,10 @@ int main (int argc, const char * argv[]) {
 	(*cl_lif_p).job_size = (*lif_p).no_lifs;
 	
 	// Setup external and synaptic voltages/currents
-	float external_voltage = J_EXT;
+	double external_voltage = J_EXT;
 	// Syanptic currents must be modified by (tau_m/dt) as they are delta current spikes
-	float delta_spike_modifier = ((*lif_p).r_m * (*lif_p).c_m) / (*lif_p).dt;
-	float transfer_voltage = J_EE;
+	double delta_spike_modifier = (*lif_p).tau_m / (*lif_p).dt;
+	double transfer_voltage = J_EE;
 	transfer_voltage *= delta_spike_modifier;
 	//printf("DEBUG: delta_spike_modifier %f, transfer_voltage %f\n", delta_spike_modifier, transfer_voltage);
 	 

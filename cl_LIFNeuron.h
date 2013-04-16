@@ -4,9 +4,9 @@
 #include "GeneralIncludes.h"
 
 typedef struct LIFNeuron{
-    float * V;
-	float * I;
-	float * gauss;
+    double * V;
+	double * I;
+	double * gauss;
     unsigned int * time_since_spike;
 	
 	unsigned int * no_outgoing_synapses;
@@ -16,14 +16,15 @@ typedef struct LIFNeuron{
 	unsigned int * no_incoming_synapses;
 	signed int ** incoming_synapse_index;
 
-	float v_rest;
-	float v_reset;
-	float v_threshold;
-	float r_m;
-	float c_m;
-	float sigma;
-	float refrac_time;
-	float dt;
+	double v_rest;
+	double v_reset;
+	double v_threshold;
+	double tau_m;
+	//float r_m;
+	//float c_m;
+	double sigma;
+	float refrac_time;  //TODO: why is this a float?
+	double dt;
 	unsigned int no_lifs;
 	
 	unsigned char * subpopulation_flag; // manipulations will be performed on this population

@@ -267,9 +267,9 @@ int createLifIObufs(CL *cl){
 	
     // Create the input and output arrays in device memory for our calculation
     //
-    (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
-    (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * (*cl).job_size, NULL, NULL);
+    (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(double) * (*cl).job_size, NULL, NULL);
+    (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(double) * (*cl).job_size, NULL, NULL);
+	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(double) * (*cl).job_size, NULL, NULL);
 	(*cl).input_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
 	
 	(*cl).d_z = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
@@ -341,8 +341,8 @@ int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	
     // Write our data set into the input array in device memory
     //
-    (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL);
-    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_current, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).I, 0, NULL, NULL);
+    (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(double) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL);
+    (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_current, CL_TRUE, 0, sizeof(double) * (*lif).no_lifs, (*lif).I, 0, NULL, NULL);
 	//(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL);
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*lif).time_since_spike, 0, NULL, NULL);
 	
@@ -427,15 +427,15 @@ int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
 	//(*cl).err  |= clSetKernelArg((*cl).kernel, 4, sizeof(cl_mem), &(*cl).output_v);
 	//(*cl).err  |= clSetKernelArg((*cl).kernel, 5, sizeof(cl_mem), &(*cl).output_spike);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(float), &(*lif).v_rest);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(float), &(*lif).v_reset);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(float), &(*lif).v_threshold);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(float), &(*lif).r_m);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*lif).c_m);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*lif).sigma);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(float), &(*lif).refrac_time);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 15, sizeof(float), &(*lif).dt);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 16, sizeof(unsigned int), &(*lif).no_lifs);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 8, sizeof(double), &(*lif).v_rest);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 9, sizeof(double), &(*lif).v_reset);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 10, sizeof(double), &(*lif).v_threshold);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(double), &(*lif).tau_m);
+	//(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(float), &(*lif).c_m);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(double), &(*lif).sigma);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(float), &(*lif).refrac_time);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 14, sizeof(double), &(*lif).dt);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 15, sizeof(unsigned int), &(*lif).no_lifs);
 	
     if ((*cl).err != CL_SUCCESS)
     {
@@ -632,9 +632,9 @@ int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	
 	//(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).output_v, CL_TRUE, 0, sizeof(float) * NO_LIFS, (*lif).V, 0, NULL, NULL );
 	//(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
-	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL );
+	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(double) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*lif).time_since_spike, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(double) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL );
 	
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).d_z, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_z, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).d_w, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_w, 0, NULL, NULL );
