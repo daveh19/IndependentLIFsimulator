@@ -9,7 +9,9 @@
  
 #define PI (4.*atan(1.))
 
-#include "/usr/local/include/Random123/philox.h"
+//#include "Random123/philox.h"
+
+#include "Random123/philox.h"
 
 /*typedef struct SynapseConstsStruct{
 	float gamma_p;
@@ -128,10 +130,10 @@ void MWC_GetNormal(MWCRandomStruct *rnd)
 // Leaky integrate and fire kernel
 //
 __kernel void lif(
-	__global double* input_v, // membrane voltage
-	__global double* input_i, // input current
-	__global double* input_gauss, // gaussian noise on membrane potential
-	__global unsigned int* input_spike, // refractory period count down variable
+	__global float* input_v, // membrane voltage
+	__global float* input_i, // input current
+	//__global float* input_gauss, // gaussian noise on membrane potential
+	__global unsigned int* input_spike, // refractory period count up variable
 	
 	//State variables for random number generator
 	/*__global unsigned int* d_z,
@@ -139,42 +141,87 @@ __kernel void lif(
 	__global unsigned int* d_jsr,
 	__global unsigned int* d_jcong,*/
 	
-	const double v_rest, // resting membrane voltage
-	const double v_reset, // reset membrane voltage
-	const double v_threshold, // threshold voltage for spiking
-	const double tau_m, // membrane resistance
+	const float v_rest, // resting membrane voltage
+	const float v_reset, // reset membrane voltage
+	const float v_threshold, // threshold voltage for spiking
+	const float tau_m, // membrane time constant
 	//const float c_m, // membrane capacitance
-	const double sigma, // size of noise
+	const float sigma, // size of noise
 	const float refrac_time, // duration of refractory period
-	const double dt, // time step size
+	const float dt, // time step size
+	const unsigned int no_lifs, // number of lifs in simulation
+	
+	const unsigned int time_step, // used for indexing the random number generator
+	const unsigned int random_seed, // seed for the random number generator
+	
+	//TODO: if gauss stream permanently removed then it should be removed from here, etc.
+	__global float* output_gauss 
+	)
+	/*(
+	__global float* input_v, // membrane voltage
+	__global float* input_i, // input current
+	__global float* input_gauss, // gaussian noise on membrane potential
+	__global unsigned int* input_spike, // refractory period count down variable
+	*/
+	//State variables for random number generator
+	/*__global unsigned int* d_z,
+	__global unsigned int* d_w,
+	__global unsigned int* d_jsr,
+	__global unsigned int* d_jcong,*/
+	/*
+	const float v_rest, // resting membrane voltage
+	const float v_reset, // reset membrane voltage
+	const float v_threshold, // threshold voltage for spiking
+	const float tau_m, // membrane resistance
+	//const float c_m, // membrane capacitance
+	const float sigma, // size of noise
+	const float refrac_time, // duration of refractory period
+	const float dt, // time step size
 	const unsigned int no_lifs, // number of lifs in simulation	
 	
 	const unsigned int time_step, // used for indexing the random number generator
 	const unsigned int random_seed // seed for the random number generator
-	)
+	)*/
 {
 	int i = get_global_id(0);
 	if ( i < no_lifs ){
-		double v = input_v[i];
-		double input_current = input_i[i];
-		unsigned int time_since_spike = input_spike[i];
+		float new_v;
+		float dv;
+		float noise;
 		
 		philox2x32_key_t key;
 		philox2x32_ctr_t ctr;
 		philox2x32_ctr_t rand_val;
 		float2 uni_rand;
 		
+		float r, theta;
+		float dave_temp;
+		float my_random_value;
+		
+		float v = input_v[i];
+		float input_current = input_i[i];
+		unsigned int time_since_spike = input_spike[i];
+		
+		// Generate Gaussian(0,1) noise using Random123 library implementation		
 		key.v[0] = i;
 		ctr.v[0] = time_step;
 		ctr.v[1] = random_seed;
 		rand_val = philox2x32_R(10, ctr, key);
 		// Convert to Uniform distribution (1/(2^32 +2))
-		uni_rand.x = rand_val.v[0] * 2.328306435454494e-10;
-		uni_rand.y = rand_val.v[1] * 2.328306435454494e-10;
+		uni_rand.x = rand_val.v[0] * (1./(2^32 + 2));//2.328306435454494e-10;
+		uni_rand.y = rand_val.v[1] * (1./(2^32 + 2));//2.328306435454494e-10;
 		// Box-Muller transform
-		double r = sqrt( (double)(-2.0*log(uni_rand.x)) );
-		double theta = 2.0 * PI * uni_rand.y;
-		double random_value = r * sin(theta);
+		r = sqrt( -2.0*log(uni_rand.x) );
+		theta = 2.0 * PI * uni_rand.y;
+		//my_random_value = r * sin(((float)theta);
+		dave_temp = r * sin(theta);
+		
+		//dave_temp = dave_temp + 1;
+		dv = 0;
+		noise = 0;
+		//my_random_value = 1.34;
+		
+		//my_random_value = my_random_value + 3.;
 		
 		// Generate Gaussian(0,1) noise
 		/*MarsagliaStruct rnd;
@@ -184,9 +231,7 @@ __kernel void lif(
 		rnd.d_jcong = d_jcong[i];
 		Marsaglia_GetNormal(&rnd);*/
 	
-		double new_v;
-		double dv = 0;
-		double noise = 0;
+		
 		//float tau_m = r_m * c_m;
 	
 		//REMINDER: initialise time_since_spike to refrac_time in main program,
@@ -210,7 +255,7 @@ __kernel void lif(
 			dv += (input_current / tau_m);
 			// Apply noise
 			//noise = sqrt(dt / tau_m) * sigma * rnd.value;
-			noise = sqrt(dt / tau_m) * sigma * random_value;
+			noise = sqrt(dt / tau_m) * sigma * my_random_value;
 		}
 
 		new_v = v + (dv * dt) + noise;
@@ -234,7 +279,7 @@ __kernel void lif(
 		d_jsr[i] = rnd.d_jsr;
 		d_jcong[i] = rnd.d_jcong;*/
 		
-		input_gauss[i] = random_value;
+		output_gauss[i] = dave_temp;
 
 		input_spike[i] = time_since_spike;
 		input_v[i] = new_v;

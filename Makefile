@@ -18,10 +18,11 @@ LIBCUDA = -L/usr/local/cuda/ -L/usr/local/cuda/lib/ -l OpenCL
 INCAMD = -I/opt/AMDAPP/include/
 LIBAMD = -L/opt/AMDAPP/lib/x86_64/ -lOpenCL
 
-SRCS = *.c
+SRCS = DataReporters.c HandleOpenCL.c NumericalTools.c main.c
 OBJS = *.o
  
-EXE = kernel/network_sim
+#EXE = kernel/network_sim
+EXE = build/Debug/net_sim_2
 
 midway:
 				$(LD) $(CFLAGS) -lOpenCL $(SRCS) -o $(EXE)

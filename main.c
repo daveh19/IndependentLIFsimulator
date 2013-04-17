@@ -250,15 +250,15 @@ int main (int argc, const char * argv[]) {
 	cl_LIFNeuron lif;
 	cl_LIFNeuron *lif_p = &lif;
 	
-	(*lif_p).V = malloc(sizeof(double) * NO_LIFS);
-	(*lif_p).I = malloc(sizeof(double) * NO_LIFS);
-	(*lif_p).gauss = calloc(NO_LIFS, sizeof(double));
+	(*lif_p).V = malloc(sizeof(float) * NO_LIFS);
+	(*lif_p).I = malloc(sizeof(float) * NO_LIFS);
+	(*lif_p).gauss = calloc(NO_LIFS, sizeof(float));
 	(*lif_p).time_since_spike = calloc(NO_LIFS, sizeof(unsigned int));
 	
 	(*lif_p).v_rest = LIF_V_REST;
 	(*lif_p).v_reset = LIF_V_RESET;
 	(*lif_p).v_threshold = LIF_V_THRESHOLD;
-	(*lif_p).tau_m = ((double)LIF_RM * (double)LIF_CM);
+	(*lif_p).tau_m = (LIF_RM * LIF_CM);
 	//(*lif_p).r_m = LIF_RM;
 	//(*lif_p).c_m = LIF_CM;
 	(*lif_p).sigma = LIF_SIGMA; //5; 
@@ -537,7 +537,7 @@ int main (int argc, const char * argv[]) {
 			#ifdef DEBUG_MODE_NETWORK
 				lif_gauss_totals[i] += (*lif_p).gauss[i];
 			#endif /* DEBUG_MODE_NETWORK */
-			(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
+			//(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
 		}
 		// For a brief period apply stimulation to a subset of neurons
 		if((STIM_ON < (j * LIF_DT)) && ((j * LIF_DT) < STIM_OFF)){
