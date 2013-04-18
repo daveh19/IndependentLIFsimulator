@@ -36,17 +36,16 @@ typedef struct cl_struct{
     cl_kernel kernel;                   // compute kernel
 	
 	
+	cl_mem gauss;
+	
 	// LIF specific memory streams
 	cl_mem input_v;
 	cl_mem input_current;
-	cl_mem input_gauss;
 	cl_mem input_spike;
-	
 	
 	// Synapse specific memory streams
 	cl_mem rho;
 	cl_mem ca;
-	//cl_mem input_gauss; // duplicate
 	cl_mem pre_spike;
 	cl_mem post_spike;
 	
@@ -62,7 +61,7 @@ typedef struct cl_struct{
 } CL;
 
 
-static char *print_cl_errstring(cl_int err);
+//static char *print_cl_errstring(cl_int err);
 char* readKernelSource(char * filename);
 int getPlatformIDs(CL *cl);
 int connectToComputeDevice(CL *cl);

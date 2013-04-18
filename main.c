@@ -234,7 +234,7 @@ int main (int argc, const char * argv[]) {
 	int i, j, k;
 	int offset;
 	//long uniform_synaptic_seed = UNIFORM_SYNAPTIC_SEED;
-	long gaussian_lif_seed = (GAUSSIAN_SYNAPTIC_SEED - 1);
+	//long gaussian_lif_seed = (GAUSSIAN_SYNAPTIC_SEED - 1);
 	
 	clock_t start_t,finish_t;
 	double totaltime;
@@ -537,6 +537,7 @@ int main (int argc, const char * argv[]) {
 			#ifdef DEBUG_MODE_NETWORK
 				lif_gauss_totals[i] += (*lif_p).gauss[i];
 			#endif /* DEBUG_MODE_NETWORK */
+			//TODO: apply serialised external noise here
 			//(*lif_p).gauss[i] = gasdev(&gaussian_lif_seed);
 		}
 		// For a brief period apply stimulation to a subset of neurons

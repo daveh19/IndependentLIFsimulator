@@ -10,6 +10,59 @@
 #include "HandleOpenCL.h"
 
 
+static char *print_cl_errstring(cl_int err) {
+    switch (err) {
+        case CL_SUCCESS:                          return strdup("Success!");
+        case CL_DEVICE_NOT_FOUND:                 return strdup("Device not found.");
+        case CL_DEVICE_NOT_AVAILABLE:             return strdup("Device not available");
+        case CL_COMPILER_NOT_AVAILABLE:           return strdup("Compiler not available");
+        case CL_MEM_OBJECT_ALLOCATION_FAILURE:    return strdup("Memory object allocation failure");
+        case CL_OUT_OF_RESOURCES:                 return strdup("Out of resources");
+        case CL_OUT_OF_HOST_MEMORY:               return strdup("Out of host memory");
+        case CL_PROFILING_INFO_NOT_AVAILABLE:     return strdup("Profiling information not available");
+        case CL_MEM_COPY_OVERLAP:                 return strdup("Memory copy overlap");
+        case CL_IMAGE_FORMAT_MISMATCH:            return strdup("Image format mismatch");
+        case CL_IMAGE_FORMAT_NOT_SUPPORTED:       return strdup("Image format not supported");
+        case CL_BUILD_PROGRAM_FAILURE:            return strdup("Program build failure");
+        case CL_MAP_FAILURE:                      return strdup("Map failure");
+        case CL_INVALID_VALUE:                    return strdup("Invalid value");
+        case CL_INVALID_DEVICE_TYPE:              return strdup("Invalid device type");
+        case CL_INVALID_PLATFORM:                 return strdup("Invalid platform");
+        case CL_INVALID_DEVICE:                   return strdup("Invalid device");
+        case CL_INVALID_CONTEXT:                  return strdup("Invalid context");
+        case CL_INVALID_QUEUE_PROPERTIES:         return strdup("Invalid queue properties");
+        case CL_INVALID_COMMAND_QUEUE:            return strdup("Invalid command queue");
+        case CL_INVALID_HOST_PTR:                 return strdup("Invalid host pointer");
+        case CL_INVALID_MEM_OBJECT:               return strdup("Invalid memory object");
+        case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:  return strdup("Invalid image format descriptor");
+        case CL_INVALID_IMAGE_SIZE:               return strdup("Invalid image size");
+        case CL_INVALID_SAMPLER:                  return strdup("Invalid sampler");
+        case CL_INVALID_BINARY:                   return strdup("Invalid binary");
+        case CL_INVALID_BUILD_OPTIONS:            return strdup("Invalid build options");
+        case CL_INVALID_PROGRAM:                  return strdup("Invalid program");
+        case CL_INVALID_PROGRAM_EXECUTABLE:       return strdup("Invalid program executable");
+        case CL_INVALID_KERNEL_NAME:              return strdup("Invalid kernel name");
+        case CL_INVALID_KERNEL_DEFINITION:        return strdup("Invalid kernel definition");
+        case CL_INVALID_KERNEL:                   return strdup("Invalid kernel");
+        case CL_INVALID_ARG_INDEX:                return strdup("Invalid argument index");
+        case CL_INVALID_ARG_VALUE:                return strdup("Invalid argument value");
+        case CL_INVALID_ARG_SIZE:                 return strdup("Invalid argument size");
+        case CL_INVALID_KERNEL_ARGS:              return strdup("Invalid kernel arguments");
+        case CL_INVALID_WORK_DIMENSION:           return strdup("Invalid work dimension");
+        case CL_INVALID_WORK_GROUP_SIZE:          return strdup("Invalid work group size");
+        case CL_INVALID_WORK_ITEM_SIZE:           return strdup("Invalid work item size");
+        case CL_INVALID_GLOBAL_OFFSET:            return strdup("Invalid global offset");
+        case CL_INVALID_EVENT_WAIT_LIST:          return strdup("Invalid event wait list");
+        case CL_INVALID_EVENT:                    return strdup("Invalid event");
+        case CL_INVALID_OPERATION:                return strdup("Invalid operation");
+        case CL_INVALID_GL_OBJECT:                return strdup("Invalid OpenGL object");
+        case CL_INVALID_BUFFER_SIZE:              return strdup("Invalid buffer size");
+        case CL_INVALID_MIP_LEVEL:                return strdup("Invalid mip-map level");
+        default:                                  return strdup("Unknown");
+    }
+}
+
+
 char* readKernelSource(char * filename){
 	// Try loading the kernel from a source file
 	FILE *f_kernel;
@@ -227,7 +280,6 @@ int buildProgram(CL *cl){
 		clGetProgramBuildInfo((*cl).program, (*cl).device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
 		printf("%s\n", buffer);
 		printf("Error code: %d\n", (*cl).err);
-		printf("%s\n", print_cl_errstring((*cl).err));
 		exit(1);
 	}
 	return !(EXIT_FAILURE);
@@ -276,8 +328,9 @@ int createLifIObufs(CL *cl){
     //
     (*cl).input_v = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
     (*cl).input_current = clCreateBuffer((*cl).context,  CL_MEM_WRITE_ONLY,  sizeof(float) * (*cl).job_size, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * (*cl).job_size, NULL, NULL);
 	(*cl).input_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
+	
+	(*cl).gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * (*cl).job_size, NULL, NULL);
 	
 	/*(*cl).d_z = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
 	(*cl).d_w = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
@@ -287,7 +340,7 @@ int createLifIObufs(CL *cl){
 	
 	//(*cl).output_v = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_LIFS, NULL, NULL);
 	//(*cl).output_spike = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * NO_LIFS, NULL, NULL);
-    if (!(*cl).input_v || !(*cl).input_current || !(*cl).input_gauss || !(*cl).input_spike)// || !(*cl).d_z || !(*cl).d_w || !(*cl).d_jsr || !(*cl).d_jcong)
+    if (!(*cl).input_v || !(*cl).input_current || !(*cl).gauss || !(*cl).input_spike)// || !(*cl).d_z || !(*cl).d_w || !(*cl).d_jsr || !(*cl).d_jcong)
     {
         printf("Error: Failed to allocate device memory!\n");
 	    exit(1);
@@ -305,7 +358,7 @@ int createSynIObufs(CL *cl){
     //
     (*cl).rho = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
     (*cl).ca = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(float) * (*cl).job_size, NULL, NULL);
-	(*cl).input_gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * (*cl).job_size, NULL, NULL);
+	(*cl).gauss = clCreateBuffer((*cl).context,  CL_MEM_READ_ONLY,  sizeof(float) * (*cl).job_size, NULL, NULL);
 	(*cl).pre_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
 	(*cl).post_spike = clCreateBuffer((*cl).context,  CL_MEM_READ_WRITE,  sizeof(unsigned int) * (*cl).job_size, NULL, NULL);
 	
@@ -316,7 +369,7 @@ int createSynIObufs(CL *cl){
 	
 	//(*cl).output_rho = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
 	//(*cl).output_ca = clCreateBuffer((*cl).context, CL_MEM_WRITE_ONLY, sizeof(float) * NO_SYNS, NULL, NULL);
-    if (!(*cl).rho || !(*cl).ca || !(*cl).input_gauss || !(*cl).pre_spike || !(*cl).post_spike || !(*cl).d_z || !(*cl).d_w || !(*cl).d_jsr || !(*cl).d_jcong)
+    if (!(*cl).rho || !(*cl).ca || !(*cl).gauss || !(*cl).pre_spike || !(*cl).post_spike || !(*cl).d_z || !(*cl).d_w || !(*cl).d_jsr || !(*cl).d_jcong)
     {
         printf("Error: Failed to allocate device memory!\n");
 	    exit(1);
@@ -351,9 +404,9 @@ int enqueueLifInputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
     //
     (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL);
     (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_current, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).I, 0, NULL, NULL);
-	//next line...
-	//(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL);
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*lif).time_since_spike, 0, NULL, NULL);
+	//TODO: enable/disable inputting gauss values to kernel here (also change to a RW buffer)
+	//(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL);
 	
 	/*(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).d_z, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_z, 0, NULL, NULL);
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).d_w, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_w, 0, NULL, NULL);
@@ -377,9 +430,10 @@ int enqueueSynInputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const, cl_Mar
     //
     (*cl).err = clEnqueueWriteBuffer((*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).rho, 0, NULL, NULL);
     (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).ca, 0, NULL, NULL);
-	//(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).gauss, 0, NULL, NULL);
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).preT, 0, NULL, NULL);
     (*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).post_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).postT, 0, NULL, NULL);
+	
+	//(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).gauss, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).gauss, 0, NULL, NULL);
 	
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).d_z, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*rnd).d_z, 0, NULL, NULL);
 	(*cl).err |= clEnqueueWriteBuffer((*cl).commands, (*cl).d_w, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*rnd).d_w, 0, NULL, NULL);
@@ -449,7 +503,7 @@ int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 11, sizeof(unsigned int), &(*lif).time_step);
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 12, sizeof(unsigned int), &(*lif).random123_seed);
 	
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(cl_mem), &(*cl).input_gauss);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 13, sizeof(cl_mem), &(*cl).gauss);
 	
     if ((*cl).err != CL_SUCCESS)
     {
@@ -472,7 +526,7 @@ int setSynKernelArgs(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const){
     (*cl).err = 0;
     (*cl).err  = clSetKernelArg((*cl).kernel, 0, sizeof(cl_mem), &(*cl).rho);
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 1, sizeof(cl_mem), &(*cl).ca);
-	(*cl).err  |= clSetKernelArg((*cl).kernel, 2, sizeof(cl_mem), &(*cl).input_gauss);
+	(*cl).err  |= clSetKernelArg((*cl).kernel, 2, sizeof(cl_mem), &(*cl).gauss);
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 3, sizeof(cl_mem), &(*cl).pre_spike);
 	(*cl).err  |= clSetKernelArg((*cl).kernel, 4, sizeof(cl_mem), &(*cl).post_spike);
 	
@@ -648,7 +702,7 @@ int enqueueLifOutputBuf(CL *cl, cl_LIFNeuron *lif, cl_MarsagliaStruct *rnd){
 	//(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).output_spike, CL_TRUE, 0, sizeof(unsigned int) * NO_LIFS, (*lif).time_since_spike, 0, NULL, NULL );
 	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).input_v, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).V, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_spike, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*lif).time_since_spike, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).gauss, CL_TRUE, 0, sizeof(float) * (*lif).no_lifs, (*lif).gauss, 0, NULL, NULL );
 	
 	/*(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).d_z, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_z, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).d_w, CL_TRUE, 0, sizeof(unsigned int) * (*lif).no_lifs, (*rnd).d_w, 0, NULL, NULL );
@@ -670,7 +724,7 @@ int enqueueSynOutputBuf(CL *cl, cl_Synapse *syn, SynapseConsts *syn_const, cl_Ma
 	
 	(*cl).err = clEnqueueReadBuffer( (*cl).commands, (*cl).rho, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).rho, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).ca, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).ca, 0, NULL, NULL );
-	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).input_gauss, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).gauss, 0, NULL, NULL );
+	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).gauss, CL_TRUE, 0, sizeof(float) * (*syn_const).no_syns, (*syn).gauss, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).pre_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).preT, 0, NULL, NULL );
 	(*cl).err |= clEnqueueReadBuffer( (*cl).commands, (*cl).post_spike, CL_TRUE, 0, sizeof(unsigned int) * (*syn_const).no_syns, (*syn).postT, 0, NULL, NULL );
 	
@@ -710,7 +764,7 @@ void shutdownLifKernel(CL *cl){
 	
 	clReleaseMemObject((*cl).input_v);
 	clReleaseMemObject((*cl).input_current);
-	clReleaseMemObject((*cl).input_gauss);
+	clReleaseMemObject((*cl).gauss);
 	clReleaseMemObject((*cl).input_spike);
 	
 	/*clReleaseMemObject((*cl).d_z);
@@ -734,7 +788,7 @@ void shutdownSynKernel(CL *cl){
 	
 	clReleaseMemObject((*cl).rho);
 	clReleaseMemObject((*cl).ca);
-	clReleaseMemObject((*cl).input_gauss);
+	clReleaseMemObject((*cl).gauss);
 	clReleaseMemObject((*cl).pre_spike);
 	clReleaseMemObject((*cl).post_spike);
 	
@@ -751,54 +805,3 @@ void shutdownSynKernel(CL *cl){
 	printf("done\n");
 }
 
-static char *print_cl_errstring(cl_int err) {
-    switch (err) {
-        case CL_SUCCESS:                          return strdup("Success!");
-        case CL_DEVICE_NOT_FOUND:                 return strdup("Device not found.");
-        case CL_DEVICE_NOT_AVAILABLE:             return strdup("Device not available");
-        case CL_COMPILER_NOT_AVAILABLE:           return strdup("Compiler not available");
-        case CL_MEM_OBJECT_ALLOCATION_FAILURE:    return strdup("Memory object allocation failure");
-        case CL_OUT_OF_RESOURCES:                 return strdup("Out of resources");
-        case CL_OUT_OF_HOST_MEMORY:               return strdup("Out of host memory");
-        case CL_PROFILING_INFO_NOT_AVAILABLE:     return strdup("Profiling information not available");
-        case CL_MEM_COPY_OVERLAP:                 return strdup("Memory copy overlap");
-        case CL_IMAGE_FORMAT_MISMATCH:            return strdup("Image format mismatch");
-        case CL_IMAGE_FORMAT_NOT_SUPPORTED:       return strdup("Image format not supported");
-        case CL_BUILD_PROGRAM_FAILURE:            return strdup("Program build failure");
-        case CL_MAP_FAILURE:                      return strdup("Map failure");
-        case CL_INVALID_VALUE:                    return strdup("Invalid value");
-        case CL_INVALID_DEVICE_TYPE:              return strdup("Invalid device type");
-        case CL_INVALID_PLATFORM:                 return strdup("Invalid platform");
-        case CL_INVALID_DEVICE:                   return strdup("Invalid device");
-        case CL_INVALID_CONTEXT:                  return strdup("Invalid context");
-        case CL_INVALID_QUEUE_PROPERTIES:         return strdup("Invalid queue properties");
-        case CL_INVALID_COMMAND_QUEUE:            return strdup("Invalid command queue");
-        case CL_INVALID_HOST_PTR:                 return strdup("Invalid host pointer");
-        case CL_INVALID_MEM_OBJECT:               return strdup("Invalid memory object");
-        case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:  return strdup("Invalid image format descriptor");
-        case CL_INVALID_IMAGE_SIZE:               return strdup("Invalid image size");
-        case CL_INVALID_SAMPLER:                  return strdup("Invalid sampler");
-        case CL_INVALID_BINARY:                   return strdup("Invalid binary");
-        case CL_INVALID_BUILD_OPTIONS:            return strdup("Invalid build options");
-        case CL_INVALID_PROGRAM:                  return strdup("Invalid program");
-        case CL_INVALID_PROGRAM_EXECUTABLE:       return strdup("Invalid program executable");
-        case CL_INVALID_KERNEL_NAME:              return strdup("Invalid kernel name");
-        case CL_INVALID_KERNEL_DEFINITION:        return strdup("Invalid kernel definition");
-        case CL_INVALID_KERNEL:                   return strdup("Invalid kernel");
-        case CL_INVALID_ARG_INDEX:                return strdup("Invalid argument index");
-        case CL_INVALID_ARG_VALUE:                return strdup("Invalid argument value");
-        case CL_INVALID_ARG_SIZE:                 return strdup("Invalid argument size");
-        case CL_INVALID_KERNEL_ARGS:              return strdup("Invalid kernel arguments");
-        case CL_INVALID_WORK_DIMENSION:           return strdup("Invalid work dimension");
-        case CL_INVALID_WORK_GROUP_SIZE:          return strdup("Invalid work group size");
-        case CL_INVALID_WORK_ITEM_SIZE:           return strdup("Invalid work item size");
-        case CL_INVALID_GLOBAL_OFFSET:            return strdup("Invalid global offset");
-        case CL_INVALID_EVENT_WAIT_LIST:          return strdup("Invalid event wait list");
-        case CL_INVALID_EVENT:                    return strdup("Invalid event");
-        case CL_INVALID_OPERATION:                return strdup("Invalid operation");
-        case CL_INVALID_GL_OBJECT:                return strdup("Invalid OpenGL object");
-        case CL_INVALID_BUFFER_SIZE:              return strdup("Invalid buffer size");
-        case CL_INVALID_MIP_LEVEL:                return strdup("Invalid mip-map level");
-        default:                                  return strdup("Unknown");
-    }
-}

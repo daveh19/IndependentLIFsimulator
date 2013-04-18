@@ -9,8 +9,6 @@
  
 #define PI (4.*atan(1.))
 
-//#include "Random123/philox.h"
-
 #include "Random123/philox.h"
 
 /*typedef struct SynapseConstsStruct{
@@ -52,6 +50,7 @@ typedef struct random_struct_marsaglia{
 	unsigned int d_jsr;
 	unsigned int d_jcong;
 } MarsagliaStruct;
+
 // Get Uniform(0,1) pseudo-random value using technique published by Marsaglia
 void Marsaglia_Uniform(MarsagliaStruct *rdm){
 	// Multiply-with-carry
@@ -108,7 +107,7 @@ unsigned int MWC_GetUint(MWCRandomStruct *rnd)
 // Uniform distribution in interval (0,1)
 float MWC_GetUniform(MWCRandomStruct *rnd)
 {
-	// 0 <= u < 2^32
+	// 0 <= u < 2^32 (UINT_MAX)
 	unsigned int u = MWC_GetUint(rnd);
 	// The magic number below is 1/(2^32 + 2).
 	// The result is strictly between 0 and 1.
@@ -157,50 +156,17 @@ __kernel void lif(
 	//TODO: if gauss stream permanently removed then it should be removed from here, etc.
 	__global float* output_gauss 
 	)
-	/*(
-	__global float* input_v, // membrane voltage
-	__global float* input_i, // input current
-	__global float* input_gauss, // gaussian noise on membrane potential
-	__global unsigned int* input_spike, // refractory period count down variable
-	*/
-	//State variables for random number generator
-	/*__global unsigned int* d_z,
-	__global unsigned int* d_w,
-	__global unsigned int* d_jsr,
-	__global unsigned int* d_jcong,*/
-	/*
-	const float v_rest, // resting membrane voltage
-	const float v_reset, // reset membrane voltage
-	const float v_threshold, // threshold voltage for spiking
-	const float tau_m, // membrane resistance
-	//const float c_m, // membrane capacitance
-	const float sigma, // size of noise
-	const float refrac_time, // duration of refractory period
-	const float dt, // time step size
-	const unsigned int no_lifs, // number of lifs in simulation	
-	
-	const unsigned int time_step, // used for indexing the random number generator
-	const unsigned int random_seed // seed for the random number generator
-	)*/
 {
 	int i = get_global_id(0);
 	if ( i < no_lifs ){
-		float new_v;
-		float dv;
-		float noise;
+		float v = input_v[i];
+		float input_current = input_i[i];
+		unsigned int time_since_spike = input_spike[i];
 		
 		philox2x32_key_t key;
 		philox2x32_ctr_t ctr;
 		philox2x32_ctr_t rand_val;
 		float2 uni_rand;
-		
-		float r, theta;
-		float dave_temp;
-		float my_random_value;
-		
-		float v = input_v[i];
-		float input_current = input_i[i];
-		unsigned int time_since_spike = input_spike[i];
 		
 		// Generate Gaussian(0,1) noise using Random123 library implementation		
 		key.v[0] = i;
@@ -208,21 +174,14 @@ __kernel void lif(
 		ctr.v[1] = random_seed;
 		rand_val = philox2x32_R(10, ctr, key);
 		// Convert to Uniform distribution (1/(2^32 +2))
-		uni_rand.x = rand_val.v[0] * (1./(2^32 + 2));//2.328306435454494e-10;
-		uni_rand.y = rand_val.v[1] * (1./(2^32 + 2));//2.328306435454494e-10;
+		uni_rand.x = rand_val.v[0] * 2.328306435454494e-10;
+		uni_rand.y = rand_val.v[1] * 2.328306435454494e-10;
 		// Box-Muller transform
-		r = sqrt( -2.0*log(uni_rand.x) );
-		theta = 2.0 * PI * uni_rand.y;
-		//my_random_value = r * sin(((float)theta);
-		dave_temp = r * sin(theta);
+		float r = sqrt( (float)(-2.0*log(uni_rand.x)) );
+		float theta = 2.0 * PI * uni_rand.y;
+		float random_value = r * sin(theta);
 		
-		//dave_temp = dave_temp + 1;
-		dv = 0;
-		noise = 0;
-		//my_random_value = 1.34;
-		
-		//my_random_value = my_random_value + 3.;
-		
+		//TODO: delete Marsaglia approach
 		// Generate Gaussian(0,1) noise
 		/*MarsagliaStruct rnd;
 		rnd.d_z = d_z[i];
@@ -230,9 +189,25 @@ __kernel void lif(
 		rnd.d_jsr = d_jsr[i];
 		rnd.d_jcong = d_jcong[i];
 		Marsaglia_GetNormal(&rnd);*/
-	
 		
+		float new_v;
+		float dv = 0;
+		float noise = 0;
 		//float tau_m = r_m * c_m;
+		
+		//----------- Testing
+		//float dave_temp;
+		//float my_random_value;
+		//my_random_value = r * sin(((float)theta);
+		//dave_temp = r * sin(theta);
+		
+		//dave_temp = dave_temp + 1;
+		//dv = 0;
+		//noise = 0;
+		//my_random_value = 1.34;
+		
+		//my_random_value = my_random_value + 3.;
+		//------------- End testing
 	
 		//REMINDER: initialise time_since_spike to refrac_time in main program,
 		// otherwise system always resets to V_reset upon initialisation
@@ -255,7 +230,7 @@ __kernel void lif(
 			dv += (input_current / tau_m);
 			// Apply noise
 			//noise = sqrt(dt / tau_m) * sigma * rnd.value;
-			noise = sqrt(dt / tau_m) * sigma * my_random_value;
+			noise = sqrt(dt / tau_m) * sigma * random_value;
 		}
 
 		new_v = v + (dv * dt) + noise;
@@ -278,11 +253,10 @@ __kernel void lif(
 		d_w[i] = rnd.d_w;
 		d_jsr[i] = rnd.d_jsr;
 		d_jcong[i] = rnd.d_jcong;*/
-		
-		output_gauss[i] = dave_temp;
 
 		input_spike[i] = time_since_spike;
 		input_v[i] = new_v;
+		output_gauss[i] = random_value;
 	}
 }
 
@@ -328,11 +302,20 @@ __kernel void synapse(
 		unsigned int post_spike = input_post_spike[i];
 		
 		// Generate Gaussian(0,1) noise
-		MarsagliaStruct rnd;
+		/*MarsagliaStruct rnd;
 		rnd.d_z = d_z[i];
 		rnd.d_w = d_w[i];
 		rnd.d_jsr = d_jsr[i];
 		rnd.d_jcong = d_jcong[i];
+		Marsaglia_GetNormal(&rnd);*/
+		
+		//TODO: delete marsaglia approach
+		// Generate Gaussian(0,1) noise
+		MarsagliaStruct rnd;
+		rnd.d_z = 362436069;//d_z[i];
+		rnd.d_w = 521288629;//d_w[i];
+		rnd.d_jsr = 123456789;//d_jsr[i];
+		rnd.d_jcong = 380116160;//d_jcong[i];
 		Marsaglia_GetNormal(&rnd);
 	
 		float new_rho, new_ca;
@@ -371,10 +354,10 @@ __kernel void synapse(
 		input_post_spike[i] = 0;
 		
 		// Final output
-		d_z[i] = rnd.d_z;
+		/*d_z[i] = rnd.d_z;
 		d_w[i] = rnd.d_w;
 		d_jsr[i] = rnd.d_jsr;
-		d_jcong[i] = rnd.d_jcong;
+		d_jcong[i] = rnd.d_jcong;*/
 		input_gauss[i] = rnd.value;
 		
 		//input_rho[i] = new_rho;
