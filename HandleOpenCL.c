@@ -265,8 +265,8 @@ int buildProgram(CL *cl){
 	
 	printf("building program...\n");
 	
-	//char* options = "-I /usr/local/include/Random123/";
-	char* options = "";
+	char* options = "-I /home/dhiggins/include/";
+	//char* options = "";
 	printf("build options: %s\n", options);
 	
 	//(*cl).err = clBuildProgram((*cl).program, 0, NULL, NULL, NULL, NULL);
@@ -472,7 +472,7 @@ int setLifKernelArgs(CL *cl, cl_LIFNeuron *lif){
 	// Set the Kernel arguments
 	//
 	
-	printf("setting args for LIF compute kernel...\n");
+	//printf("setting args for LIF compute kernel...\n");
 	
     // Set the arguments to our compute kernel
     //

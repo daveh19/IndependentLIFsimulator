@@ -472,6 +472,12 @@ int main (int argc, const char * argv[]) {
 	// Print initial state of a single recorder synapse
 	print_synapse_activity(j, syn_p);
 	while(j < MAX_TIME_STEPS){
+		// Kernel args need to be set on each time step in order to update index of RND
+		//TODO: remove setKernelArgs before this loop?
+		if( setLifKernelArgs(cl_lif_p, lif_p) == EXIT_FAILURE){
+			printf("Error on time step %d setting kernel arguments\n", j);
+			return EXIT_FAILURE;
+		}
 		
 		// -----Process LIF Kernel-------
 		if( enqueueLifKernel(cl_lif_p) == EXIT_FAILURE){
