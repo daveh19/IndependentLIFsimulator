@@ -256,7 +256,7 @@ __kernel void lif(
 
 		input_spike[i] = time_since_spike;
 		input_v[i] = new_v;
-		output_gauss[i] = (float) time_step; //random_value;
+		output_gauss[i] = random_value;
 	}
 }
 

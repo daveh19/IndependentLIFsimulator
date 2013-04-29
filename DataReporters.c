@@ -75,8 +75,7 @@ void reporters_setup(){
 	pop_summary_n = calloc(no_spiking_bins, sizeof(unsigned int));
 	// Code for monitoring selectively manipulated neurons
 	lif_injection_spikes = calloc(no_spiking_bins, sizeof(float));
-	fprintf(average_activity_ouput, "\n\n\n\n\n# Summary network activity (time bin (ms), TotSpikes, ExcSpikes, InhSpikes, InstantaneousExcRate, InstantaneousInhRate, RhoAv, RhoStdev, RhoAvSubPop, RhoStdevSubPop, SupPopSelectiveStimExcRate)\n# all normalised to their respective population sizes\n");
-	
+	fprintf(average_activity_ouput, "\n\n\n\n\n# Summary network activity (time bin, TotSpikes/N, ExcSpikes/NE, InhSpikes/NI, InstantaneousExcRate, InstantaneousInhRate, RhoAvSubPop, RhoStdevSubPop, RhoAv, RhoStdev, SupPopSelectiveStimExcRate, NoExcSpikes)\n# all normalised to their respective population sizes\n");
 	// Detailed recording from single synapse
 	strcpy(outfile, "output/");
 	strcat(outfile, synaptic_activity_name);
