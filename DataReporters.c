@@ -45,11 +45,11 @@ void reporters_setup(){
 	if(intracellular_output == NULL){
 		perror("Error: failed to open intracellular output file\n");
 	}
-	lif_currents_EE = calloc(MAX_TIME_STEPS, sizeof(float));
+	/*lif_currents_EE = calloc(MAX_TIME_STEPS, sizeof(float));
 	lif_currents_EI = calloc(MAX_TIME_STEPS, sizeof(float));
 	lif_currents_IE = calloc(MAX_TIME_STEPS, sizeof(float));
-	lif_currents_II = calloc(MAX_TIME_STEPS, sizeof(float));
-	fprintf(intracellular_output, "\n\n\n\n\n# Intracellular recorder (t, V(t), time since spike(t), Iext(t), gauss(t-1), Itot(t)), currents:{EE,IE,EI,II}\n# Neuron ID: %d\n", RECORDER_NEURON_ID);
+	lif_currents_II = calloc(MAX_TIME_STEPS, sizeof(float));*/
+	fprintf(intracellular_output, "\n\n\n\n\n# Intracellular recorder (t, V(t), time since spike(t), Iext(t), gauss(t-1), Itot(t))\n# Neuron ID: %d\n", RECORDER_NEURON_ID);
 	
 	// Population spiking activity
 	strcpy(outfile, "output/");
@@ -62,20 +62,20 @@ void reporters_setup(){
 	// Setup the bins for recording average population spiking behaviour
 	no_spiking_bins = (LIF_DT / BIN_SIZE) * MAX_TIME_STEPS;
 	summary_exc_spikes = calloc(no_spiking_bins, sizeof(float));
-	summary_inh_spikes = calloc(no_spiking_bins, sizeof(float));
+	//summary_inh_spikes = calloc(no_spiking_bins, sizeof(float));
 	//TODO: new code for monitoring multiple synapses here
-	summary_rho = calloc(no_spiking_bins, sizeof(float));
+	/*summary_rho = calloc(no_spiking_bins, sizeof(float));
 	summary_M = calloc(no_spiking_bins, sizeof(float));
 	summary_S = calloc(no_spiking_bins, sizeof(float));
-	summary_n = calloc(no_spiking_bins, sizeof(unsigned int));
+	summary_n = calloc(no_spiking_bins, sizeof(unsigned int));*/
 	//TODO: new code for monitoring main population synapses here
 	pop_summary_rho = calloc(no_spiking_bins, sizeof(float));
 	pop_summary_M = calloc(no_spiking_bins, sizeof(float));
 	pop_summary_S = calloc(no_spiking_bins, sizeof(float));
 	pop_summary_n = calloc(no_spiking_bins, sizeof(unsigned int));
 	// Code for monitoring selectively manipulated neurons
-	lif_injection_spikes = calloc(no_spiking_bins, sizeof(float));
-	fprintf(average_activity_ouput, "\n\n\n\n\n# Summary network activity (time bin, TotSpikes/N, ExcSpikes/NE, InhSpikes/NI, InstantaneousExcRate, InstantaneousInhRate, RhoAvSubPop, RhoStdevSubPop, RhoAv, RhoStdev, SupPopSelectiveStimExcRate, NoExcSpikes)\n# all normalised to their respective population sizes\n");
+	//lif_injection_spikes = calloc(no_spiking_bins, sizeof(float));
+	fprintf(average_activity_ouput, "\n\n\n\n\n# Summary network activity (time bin, ExcSpikes/N_EXC, InstantaneousExcRate, RhoAv, RhoStdev, NoExcSpikes)\n# all normalised to their respective population sizes\n");
 	// Detailed recording from single synapse
 	strcpy(outfile, "output/");
 	strcat(outfile, synaptic_activity_name);
@@ -94,9 +94,9 @@ void reporters_setup(){
 	if(synaptic_strength_output == NULL){
 		perror("Error: failed to open synaptic strength output file\n");
 	}
-	fprintf(synaptic_strength_output, "\n\n\n\n\n# Final synaptic strengths (syn_id, pre_syn_lif_id, post_syn_lif_id, rho_initial, rho_final, in_sub_pop)\n");
+	fprintf(synaptic_strength_output, "\n\n\n\n\n# Final synaptic strengths (syn_id, pre_syn_lif_id, post_syn_lif_id, rho_initial, rho_final)\n");
 	
-	#ifdef DEBUG_MODE_NETWORK
+	/*#ifdef DEBUG_MODE_NETWORK
 		//Debugging stuff
 		lif_debug_name = "lif_debug.dat";
 		// LIF connectivity and activity output file
@@ -122,7 +122,7 @@ void reporters_setup(){
 		lif_in_EI = calloc(NO_LIFS, sizeof(int));
 		lif_in_IE = calloc(NO_LIFS, sizeof(int));
 		lif_in_II = calloc(NO_LIFS, sizeof(int));
-	#endif /* DEBUG_MODE_NETWORK */
+	#endif*/ /* DEBUG_MODE_NETWORK */
 }
 
 
@@ -137,7 +137,8 @@ void print_network_summary_activity(){
 	// bin_id_ms, no_spikes, no_exc_spikes, no_inh_spikes, exc_freq, inh_freq
 	printf("Outputting network summary activity\n");
 	for(int i = 0; i < no_spiking_bins; i++){
-		fprintf(average_activity_ouput, "%d %f %f %f %f %f %f %f %f %f %f %d\n", i, ((summary_inh_spikes[i] + summary_exc_spikes[i]) / NO_LIFS), (summary_exc_spikes[i] / NO_EXC), (summary_inh_spikes[i] / NO_INH), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)), ((summary_inh_spikes[i] / NO_INH) * (1.0 / BIN_SIZE)), summary_rho[i]/summary_n[i], sqrt(summary_S[i]/(summary_n[i]-1)),  pop_summary_rho[i]/pop_summary_n[i], sqrt(pop_summary_S[i]/(pop_summary_n[i]-1)), ((lif_injection_spikes[i] / no_injection_lifs) * (1.0 / BIN_SIZE)), (int) summary_exc_spikes[i] );
+		//fprintf(average_activity_ouput, "%d %f %f %f %f %f %f %f %f %f %f %d\n", i, ((summary_inh_spikes[i] + summary_exc_spikes[i]) / NO_LIFS), (summary_exc_spikes[i] / NO_EXC), (summary_inh_spikes[i] / NO_INH), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)), ((summary_inh_spikes[i] / NO_INH) * (1.0 / BIN_SIZE)), summary_rho[i]/summary_n[i], sqrt(summary_S[i]/(summary_n[i]-1)),  pop_summary_rho[i]/pop_summary_n[i], sqrt(pop_summary_S[i]/(pop_summary_n[i]-1)), ((lif_injection_spikes[i] / no_injection_lifs) * (1.0 / BIN_SIZE)), (int) summary_exc_spikes[i] );
+		fprintf(average_activity_ouput, "%d %f %f %f %f %d\n", i, (summary_exc_spikes[i] / NO_EXC), ((summary_exc_spikes[i] / NO_EXC) * (1.0 / BIN_SIZE)),  pop_summary_rho[i]/pop_summary_n[i], sqrt(pop_summary_S[i]/(pop_summary_n[i]-1)), (int) summary_exc_spikes[i] );
 	}
 }
 
@@ -152,19 +153,19 @@ void print_synapse_activity(int t, cl_Synapse *syn){
 void print_synapses_final_state(cl_Synapse *syn, SynapseConsts *syn_const){
 	// syn_id, pre_lif_id, post_lif_id, rho_initial, rho_final
 	for(int i = 0; i < (*syn_const).no_syns; i++){
-		fprintf(synaptic_strength_output, "%d %d %d %f %f %d\n", i, (*syn).pre_lif[i], (*syn).post_lif[i], (*syn).rho_initial[i], (*syn).rho[i], (*syn).receives_stimulation_flag[i]);
+		fprintf(synaptic_strength_output, "%d %d %d %f %f\n", i, (*syn).pre_lif[i], (*syn).post_lif[i], (*syn).rho_initial[i], (*syn).rho[i]);
 	}
 }
 
 
-void print_lif_debug(cl_LIFNeuron *lif){
+/*void print_lif_debug(cl_LIFNeuron *lif){
 	// lif_id, mean_dest_id, no_out_syns, gauss_total, no_out_EE_syns, no_EE, dest_EE, no_EI, dest_EI, no_IE, dest_IE, no_II, dest_II, in_EE, in_EI, in_IE, in_II 
 	printf("\nLIF Debug: saving connection statistics to file...\n");
 	for(int i = 0; i < (*lif).no_lifs; i++){
 		fprintf(lif_debug_output, "%d %f %d %f %d %d %f %d %f %d %f %d %f %d %d %d %d %d\n", i, lif_mean_destination[i], (*lif).no_outgoing_synapses[i], lif_gauss_totals[i], (*lif).no_outgoing_ee_synapses[i], lif_debug_no_EE[i], lif_mean_dest_EE[i], lif_debug_no_EI[i], lif_mean_dest_EI[i], lif_debug_no_IE[i], lif_mean_dest_IE[i], lif_debug_no_II[i], lif_mean_dest_II[i], lif_in_EE[i], lif_in_EI[i], lif_in_IE[i], lif_in_II[i], (*lif).subpopulation_flag[i]);
 		//printf("%d %f %d %f\n", i, lif_mean_destination[i], (*lif).no_outgoing_synapses[i], lif_gauss_totals[i]);
 	}
-}
+}*/
 
 
 void reporters_close(){
@@ -173,7 +174,7 @@ void reporters_close(){
 	fclose(average_activity_ouput);
 	fclose(synaptic_activity_output);
 	fclose(synaptic_strength_output);
-	#ifdef DEBUG_MODE_NETWORK
+	/*#ifdef DEBUG_MODE_NETWORK
 		fclose(lif_debug_output);
-	#endif /* DEBUG_MODE_NETWORK */
+	#endif*/ /* DEBUG_MODE_NETWORK */
 }

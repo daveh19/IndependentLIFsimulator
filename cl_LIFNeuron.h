@@ -30,7 +30,7 @@ typedef struct LIFNeuron{
 	unsigned int time_step;
 	unsigned int random123_seed;
 	
-	unsigned char * subpopulation_flag; // manipulations will be performed on this population
+	//unsigned char * subpopulation_flag; // manipulations will be performed on this population
 } cl_LIFNeuron;
 
 

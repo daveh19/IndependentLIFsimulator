@@ -32,7 +32,7 @@ typedef struct Synapse{
 	signed int * pre_lif;
 	signed int * post_lif;
 	
-	unsigned char * receives_stimulation_flag;
+	//unsigned char * receives_stimulation_flag;
 } cl_Synapse;
 
 typedef struct preT_event_queue{

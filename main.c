@@ -25,6 +25,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 	}
 	else{
 		expected_ee_synapses = (NO_EXC / 2.0) + 1;
+		printf("ALERT: Odd number of LIFs\n");
 	}
 	//unsigned int total_fixed_synapses = 0;
 	
@@ -57,7 +58,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 	//start = clock();
 	
 	// Assign basic memory requirements for keeping track of pre and post neuronal synapses
-	//(*lif_p).no_outgoing_synapses = calloc(NO_EXC, sizeof(unsigned int));
+	(*lif_p).no_outgoing_synapses = calloc(NO_EXC, sizeof(unsigned int));
 	(*lif_p).no_outgoing_ee_synapses = calloc(NO_EXC, sizeof(unsigned int));
 	(*lif_p).outgoing_synapse_index = calloc(NO_EXC, sizeof(signed int)); //modified, did contain lists
 	
@@ -95,7 +96,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 						//printf("i %d, j %d\n", i, j);
 					}*/
 					
-					total_ee_synapses++;
+					//total_ee_synapses++;
 					/*#ifdef DEBUG_MODE_NETWORK
 						lif_mean_destination[i] += j;
 						lif_mean_dest_EE[i] += j;
@@ -116,6 +117,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 			(*lif_p).no_incoming_synapses[i]++;
 			//printf("in_id: %d, no_in: %d \n", (*lif_p).incoming_synapse_index[j][(*lif_p).no_incoming_synapses[j]-1], (*lif_p).no_incoming_synapses[j]);
 			
+			total_ee_synapses++; // only increment after adding post-synaptic lif
 		}
 	}
 	/*for(int i = 0; i < NO_EXC; i++){
@@ -486,7 +488,7 @@ int main (int argc, const char * argv[]) {
 	// Print initial state of a single recorder synapse
 	print_synapse_activity(j, syn_p);
 	while(j < MAX_TIME_STEPS){
-		// Kernel args need to be set on each time step in order to update index of RND
+		// Kernel args need to be set on each time step in order to update index of Random123
 		//TODO: remove setKernelArgs before this loop?
 		if( setLifKernelArgs(cl_lif_p, lif_p) == EXIT_FAILURE){
 			printf("Error on time step %d setting kernel arguments\n", j);
@@ -574,7 +576,7 @@ int main (int argc, const char * argv[]) {
 		// print: time, voltage, input current
 		fprintf(intracellular_output, "%d %f %d %f %f ", j, (*lif_p).V[RECORDER_NEURON_ID], (*lif_p).time_since_spike[RECORDER_NEURON_ID], (*lif_p).I[RECORDER_NEURON_ID], (*lif_p).gauss[RECORDER_NEURON_ID]);
 		
-		int local_count = 0;
+		//int local_count = 0;
 		// Update LIFs: spike detection/propagation to post-synaptic lifs as well as pre- and post-lif neurons
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			if((*lif_p).time_since_spike[i] == 0){
@@ -671,9 +673,9 @@ int main (int argc, const char * argv[]) {
 						summary_exc_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
 					//}
 				}
-				else{
+				/*else{
 					summary_inh_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
-				}
+				}*/
 			} // end of handling spike
 			// Pre-synaptic spike propagates across synapse after delay
 			// Alternative to event queue system, assumes only 1 spike can occur in delay period
@@ -693,7 +695,8 @@ int main (int argc, const char * argv[]) {
 		//printf("local_count: %d, time: %f\n", local_count, (j*LIF_DT));
 		
 		// Print total I to intracellular recorder file
-		fprintf(intracellular_output, "%f %f %f %f %f\n", (*lif_p).I[RECORDER_NEURON_ID], lif_currents_EE[j], lif_currents_IE[j], lif_currents_EI[j], lif_currents_II[j]);
+		//fprintf(intracellular_output, "%f %f %f %f %f\n", (*lif_p).I[RECORDER_NEURON_ID], lif_currents_EE[j], lif_currents_IE[j], lif_currents_EI[j], lif_currents_II[j]);
+		fprintf(intracellular_output, "%f\n", (*lif_p).I[RECORDER_NEURON_ID]);
 		
 		// Print state of a single synapse
 		// Moved to updateEventBasedSynapse()
@@ -969,7 +972,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		print_synapse_activity(current_time, syn);
 	}
 	//Update multisynapse summary variables
-	if((syn_id % RECORDER_MULTI_SYNAPSE_SKIP) == RECORDER_SYNAPSE_ID){
+	/*if((syn_id % RECORDER_MULTI_SYNAPSE_SKIP) == RECORDER_SYNAPSE_ID){
 		int time_bin_index = (int)( ( (*syn_const).dt / BIN_SIZE ) * current_time + EPSILLON);
 		summary_rho[time_bin_index] += (*syn).rho[syn_id];
 		summary_n[time_bin_index]++;
@@ -987,7 +990,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 			summary_M[time_bin_index] = Mk;
 		}
 	}
-	else{
+	else{*/
 		int time_bin_index = (int)( ( (*syn_const).dt / BIN_SIZE ) * current_time + EPSILLON);
 		pop_summary_rho[time_bin_index] += (*syn).rho[syn_id];
 		pop_summary_n[time_bin_index]++;
@@ -1004,7 +1007,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 			pop_summary_S[time_bin_index] = pop_summary_S[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
 			pop_summary_M[time_bin_index] = Mk;
 		}
-	}
+	//}
 }
 
 
@@ -1046,11 +1049,11 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, SpikeQueue *spike_queue_
 	
 	// Reporter variables
 	free(summary_exc_spikes);
-	free(summary_inh_spikes);
+	/*free(summary_inh_spikes);
 	free(lif_currents_EE);
 	free(lif_currents_IE);
 	free(lif_currents_EI);
-	free(lif_currents_II);
+	free(lif_currents_II);*/
 	
 	#ifdef DEBUG_MODE_NETWORK
 		// Debugging variables
