@@ -23,7 +23,7 @@
 #define GAUSSIAN_SYNAPTIC_SEED (-12)
 #define UNIFORM_SYNAPTIC_SEED (-10)
 
-#define MAX_TIME_STEPS (400000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
+#define MAX_TIME_STEPS (30000000) /*(12000000)*/ /*(12000000)*/ /*(300000)*/ /*no of timesteps, each of size dt*/
 
 // Network schema
 #define NO_EXC (10000) /*(8000)*/ /*(400)*/ /*(10000)*/
@@ -48,7 +48,7 @@
 #define J_II (-0.4)
 #define J_EI (-0.4)
 
-#define J_EXT (10.186) /*(6.215)*/ /*(8.9065)*/ /*(7.07)*/ /*(6.966) in-vivo*/ /*(7.07) 1hz in-vitro*/
+#define J_EXT (10.) /*(10.186)*/ /*(6.215)*/ /*(8.9065)*/ /*(7.07)*/ /*(6.966) in-vivo*/ /*(7.07) 1hz in-vitro*/
 
 
 // LIF specific

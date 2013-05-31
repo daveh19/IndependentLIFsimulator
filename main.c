@@ -300,7 +300,7 @@ int main (int argc, const char * argv[]) {
 	//int dave = 0;
 	
 	// Begin loop over frequencies here
-	for (double external_voltage = J_EXT; external_voltage < (22)/*12.*/; external_voltage+=100.){ 
+	for (double external_voltage = J_EXT; external_voltage < (20.5)/*12.*/; external_voltage+=1.){ 
 		// Reset the random seeds on each iteration, limits the risk of period length problems
 		gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
 		

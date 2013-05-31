@@ -223,7 +223,7 @@ void print_synapse_activity(int t, cl_Synapse *syn){
 	fprintf(synaptic_activity_output, "%d %f %f %d %d\n", t, (*syn).rho[RECORDER_SYNAPSE_ID], (*syn).ca[RECORDER_SYNAPSE_ID], (*syn).preT[RECORDER_SYNAPSE_ID], (*syn).postT[RECORDER_SYNAPSE_ID]);
 
 	//TODO: consider adding flush() to output here
-	fflush(synaptic_activity_output);
+	//fflush(synaptic_activity_output);
 }
 
 
