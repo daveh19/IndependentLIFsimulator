@@ -8,6 +8,7 @@
 
 //#define PI (atan(1.)*4.)
 
+static long gaussian_synaptic_seed;
 void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, SpikeQueue *spike_queue_p);
 void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_id, int current_time);
 
@@ -42,7 +43,15 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 	//printf("DEBUG: delta_spike_modifier %f\n", delta_spike_modifier);
 	
 	(*syn_p).pre_lif = calloc(expected_ee_synapses, sizeof(signed int));
+	if((*syn_p).pre_lif == NULL){
+		printf("Failed to allocate memory for pre_lif\n");
+		exit(EXIT_FAILURE);
+	}
 	(*syn_p).post_lif = calloc(expected_ee_synapses, sizeof(signed int));
+	if((*syn_p).post_lif == NULL){
+		printf("Failed to allocate memory for post_lif\n");
+		exit(EXIT_FAILURE);
+	}
 	
 	/*(*fixed_syn_p).Jx = calloc(estimated_total_synapses, sizeof(float));
 	(*fixed_syn_p).post_lif = calloc(estimated_total_synapses, sizeof(signed int));*/
@@ -59,11 +68,31 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 	
 	// Assign basic memory requirements for keeping track of pre and post neuronal synapses
 	(*lif_p).no_outgoing_synapses = calloc(NO_EXC, sizeof(unsigned int));
+	if((*lif_p).no_outgoing_synapses == NULL){
+		printf("Failed to allocate memory for no_outgoing_synapses\n");
+		exit(EXIT_FAILURE);
+	}
 	(*lif_p).no_outgoing_ee_synapses = calloc(NO_EXC, sizeof(unsigned int));
+	if((*lif_p).no_outgoing_ee_synapses == NULL){
+		printf("Failed to allocate memory for no_outgoing_ee_synapses\n");
+		exit(EXIT_FAILURE);
+	}
 	(*lif_p).outgoing_synapse_index = calloc(NO_EXC, sizeof(signed int)); //modified, did contain lists
+	if((*lif_p).outgoing_synapse_index == NULL){
+		printf("Failed to allocate memory for outgoing_synapse_index\n");
+		exit(EXIT_FAILURE);
+	}
 	
 	(*lif_p).no_incoming_synapses = calloc(NO_EXC, sizeof(unsigned int));
+	if((*lif_p).no_incoming_synapses == NULL){
+		printf("Failed to allocate memory for no_incoming_synapses\n");
+		exit(EXIT_FAILURE);
+	}
 	(*lif_p).incoming_synapse_index = calloc(NO_EXC, sizeof(signed int));//modified, did contain lists
+	if((*lif_p).incoming_synapse_index == NULL){
+		printf("Failed to allocate memory for incoming_synapse_index\n");
+		exit(EXIT_FAILURE);
+	}
 	
 	// Assign memory for recording ids of pre and post neuronal synapses
 	/*for(int i = 0; i < NO_EXC; i++){
@@ -223,7 +252,15 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 	// Shrink memory reserved to required sizes
 	if(total_ee_synapses != expected_ee_synapses){
 		(*syn_p).pre_lif = realloc((*syn_p).pre_lif, sizeof(signed int) * total_ee_synapses);
+		if((*syn_p).pre_lif == NULL){
+			printf("Failed to re-allocate memory for pre_lif\n");
+			exit(EXIT_FAILURE);
+		}
 		(*syn_p).post_lif = realloc((*syn_p).post_lif, sizeof(signed int) * total_ee_synapses);
+		if((*syn_p).post_lif == NULL){
+			printf("Failed to re-allocate memory for post_lif\n");
+			exit(EXIT_FAILURE);
+		}
 	}
 	//(*fixed_syn_p).Jx = realloc((*fixed_syn_p).Jx, sizeof(float) * total_fixed_synapses);
 	//(*fixed_syn_p).post_lif = realloc((*fixed_syn_p).post_lif, sizeof(signed int) * total_fixed_synapses);
@@ -260,6 +297,22 @@ int main (int argc, const char * argv[]) {
 	
 	char *KernelSource = readKernelSource("kernel.cl");
 	
+	//int dave = 0;
+	
+	// Begin loop over frequencies here
+	for (double external_voltage = J_EXT; external_voltage < (15)/*12.*/; external_voltage+=1.){ 
+		// Reset the random seeds on each iteration, limits the risk of period length problems
+		gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
+		
+		/*if (dave < 2){ //debugging loop in order to examine RND differences
+		 //firing rates don't change as they use a hard defined seed (Random123)
+		 //the synapses do change as they use a static variable
+			external_voltage = J_EXT;
+			dave++;
+		}*/
+		printf("-----Beginning freqency loop, external_voltage: %lf-----\n", external_voltage);
+		alloc_reporter_variables(); //allocate summary_exc_spikes[] and pop_summary_[] afresh each loop iteration
+		
 	// LIF compute kernel
 	CL cl_lif;
 	CL *cl_lif_p = &cl_lif;	
@@ -267,10 +320,26 @@ int main (int argc, const char * argv[]) {
 	cl_LIFNeuron *lif_p = &lif;
 	
 	(*lif_p).V = malloc(sizeof(float) * NO_EXC);
+		if((*lif_p).V == NULL){
+			printf("Failed to allocate memory for V\n");
+			exit(EXIT_FAILURE);
+		}
 	(*lif_p).I = malloc(sizeof(float) * NO_EXC);
+		if((*lif_p).I == NULL){
+			printf("Failed to allocate memory for I\n");
+			exit(EXIT_FAILURE);
+		}
 	(*lif_p).gauss = calloc(NO_EXC, sizeof(float));
+		if((*lif_p).gauss == NULL){
+			printf("Failed to allocate memory for lif.gauss\n");
+			exit(EXIT_FAILURE);
+		}
 	(*lif_p).time_since_spike = calloc(NO_EXC, sizeof(unsigned int));
-	
+		if((*lif_p).time_since_spike == NULL){
+			printf("Failed to allocate memory for time_since_spike\n");
+			exit(EXIT_FAILURE);
+		}
+		
 	(*lif_p).v_rest = LIF_V_REST;
 	(*lif_p).v_reset = LIF_V_RESET;
 	(*lif_p).v_threshold = LIF_V_THRESHOLD;
@@ -286,7 +355,7 @@ int main (int argc, const char * argv[]) {
 	(*cl_lif_p).job_size = (*lif_p).no_lifs;
 	
 	// Setup external and synaptic voltages/currents
-	double external_voltage = J_EXT;
+	//double external_voltage = J_EXT; // moved to loop variable
 	// Syanptic currents must be modified by (tau_m/dt) as they are delta current spikes
 	double delta_spike_modifier = (*lif_p).tau_m / (*lif_p).dt;
 	double transfer_voltage = J_EE;
@@ -346,22 +415,73 @@ int main (int argc, const char * argv[]) {
 	//End network generation
 	
 	(*syn_p).rho = malloc(sizeof(float) * (*syn_const_p).no_syns);
+		if((*syn_p).rho == NULL){
+			printf("Failed to allocate memory for rho\n");
+			exit(EXIT_FAILURE);
+		}
 	(*syn_p).rho_initial = malloc(sizeof(float) * (*syn_const_p).no_syns);
+		if((*syn_p).rho_initial == NULL){
+			printf("Failed to allocate memory for rho_initial\n");
+			exit(EXIT_FAILURE);
+		}
 	(*syn_p).ca = malloc(sizeof(float) * (*syn_const_p).no_syns);
+		if((*syn_p).ca == NULL){
+			printf("Failed to allocate memory for ca\n");
+			exit(EXIT_FAILURE);
+		}
 	(*syn_p).gauss = calloc((*syn_const_p).no_syns, sizeof(float));
+		if((*syn_p).gauss == NULL){
+			printf("Failed to allocate memory for syn.gauss\n");
+			exit(EXIT_FAILURE);
+		}
 	(*syn_const_p).delay = SYN_CALCIUM_DELAY; // measured in multiples of dt
 	
+	(*syn_p).alpha_p = calloc((*syn_const_p).no_syns, sizeof(float));
+		if((*syn_p).alpha_p == NULL){
+			printf("Failed to allocate memory for alpha_p\n");
+			exit(EXIT_FAILURE);
+		}
+	(*syn_p).alpha_d = calloc((*syn_const_p).no_syns, sizeof(float));
+		if((*syn_p).alpha_d == NULL){
+			printf("Failed to allocate memory for alpha_d\n");
+			exit(EXIT_FAILURE);
+		}
+	
 	(*syn_p).time_of_last_update = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
+		if((*syn_p).time_of_last_update == NULL){
+			printf("Failed to allocate memory for time_of_last_update\n");
+			exit(EXIT_FAILURE);
+		}
 	(*syn_p).preT = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
+		if((*syn_p).preT == NULL){
+			printf("Failed to allocate memory for preT\n");
+			exit(EXIT_FAILURE);
+		}
 	(*syn_p).postT = calloc((*syn_const_p).no_syns, sizeof(unsigned int));
+		if((*syn_p).postT == NULL){
+			printf("Failed to allocate memory for postT\n");
+			exit(EXIT_FAILURE);
+		}
 	
 	// Event queue for delayed propagation of pre-synaptic spikes to synaptic calcium buffer
 	SpikeQueue spike_queue;
 	SpikeQueue *spike_queue_p = &spike_queue;
 	(*spike_queue_p).neuron_id = malloc((*syn_const_p).delay * sizeof(int *));
+		if((*spike_queue_p).neuron_id == NULL){
+			printf("Failed to allocate memory for queue.neuron_id\n");
+			exit(EXIT_FAILURE);
+		}
 	(*spike_queue_p).no_events = calloc((*syn_const_p).delay, sizeof(int));
+		if((*spike_queue_p).no_events == NULL){
+			printf("Failed to allocate memory for queue.no_events\n");
+			exit(EXIT_FAILURE);
+		}
 	for(i = 0; i < (*syn_const_p).delay; i++){
 		(*spike_queue_p).neuron_id[i] = malloc((*lif_p).no_lifs * sizeof(int));
+		if((*spike_queue_p).neuron_id[i] == NULL){
+			printf("Failed to allocate memory for queue.neuron_id[%d]\n", i);
+			exit(EXIT_FAILURE);
+		}
 	}
 	
 
@@ -736,16 +856,26 @@ int main (int argc, const char * argv[]) {
 	// Print summary of excitatory and inhibitory activity
 	//TODO: consider cycling through all synapses (not just recorder synapses) to do a final update of their states
 	//TODO: disable updating of multi-recorder synapses here
-	for (i = RECORDER_SYNAPSE_ID; i < (*syn_const_p).no_syns; i+= RECORDER_MULTI_SYNAPSE_SKIP){
+	/*for (i = RECORDER_SYNAPSE_ID; i < (*syn_const_p).no_syns; i+= RECORDER_MULTI_SYNAPSE_SKIP){
 		//TODO: reenable updateEventBasedSynapse here
 		updateEventBasedSynapse(syn_p, syn_const_p, i, j);
-	}
+	}*/
 	//TODO: reenable final update of single recorder synapse here
-	updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
+	if(RECORDER_SYNAPSE_ID < (*syn_const_p).no_syns){
+		updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
+	}
 	print_network_summary_activity();
 	printf("done.\nAnd final state of synapses...");
 	// Print final state of synapse strengths
 	print_synapses_final_state(syn_p, syn_const_p);
+	
+	float fup = 0.5;
+	float cmich = 5.41;
+	float nT = (float) MAX_TIME_STEPS * (*syn_const_p).dt;
+	print_synchange(syn_p, syn_const_p, fup, cmich, nT);
+	
+		//print blank lines to separate output in DataReporters
+		reporters_flush();
 	
 	printf("done.\n");
 	
@@ -755,21 +885,28 @@ int main (int argc, const char * argv[]) {
 	#endif /* DEBUG_MODE_NETWORK */
 	
 	printf("done\n");
+	
+		shutdownLifKernel(cl_lif_p);
+		//shutdownSynKernel(cl_syn_p);
+	
+		freeMemory(lif_p, syn_p, spike_queue_p);
+		free_reporter_variables();
+		printf("-----End of loop where external_voltage: %lf-----\n", external_voltage);
+	}// End of loop over frequencies
+	
+	
 	// Close output files
 	reporters_close();
 	
-    shutdownLifKernel(cl_lif_p);
-	//shutdownSynKernel(cl_syn_p);
-	
-	freeMemory(lif_p, syn_p, spike_queue_p);
-	
-    printf("Hello, World!\n");
+    printf("Goodbye, World!\n");
     return 0;
 }
 
 
+// There is a cute risk of buffer overflow here: I do not check syn_id to see if it is smaller than (*syn_const).no_syns
+// this can corrupt the summary variables
 void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_id, int current_time){
-	static long gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
+	//static long gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
 	float theta_upper = fmax((*syn_const).theta_d, (*syn_const).theta_p);
 	float theta_lower = fmin((*syn_const).theta_d, (*syn_const).theta_p);
 	float gamma_upper = fmax((*syn_const).gamma_d, (*syn_const).gamma_p); //what??? We're always assuming that the gamma related to the upper threshold is greater than gamma for the lower threshold
@@ -842,6 +979,12 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		t_upper = 0;
 		t_lower = time_since_update;
 		t_deter = 0;
+	}
+	
+	// Monitoring of time in threshold zones
+	if(current_time > (3 / (*syn_const).dt)){
+		(*syn).alpha_d[syn_id] += t_lower + t_upper;
+		(*syn).alpha_p[syn_id] += t_upper;
 	}
 	
 	// Weight updates
@@ -1032,6 +1175,8 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, SpikeQueue *spike_queue_
 	free((*syn_p).rho_initial);
 	free((*syn_p).ca);
 	free((*syn_p).gauss);
+	free((*syn_p).alpha_d);
+	free((*syn_p).alpha_p);
 	free((*syn_p).time_of_last_update);
 	free((*syn_p).preT);
 	free((*syn_p).postT);
@@ -1046,30 +1191,4 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, SpikeQueue *spike_queue_
 		free((*spike_queue_p).neuron_id[i]);
 	}
 	free((*spike_queue_p).neuron_id);
-	
-	// Reporter variables
-	free(summary_exc_spikes);
-	/*free(summary_inh_spikes);
-	free(lif_currents_EE);
-	free(lif_currents_IE);
-	free(lif_currents_EI);
-	free(lif_currents_II);*/
-	
-	#ifdef DEBUG_MODE_NETWORK
-		// Debugging variables
-		free(lif_gauss_totals);
-		free(lif_mean_destination);
-		free(lif_debug_no_EE);
-		free(lif_debug_no_IE);
-		free(lif_debug_no_EI);
-		free(lif_debug_no_II);
-		free(lif_mean_dest_EE);
-		free(lif_mean_dest_IE);
-		free(lif_mean_dest_EI);
-		free(lif_mean_dest_II);
-		free(lif_in_EE);
-		free(lif_in_IE);
-		free(lif_in_EI);
-		free(lif_in_II);
-	#endif /* DEBUG_MODE_NETWORK */
 }

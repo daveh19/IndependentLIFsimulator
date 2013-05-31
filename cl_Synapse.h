@@ -24,7 +24,13 @@ typedef struct Synapse{
 	float * rho_initial; // for debugging, comparison, etc.
     float * ca;
 	float * gauss;
+	
+	// Monitoring of time in threshold zones
+	float * alpha_d;
+	float * alpha_p;
+	
 	unsigned int * time_of_last_update;
+	
     //unsigned int ** preT;
 	unsigned int * preT;
     unsigned int * postT;

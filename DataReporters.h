@@ -26,12 +26,17 @@ char* synaptic_activity_name;// = "single_synapse.dat";
 // Final synaptic strengths of all dynamic synapses file
 char* synaptic_strength_name;// = "final_synaptic_strength.dat";
 
+// Calculation of synchange for each frequency
+char* synchange_name;// = "synchange.dat";
+
 //TODO: rename file pointer variable names for DataReporters
 FILE *raster_output;
 FILE *intracellular_output;
 FILE *average_activity_ouput; //network_activity_output
 FILE *synaptic_activity_output; //single_synapse_output
 FILE *synaptic_strength_output; //final_synaptic_strength_output
+
+FILE *synchange_output; //synchange_output
 
 // Summary variables for monitoring network firing rate
 //CONSIDER: since we use a timestepping approach these variables could be condensed
@@ -79,6 +84,11 @@ float *lif_currents_II;*/
 
 void reporters_setup();
 void reporters_close();
+void reporters_flush();
+void alloc_reporter_variables();
+void free_reporter_variables();
+
+void print_synchange(cl_Synapse *syn, SynapseConsts *syn_const, double fup, double cmich, double nT);
 
 void print_raster_spike(int t, int lif_no);
 void print_network_summary_activity();
