@@ -300,7 +300,7 @@ int main (int argc, const char * argv[]) {
 	//int dave = 0;
 	
 	// Begin loop over frequencies here
-	for (double external_voltage = J_EXT; external_voltage < (15)/*12.*/; external_voltage+=1.){ 
+	for (double external_voltage = J_EXT; external_voltage < (22)/*12.*/; external_voltage+=100.){ 
 		// Reset the random seeds on each iteration, limits the risk of period length problems
 		gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
 		
@@ -337,6 +337,12 @@ int main (int argc, const char * argv[]) {
 	(*lif_p).time_since_spike = calloc(NO_EXC, sizeof(unsigned int));
 		if((*lif_p).time_since_spike == NULL){
 			printf("Failed to allocate memory for time_since_spike\n");
+			exit(EXIT_FAILURE);
+		}
+	//new
+	(*lif_p).time_of_last_spike = calloc(NO_EXC, sizeof(unsigned int));
+		if((*lif_p).time_of_last_spike == NULL){
+			printf("Failed to allocate memory for time_of_last_spike\n");
 			exit(EXIT_FAILURE);
 		}
 		
@@ -700,6 +706,10 @@ int main (int argc, const char * argv[]) {
 		// Update LIFs: spike detection/propagation to post-synaptic lifs as well as pre- and post-lif neurons
 		for ( i = 0; i < (*lif_p).no_lifs; i++){
 			if((*lif_p).time_since_spike[i] == 0){
+				//Calculate isi and update time_since_last_spike (new code)
+				float isi = ( j - (*lif_p).time_of_last_spike[i] ) * (*lif_p).dt;
+				(*lif_p).time_of_last_spike[i] = j;
+				
 				//CONSIDER: using local variables to point to I[], post_lif[], Jx[], etc. it cuts down on dereferencing!
 				//TODO: strongly consider implementing parallel spike transfer system
 				/*if(i==0){
@@ -781,7 +791,7 @@ int main (int argc, const char * argv[]) {
 				
 				
 				//Print to raster file
-				print_raster_spike(j, i);
+				print_raster_spike(j, i, isi);
 				
 				// Add to average spiking activity bins
 				if(i < NO_EXC){
@@ -1160,6 +1170,9 @@ void freeMemory(cl_LIFNeuron *lif_p, cl_Synapse *syn_p, SpikeQueue *spike_queue_
 	free((*lif_p).I);
 	free((*lif_p).gauss);
 	free((*lif_p).time_since_spike);
+	//new
+	free((*lif_p).time_of_last_spike);
+	
 	free((*lif_p).no_outgoing_synapses);
 	free((*lif_p).no_outgoing_ee_synapses);
 	free((*lif_p).no_incoming_synapses);

@@ -37,7 +37,7 @@ void reporters_setup(){
 	if(raster_output == NULL){
 		perror("Error: failed to open raster output file\n");
 	}
-	fprintf(raster_output, "\n\n\n\n\n# Raster output (t, lif_no)\n");
+	fprintf(raster_output, "\n\n\n\n\n# Raster output (t, lif_no, isi)\n");
 	
 	// Intracellular recording from a single neuron
 	strcpy(outfile, "output/");
@@ -197,10 +197,12 @@ void print_synchange(cl_Synapse *syn, SynapseConsts *syn_const, double fup, doub
 }
 
 
-void print_raster_spike(int t, int lif_no){
+//TODO: add access to (*lif_p) and print out ISI
+void print_raster_spike(int t, int lif_no, float isi){
 	// A spike has occurred, add its occurrence to raster file
-	// t, lif_id
-	fprintf(raster_output, "%d %d\n", t, lif_no);
+	// print inter-spike-interval too
+	// t, lif_id, isi
+	fprintf(raster_output, "%d %d %f\n", t, lif_no, isi);
 }
 
 
