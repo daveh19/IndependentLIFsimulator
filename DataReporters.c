@@ -12,7 +12,7 @@
 void reporters_setup(){
 	char outfile[FILE_NAME_LENGTH];
 	raster_name = "raster.dat";
-	intracellular_name = "intracellular.dat";
+	intracellular_name = "/dev/null"; //"intracellular.dat";
 	average_activity_name = "network_activity.dat";
 	synaptic_activity_name = "single_synapse.dat";
 	synaptic_strength_name = "final_synaptic_strength.dat";
@@ -41,8 +41,9 @@ void reporters_setup(){
 	
 	// Intracellular recording from a single neuron
 	strcpy(outfile, "output/");
+	strcpy(outfile, "");
 	strcat(outfile, intracellular_name);
-	//printf("DEBUG: %s\n", outfile);
+	printf("DEBUG: %s\n", outfile);
 	intracellular_output = fopen(outfile, "a");
 	if(intracellular_output == NULL){
 		perror("Error: failed to open intracellular output file\n");
@@ -197,7 +198,6 @@ void print_synchange(cl_Synapse *syn, SynapseConsts *syn_const, double fup, doub
 }
 
 
-//TODO: add access to (*lif_p) and print out ISI
 void print_raster_spike(int t, int lif_no, float isi){
 	// A spike has occurred, add its occurrence to raster file
 	// print inter-spike-interval too

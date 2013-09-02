@@ -168,7 +168,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 						lif_mean_dest_IE[i] += j;
 						lif_debug_no_IE[i]++;
 						lif_in_IE[j]++;
-					#endif /* DEBUG_MODE_NETWORK */
+					#endif *//* DEBUG_MODE_NETWORK */
 	/*			}
 			}
 		}
@@ -191,7 +191,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 						lif_mean_dest_EI[i] += j;
 						lif_debug_no_EI[i]++;
 						lif_in_EI[j]++;
-					#endif /* DEBUG_MODE_NETWORK */
+					#endif *//* DEBUG_MODE_NETWORK */
 		/*		}
 			}
 		}*/
@@ -212,7 +212,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 						lif_mean_dest_II[i] += j;
 						lif_debug_no_II[i]++;
 						lif_in_II[j]++;
-					#endif /* DEBUG_MODE_NETWORK */
+					#endif *//* DEBUG_MODE_NETWORK */
 		/*		}
 			}
 		}*/
@@ -274,7 +274,7 @@ unsigned int generateNetwork(cl_LIFNeuron *lif_p, cl_Synapse *syn_p){
 			lif_mean_dest_IE[i] /= lif_debug_no_IE[i];
 			lif_mean_dest_EI[i] /= lif_debug_no_EI[i];
 			lif_mean_dest_II[i] /= lif_debug_no_II[i];
-		#endif /* DEBUG_MODE_NETWORK */
+		#endif *//* DEBUG_MODE_NETWORK */
 	/*}*/
 	
 	//(*fixed_syn_p).total_fixed_synapses = total_fixed_synapses;
@@ -300,7 +300,7 @@ int main (int argc, const char * argv[]) {
 	//int dave = 0;
 	
 	// Begin loop over frequencies here
-	for (double external_voltage = J_EXT; external_voltage < (20.5)/*12.*/; external_voltage+=1.){ 
+	for (double external_voltage = J_EXT; external_voltage < (15.5)/*12.*/; external_voltage+=100.){ 
 		// Reset the random seeds on each iteration, limits the risk of period length problems
 		gaussian_synaptic_seed = GAUSSIAN_SYNAPTIC_SEED;
 		
@@ -747,14 +747,14 @@ int main (int argc, const char * argv[]) {
 							//printf("DEBUG: total transfer voltage: %f, time: %f\n", lif_currents_EE[j], (j * LIF_DT));
 							local_count++;
 						}
-					//#endif /* DEBUG_MODE_NETWORK */
+					//#endif */ /* DEBUG_MODE_NETWORK */
 					/*#ifdef DEBUG_MODE_SPIKES
 						printf("Spike transfer (LIF %d) \n", i);
-					#endif /* DEBUG_MODE_SPIKES */
+					#endif*/ /* DEBUG_MODE_SPIKES */
 					/*//TODO: change plastic versus fixed transfer voltage here
 					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
 					//(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * SYN_RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-					/*if(i==0){
+					*//*if(i==0){
 						printf("current transfer, I: %f, to post-synaptic neuron(%d)\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
 					}*/				
 				//}*/ // end EE voltage transfer section here
@@ -774,14 +774,14 @@ int main (int argc, const char * argv[]) {
 								lif_currents_EI[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
 							}
 						}
-					//#endif /* DEBUG_MODE_NETWORK */
+					//#endif *//* DEBUG_MODE_NETWORK */
 					/*// Alternative dereferencing for fixed synapses
 					(*lif_p).I[(*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] ] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
 					#ifdef DEBUG_MODE_SPIKES
 						if(i==RECORDER_NEURON_ID){
 							printf("current transfer, I: %f, via fixed syn(%d) to post-synaptic neuron(%d)\n", ((*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ]), (*lif_p).outgoing_synapse_index[i][k]-(*syn_const_p).no_syns, (*fixed_syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns]);
 						}		
-					#endif /* DEBUG_MODE_SPIKES */
+					#endif *//* DEBUG_MODE_SPIKES */
 				//} */ // end fixed voltage transfer section here
 				// Event-based 5 (Add spike to delayed processing event queue)
 				// Add to pre-spike event queue
@@ -1148,9 +1148,21 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		pop_summary_rho[time_bin_index] += (*syn).rho[syn_id];
 		pop_summary_n[time_bin_index]++;
 		
-		if(pop_summary_M[time_bin_index] == 0){ // initialise on first entry to time bin
+		/*if(pop_summary_M[time_bin_index] == 0){ // initialise on first entry to time bin
 			pop_summary_M[time_bin_index] = (*syn).rho[syn_id];
 			pop_summary_S[time_bin_index] = 0;
+		}
+		else{
+			//Mk = Mk-1+ (xk - Mk-1)/k
+			//Sk = Sk-1 + (xk - Mk-1)*(xk - Mk).
+			float Mk;
+			Mk = pop_summary_M[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index])/pop_summary_n[time_bin_index];
+			pop_summary_S[time_bin_index] = pop_summary_S[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
+			pop_summary_M[time_bin_index] = Mk;
+		}*/
+		if(pop_summary_n[time_bin_index] == 1){ // initialise on first entry to time bin
+			pop_summary_M[time_bin_index] = (*syn).rho[syn_id];
+			//pop_summary_S[time_bin_index] = 0; //done via calloc()
 		}
 		else{
 			//Mk = Mk-1+ (xk - Mk-1)/k
