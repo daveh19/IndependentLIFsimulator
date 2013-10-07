@@ -12,7 +12,9 @@
 void reporters_setup(){
 	char outfile[FILE_NAME_LENGTH];
 	raster_name = "raster.dat";
-	intracellular_name = "/dev/null"; //"intracellular.dat";
+	//TODO: switch writing intracellular to /dev/null here
+	intracellular_name = "/dev/null";
+	//intracellular_name = "intracellular.dat";
 	average_activity_name = "network_activity.dat";
 	synaptic_activity_name = "single_synapse.dat";
 	synaptic_strength_name = "final_synaptic_strength.dat";
@@ -41,6 +43,7 @@ void reporters_setup(){
 	
 	// Intracellular recording from a single neuron
 	strcpy(outfile, "output/");
+	//TODO: switch writing intracellular to /dev/null here
 	strcpy(outfile, "");
 	strcat(outfile, intracellular_name);
 	printf("DEBUG: %s\n", outfile);
@@ -155,7 +158,7 @@ void reporters_setup(){
 	if (synchange_output == NULL){
 		perror("Error: failed to open synchange output file\n");
 	}
-	fprintf(synchange_output, "\n\n\n\n\n# Synchange output (rate, alpha_d, alpha_p, synchange, rhobar)\n");	
+	fprintf(synchange_output, "\n\n\n\n\n# Synchange output (rate, alpha_d, alpha_p, synchange, rhobar, mean_rho_final)\n");	
 }
 
 
@@ -163,15 +166,20 @@ void print_synchange(cl_Synapse *syn, SynapseConsts *syn_const, double fup, doub
 	double mean_alpha_d = 0;
 	double mean_alpha_p = 0;
 	double mean_rate = 0;
-	
+	double mean_rho_final = 0;
+    
 	// Calculate mean values for alpha_d and alpha_p
 	for(int i = 0; i < (*syn_const).no_syns; i++){
 		//TODO: temporary modification to discard first 3 secs
 		mean_alpha_d += (*syn).alpha_d[i] / ((*syn).time_of_last_update[i]*(*syn_const).dt - 3);
 		mean_alpha_p += (*syn).alpha_p[i] / ((*syn).time_of_last_update[i]*(*syn_const).dt - 3);
+        mean_rho_final += (*syn).rho[i];
 	}
 	mean_alpha_d /= (double)(*syn_const).no_syns;
 	mean_alpha_p /= (double)(*syn_const).no_syns;
+    
+    // Calculate mean value of final synaptic weights
+    mean_rho_final /= (*syn_const).no_syns;
 	
 	
 	// Calculate mean firing rate from 3rd time bin to end
@@ -194,7 +202,7 @@ void print_synchange(cl_Synapse *syn, SynapseConsts *syn_const, double fup, doub
 	DOWN = 0.5*(1+erf((rhostar-rhobar+(rhobar-1)*exp(-nT/(mean_rate*taueff)))/(sigmap*sqrt(1.-exp(-(2*nT)/(mean_rate*taueff))))));
 	synchange = ( (fup * (1-DOWN) + (1-fup) * UP) * cmich + fup * DOWN + (1-fup) * (1-UP) ) / (fup * cmich + 1 - fup);
 	
-	fprintf(synchange_output, "%f %f %f %f %f\n", mean_rate, mean_alpha_d, mean_alpha_p, synchange, rhobar);
+	fprintf(synchange_output, "%f %f %f %f %f %f\n", mean_rate, mean_alpha_d, mean_alpha_p, synchange, rhobar, mean_rho_final);
 }
 
 
@@ -268,23 +276,23 @@ void reporters_flush(){
 
 void alloc_reporter_variables(){
 	//no_spiking_bins = (LIF_DT / BIN_SIZE) * MAX_TIME_STEPS;
-	summary_exc_spikes = calloc(no_spiking_bins, sizeof(float));
+	summary_exc_spikes = calloc(no_spiking_bins, sizeof(double));
 	if(summary_exc_spikes == NULL){
 		printf("Failed to allocate memory for summary_exc_spikes\n");
 		exit(EXIT_FAILURE);
 	}
 	
-	pop_summary_rho = calloc(no_spiking_bins, sizeof(float));
+	pop_summary_rho = calloc(no_spiking_bins, sizeof(double));
 	if(pop_summary_rho == NULL){
 		printf("Failed to allocate memory for pop_summary_rho\n");
 		exit(EXIT_FAILURE);
 	}
-	pop_summary_M = calloc(no_spiking_bins, sizeof(float));
+	pop_summary_M = calloc(no_spiking_bins, sizeof(double));
 	if(pop_summary_M == NULL){
 		printf("Failed to allocate memory for pop_summary_M\n");
 		exit(EXIT_FAILURE);
 	}
-	pop_summary_S = calloc(no_spiking_bins, sizeof(float));
+	pop_summary_S = calloc(no_spiking_bins, sizeof(double));
 	if(pop_summary_S == NULL){
 		printf("Failed to allocate memory for pop_summary_S\n");
 		exit(EXIT_FAILURE);

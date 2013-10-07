@@ -26,8 +26,8 @@ typedef struct Synapse{
 	float * gauss;
 	
 	// Monitoring of time in threshold zones
-	float * alpha_d;
-	float * alpha_p;
+	double * alpha_d;
+	double * alpha_p;
 	
 	unsigned int * time_of_last_update;
 	

@@ -442,12 +442,12 @@ int main (int argc, const char * argv[]) {
 		}
 	(*syn_const_p).delay = SYN_CALCIUM_DELAY; // measured in multiples of dt
 	
-	(*syn_p).alpha_p = calloc((*syn_const_p).no_syns, sizeof(float));
+	(*syn_p).alpha_p = calloc((*syn_const_p).no_syns, sizeof(double));
 		if((*syn_p).alpha_p == NULL){
 			printf("Failed to allocate memory for alpha_p\n");
 			exit(EXIT_FAILURE);
 		}
-	(*syn_p).alpha_d = calloc((*syn_const_p).no_syns, sizeof(float));
+	(*syn_p).alpha_d = calloc((*syn_const_p).no_syns, sizeof(double));
 		if((*syn_p).alpha_d == NULL){
 			printf("Failed to allocate memory for alpha_d\n");
 			exit(EXIT_FAILURE);

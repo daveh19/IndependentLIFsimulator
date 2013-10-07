@@ -41,7 +41,7 @@ FILE *synchange_output; //synchange_output
 // Summary variables for monitoring network firing rate
 //CONSIDER: since we use a timestepping approach these variables could be condensed
 // to single value variables and printed out during the simulation
-float *summary_exc_spikes;
+double *summary_exc_spikes;
 //float *summary_inh_spikes;
 unsigned int no_spiking_bins;
 
@@ -51,9 +51,9 @@ float *summary_M;
 float *summary_S;
 unsigned int *summary_n;*/
 // Summary variables for main population synapse recorders
-float *pop_summary_rho;
-float *pop_summary_M;
-float *pop_summary_S;
+double *pop_summary_rho;
+double *pop_summary_M;
+double *pop_summary_S;
 unsigned int *pop_summary_n;
 
 // Variables for manipulating subset of neurons
