@@ -611,6 +611,8 @@ int main (int argc, const char * argv[]) {
 	//double totaltime;
 	printf("Go\n");
 	start_t = clock();
+	// as we moved summary variables to main loop it is nice to initialise the first time bin here
+	pop_summary_rho[0] = (*syn_p).rho_initial[0];
 	// Print initial state of a single recorder synapse
 	print_synapse_activity(j, syn_p);
 	while(j < MAX_TIME_STEPS){
