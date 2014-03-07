@@ -715,6 +715,7 @@ int main (int argc, const char * argv[]) {
 				/*if(i==0){
 					printf("%d spiked\n", i);
 				}*/
+				
 				// Event-based 3 (Update synapse: Backpropagation to synapse)
 				// Post-synaptic spike should backpropagate to its synapses with no delay
 				for ( k = 0; k < (*lif_p).no_incoming_synapses[i]; k++){
@@ -729,60 +730,9 @@ int main (int argc, const char * argv[]) {
 					//	printf("backprop to pre-lif synapse(%d)\n", (*lif_p).incoming_synapse_index[i][k]);
 					//}
 				}
-				// Transfer voltage change to post-synaptic neurons
-				/*for ( k = 0; k < (*lif_p).no_outgoing_ee_synapses[i]; k++){
-					// across plastic synapses
-					// Event-based 4 (Update synapse: Update in advance of current transfer)
-					//TODO: reenable updateEventBasedSynapse here
-					updateEventBasedSynapse(syn_p, syn_const_p, (*lif_p).outgoing_synapse_index[i][k], j);
-					//#ifdef DEBUG_MODE_NETWORK
-						//Debug code
-						if ((*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]] == RECORDER_NEURON_ID){
-							//local_count++;
-							//TODO: change plastic versus fixed transfer voltage here
-							lif_currents_EE[j] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-							//lif_currents_EE[j] += transfer_voltage * SYN_RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]];
-							
-							//printf("DEBUG: synaptic transfer voltage: %f, rho: %f, transfer voltage: %fc\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]], transfer_voltage);
-							//printf("DEBUG: total transfer voltage: %f, time: %f\n", lif_currents_EE[j], (j * LIF_DT));
-							local_count++;
-						}
-					//#endif */ /* DEBUG_MODE_NETWORK */
-					/*#ifdef DEBUG_MODE_SPIKES
-						printf("Spike transfer (LIF %d) \n", i);
-					#endif*/ /* DEBUG_MODE_SPIKES */
-					/*//TODO: change plastic versus fixed transfer voltage here
-					(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-					//(*lif_p).I[(*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]] += transfer_voltage * SYN_RHO_FIXED; //(*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]; 
-					*//*if(i==0){
-						printf("current transfer, I: %f, to post-synaptic neuron(%d)\n", (transfer_voltage * (*syn_p).rho[(*lif_p).outgoing_synapse_index[i][k]]), (*syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k]]);
-					}*/				
-				//}*/ // end EE voltage transfer section here
-				/*for ( k = (*lif_p).no_outgoing_ee_synapses[i]; k < (*lif_p).no_outgoing_synapses[i]; k++){
-					// across fixed synapses
-					//#ifdef DEBUG_MODE_NETWORK
-						//Debug code
-						if((*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] == RECORDER_NEURON_ID){
-							//local_count--;
-							if((i < NO_EXC) && (RECORDER_NEURON_ID >= NO_EXC)){ //E->I
-								lif_currents_IE[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-							}
-							else if((i >= NO_EXC) && (RECORDER_NEURON_ID >= NO_EXC)){ //I->I
-								lif_currents_II[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-							}
-							else if((i >= NO_EXC) && (RECORDER_NEURON_ID < NO_EXC)){ //I->E
-								lif_currents_EI[j] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-							}
-						}
-					//#endif *//* DEBUG_MODE_NETWORK */
-					/*// Alternative dereferencing for fixed synapses
-					(*lif_p).I[(*fixed_syn_p).post_lif[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ] ] += (*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ];
-					#ifdef DEBUG_MODE_SPIKES
-						if(i==RECORDER_NEURON_ID){
-							printf("current transfer, I: %f, via fixed syn(%d) to post-synaptic neuron(%d)\n", ((*fixed_syn_p).Jx[ ((*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns) ]), (*lif_p).outgoing_synapse_index[i][k]-(*syn_const_p).no_syns, (*fixed_syn_p).post_lif[(*lif_p).outgoing_synapse_index[i][k] - (*syn_const_p).no_syns]);
-						}		
-					#endif *//* DEBUG_MODE_SPIKES */
-				//} */ // end fixed voltage transfer section here
+				
+				// Voltage transfer section removed
+				
 				// Event-based 5 (Add spike to delayed processing event queue)
 				// Add to pre-spike event queue
 				//CONSIDER: don't add non EE events to event queue (relative efficiencies depend on NO_INH<<NO_EXC and nu_i>nu_e)
@@ -807,18 +757,6 @@ int main (int argc, const char * argv[]) {
 					summary_inh_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
 				}*/
 			} // end of handling spike
-			// Pre-synaptic spike propagates across synapse after delay
-			// Alternative to event queue system, assumes only 1 spike can occur in delay period
-			// Only one of these two systems can be used at a time, currently using event queue system
-			/*else if((*lif_p).time_since_spike[i] == (*syn_const_p).delay){
-				for ( k = 0; k < (*lif_p).no_outgoing_synapses[i]; k++){
-					(*syn_p).preT[(*lif_p).outgoing_synapse_index[i][k]] = 1;
-					if(i==0){
-						printf("Delayed spike transferred to post-lif synapse(%d)\n", (*lif_p).outgoing_synapse_index[i][k]);
-					}
-				}
-			}
-			*/
 		} // end of loop over neurons
 		//printf("count: %d\n", local_count);
 		
@@ -854,7 +792,37 @@ int main (int argc, const char * argv[]) {
 		offset = (++offset) % (*syn_const_p).delay;
 		j++;
 		(*lif_p).time_step = j;
-	}
+		
+		//Insert recorder code here
+		// At the end of every time bin record summary statistics for synapses (this was previously done in an on spiking manner)
+		if( ( j % (int)( (float)((BIN_SIZE / (*lif_p).dt) + EPSILLON)) ) == 0 ){ // yes, the ugly double cast is necessary for accuracy
+			printf("DEBUG: end of bin, j: %d, modulo argument: %d\n", j, (int)(float)((BIN_SIZE / (*lif_p).dt) + EPSILLON));
+			//summary_inh_spikes[(int)( ( (*lif_p).dt / BIN_SIZE ) * j + EPSILLON)]++;
+			// loop over all synapses
+			// calculate mean rho and stdev of rho
+			// save in pop variables or output to file
+			            
+			int time_bin_index = (int)( ( (*syn_const_p).dt / BIN_SIZE ) * j + EPSILLON);
+			
+			for (int syn_id = 0; syn_id < (*syn_const_p).no_syns; syn_id++){
+				pop_summary_rho[time_bin_index] += (*syn_p).rho[syn_id];
+				pop_summary_n[time_bin_index]++;
+				
+				if(pop_summary_n[time_bin_index] == 1){ // initialise on first entry to time bin
+					pop_summary_M[time_bin_index] = (*syn_p).rho[syn_id];
+					//pop_summary_S[time_bin_index] = 0; //done via calloc()
+				}
+				else{
+					//Mk = Mk-1+ (xk - Mk-1)/k
+					//Sk = Sk-1 + (xk - Mk-1)*(xk - Mk).
+					float Mk;
+					Mk = pop_summary_M[time_bin_index] + ((*syn_p).rho[syn_id] - pop_summary_M[time_bin_index])/pop_summary_n[time_bin_index];
+					pop_summary_S[time_bin_index] = pop_summary_S[time_bin_index] + ((*syn_p).rho[syn_id] - pop_summary_M[time_bin_index]) * ((*syn_p).rho[syn_id] - Mk);
+					pop_summary_M[time_bin_index] = Mk;
+				}
+			} // end of loop over synapses
+		} // end of time-bin check
+	} // end of main program loop over time
 	finish_t = clock();
 	printf("Stop\n");
 	totaltime = (double)(finish_t - start_t)/CLOCKS_PER_SEC;
@@ -863,6 +831,7 @@ int main (int argc, const char * argv[]) {
 	//CONSIDER: Could do another process and read here, as bufs have already been enqueued for processing
 	
 	printf("Simulation finished, printing summary of network activity...\n");
+	
 	// Print summary of excitatory and inhibitory activity
 	//TODO: consider cycling through all synapses (not just recorder synapses) to do a final update of their states
 	//TODO: disable updating of multi-recorder synapses here
@@ -870,12 +839,14 @@ int main (int argc, const char * argv[]) {
 		//TODO: reenable updateEventBasedSynapse here
 		updateEventBasedSynapse(syn_p, syn_const_p, i, j);
 	}*/
+		
 	//TODO: reenable final update of single recorder synapse here
-	if(RECORDER_SYNAPSE_ID < (*syn_const_p).no_syns){
+	/*if(RECORDER_SYNAPSE_ID < (*syn_const_p).no_syns){
 		updateEventBasedSynapse(syn_p, syn_const_p, RECORDER_SYNAPSE_ID, j);
-	}
+	}*/
 	print_network_summary_activity();
 	printf("done.\nAnd final state of synapses...");
+		
 	// Print final state of synapse strengths
 	print_synapses_final_state(syn_p, syn_const_p);
 	
@@ -1144,10 +1115,12 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		}
 	}
 	else{*/
+	//Moved following to main loop, time based update
+	/*
 		int time_bin_index = (int)( ( (*syn_const).dt / BIN_SIZE ) * current_time + EPSILLON);
 		pop_summary_rho[time_bin_index] += (*syn).rho[syn_id];
 		pop_summary_n[time_bin_index]++;
-		
+	*/	
 		/*if(pop_summary_M[time_bin_index] == 0){ // initialise on first entry to time bin
 			pop_summary_M[time_bin_index] = (*syn).rho[syn_id];
 			pop_summary_S[time_bin_index] = 0;
@@ -1160,6 +1133,8 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 			pop_summary_S[time_bin_index] = pop_summary_S[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
 			pop_summary_M[time_bin_index] = Mk;
 		}*/
+	//Moved following to main loop, time based update
+	/*
 		if(pop_summary_n[time_bin_index] == 1){ // initialise on first entry to time bin
 			pop_summary_M[time_bin_index] = (*syn).rho[syn_id];
 			//pop_summary_S[time_bin_index] = 0; //done via calloc()
@@ -1172,6 +1147,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 			pop_summary_S[time_bin_index] = pop_summary_S[time_bin_index] + ((*syn).rho[syn_id] - pop_summary_M[time_bin_index]) * ((*syn).rho[syn_id] - Mk);
 			pop_summary_M[time_bin_index] = Mk;
 		}
+	 */
 	//}
 }
 
