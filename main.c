@@ -1042,10 +1042,7 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 		w = w_stoch;
 	}
 	
-	//TODO: flat-well potential hack here
-    #ifdef SYN_USE_FLAT_POTENTIAL
-        t_deter = 0;
-    #endif /* SYN_USE_FLAT_POTENTIAL */
+
 	//TODO: comment out following section if double-well desired
 	// Deterministic update for piecewise-quadratic potential well
 	/*if (t_deter > 0){
@@ -1057,8 +1054,10 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	 }
 	 w = w_deter;
 	 }*/
-	//TODO: reenable double-well by commenting out following line
-	//t_deter = 0;
+    // Flat-well potential hack here
+    #ifdef SYN_USE_FLAT_POTENTIAL
+        t_deter = 0;
+    #endif /* SYN_USE_FLAT_POTENTIAL */
 	// Deterministic update for double-well potential
 	if (t_deter > 0){
 		float X_0 = pow(w - 0.5, 2) / ( w * (w - 1));
@@ -1108,19 +1107,22 @@ void updateEventBasedSynapse(cl_Synapse *syn, SynapseConsts *syn_const, int syn_
 	(*syn).postT[syn_id] = 0;
 	(*syn).time_of_last_update[syn_id] = current_time;
 	(*syn).ca[syn_id] = c_end;
-	//TODO: should I put hard bounds on rho?
-	//(*syn).rho[syn_id] = w;
-	if (w > 0){
-		if ( w < 1){
-			(*syn).rho[syn_id] = w;
-		}
-		else{
-			(*syn).rho[syn_id] = 1;
-		}
-	}
-	else{
-		(*syn).rho[syn_id] = 0;
-	}
+	// should I put hard bounds on rho?
+    #ifndef SYN_USE_HARD_BOUNDS
+        (*syn).rho[syn_id] = w;
+    #else
+        if (w > 0){
+            if ( w < 1){
+                (*syn).rho[syn_id] = w;
+            }
+            else{
+                (*syn).rho[syn_id] = 1;
+            }
+        }
+        else{
+            (*syn).rho[syn_id] = 0;
+        }
+    #endif
 	if(syn_id == RECORDER_SYNAPSE_ID){
 		// Print state of a single synapse
 		print_synapse_activity(current_time, syn);
